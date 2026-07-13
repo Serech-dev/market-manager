@@ -10,6 +10,10 @@ class Category(models.Model):
         ]
     )
 
+    def __str__(self):
+        return self.name
+
+
 class Transaction(models.Model):
     amount = models.DecimalField(
         max_digits=10,
