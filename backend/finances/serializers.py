@@ -10,7 +10,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class TransactionSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
 
     class Meta:
         model = Transaction
