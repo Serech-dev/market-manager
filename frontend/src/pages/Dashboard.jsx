@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import SummaryCard from "../components/SummaryCard";
 
 function Dashboard() {
     const [summary, setSummary] = useState({
@@ -12,9 +13,6 @@ function Dashboard() {
         api.get("sales/summary/")
             .then((response) => {
                 setSummary(response.data);
-            })
-            .catch((error) => {
-                console.error("Failed to fetch summary:", error);
             });
     }, []);
 
@@ -22,12 +20,23 @@ function Dashboard() {
         <div>
             <h1>Market Manager</h1>
 
-            <h2>Today's Summary</h2>
+            <h2>Today's Summary:</h2>
 
             <div>
-                <p>Gross: ${summary.gross}</p>
-                <p>Investment: ${summary.investment}</p>
-                <p>Earnings: ${summary.earnings}</p>
+                <SummaryCard
+                    title="Ingreso Bruto"
+                    value={summary.gross}
+                />
+
+                <SummaryCard
+                    title="Inversión"
+                    value={summary.investment}
+                />
+
+                <SummaryCard
+                    title="Ganancia"
+                    value={summary.earnings}
+                />
             </div>
         </div>
     );
