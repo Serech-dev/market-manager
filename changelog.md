@@ -1,5 +1,9 @@
 CHANGELOG
 
+V 0.1.1
+
+-refactor codebase to use sales module and model instead of finances/transaction 
+
 V 0.1.0
 
 -first version of app
