@@ -30,6 +30,9 @@ class SaleSummaryView(APIView):
                 date__month=int(month_num),
             )
 
+        else:
+            date = datetime.now()
+
         gross = sales.aggregate(
             total=Sum("gross_amount")
         )["total"] or 0
