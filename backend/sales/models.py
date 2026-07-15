@@ -33,12 +33,6 @@ class Sale(models.Model):
         max_length=255,
     )
 
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.PROTECT,
-        related_name="sales",
-    )
-
     date = models.DateField()
 
     created_at = models.DateTimeField(

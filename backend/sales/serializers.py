@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Category, Sale
+from .models import Sale
 
 
 class SaleSerializer(serializers.ModelSerializer):
