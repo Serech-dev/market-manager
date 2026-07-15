@@ -9,7 +9,7 @@ urlpatterns = [
         name="sale-list-create",
     ),
     path(
-        "sales/summary",
+        "sales/summary/",
         SaleSummaryView.as_view(),
         name="sale-summary",
     )
