@@ -7,6 +7,7 @@ class SaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
         fields = "__all__"
+        ordering = ["-date", "-created_at"]
 
     def validate(self, attrs):
         if attrs["investment_amount"] > attrs["gross_amount"]:
