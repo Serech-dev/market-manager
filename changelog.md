@@ -1,5 +1,11 @@
 CHANGELOG
 
+
+V 0.1.3
+
+-add new sale button to dashboard
+-add new "agregar venta" page 
+
 V 0.1.2
 
 -add basic frontend functionality
