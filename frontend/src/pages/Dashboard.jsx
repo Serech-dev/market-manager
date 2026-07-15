@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import SummaryCard from "../components/SummaryCard";
+import { Link } from "react-router-dom";
+
 
 function Dashboard() {
     const [summary, setSummary] = useState({
@@ -39,9 +41,11 @@ function Dashboard() {
             />
         </div>
 
-        <button>
-            + New Sale
-        </button>
+        <Link to="/new-sale">
+            <button>
+                + New Sale
+            </button>
+        </Link>
     </div>
     );
 }
