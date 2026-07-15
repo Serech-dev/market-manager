@@ -17,28 +17,32 @@ function Dashboard() {
     }, []);
 
     return (
+    <div>
+        <h1>Market Manager</h1>
+
+        <h2>Today's Summary</h2>
+
         <div>
-            <h1>Market Manager</h1>
+            <SummaryCard
+                title="Gross"
+                value={summary.gross}
+            />
 
-            <h2>Today's Summary:</h2>
+            <SummaryCard
+                title="Investment"
+                value={summary.investment}
+            />
 
-            <div>
-                <SummaryCard
-                    title="Ingreso Bruto"
-                    value={summary.gross}
-                />
-
-                <SummaryCard
-                    title="Inversión"
-                    value={summary.investment}
-                />
-
-                <SummaryCard
-                    title="Ganancia"
-                    value={summary.earnings}
-                />
-            </div>
+            <SummaryCard
+                title="Earnings"
+                value={summary.earnings}
+            />
         </div>
+
+        <button>
+            + New Sale
+        </button>
+    </div>
     );
 }
 
