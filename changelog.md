@@ -1,5 +1,11 @@
 CHANGELOG
 
+V 0.1.2
+
+-add basic frontend functionality
+-create basic frontend dashboard
+-add filtering to summary endpoint
+
 V 0.1.1
 
 -refactor codebase to use sales module and model instead of finances/transaction 
