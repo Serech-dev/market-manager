@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import SummaryCard from "../components/SummaryCard";
+import SaleCard from "../components/SaleCard";
 import { Link } from "react-router-dom";
 
 
@@ -11,10 +12,19 @@ function Dashboard() {
         earnings: 0,
     });
 
+    const [sales, setSales] = useState([]);
+
     useEffect(() => {
         api.get("sales/summary/")
             .then((response) => {
                 setSummary(response.data);
+            });
+        api.get("sales/")
+            .then((response) => {
+                setSales(response.data);
+            })
+            .catch((error) => {
+                console.error(error);
             });
     }, []);
 
@@ -46,6 +56,15 @@ function Dashboard() {
                 + New Sale
             </button>
         </Link>
+
+        <h2>Ventas</h2>
+
+        {sales.map((sale) => (
+            <SaleCard
+                key={sale.id}
+                sale={sale}
+            />
+        ))}
     </div>
     );
 }
