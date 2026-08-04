@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Dashboard from "./pages/Dashboard";
+import EditSale from "./pages/EditSale";
 import NewSale from "./pages/NewSale";
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/new-sale" element={<NewSale />} />
+                <Route path="/sales/:id/edit" element={<EditSale />} />
             </Routes>
         </BrowserRouter>
     );
