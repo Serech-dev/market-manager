@@ -47,7 +47,7 @@ function Dashboard() {
     <div>
         <h1>Market Manager</h1>
 
-        <h2>Today's Summary</h2>
+        <h2>Resumen de Hoy</h2>
 
         <div>
             <SummaryCard
@@ -68,7 +68,7 @@ function Dashboard() {
 
         <Link to="/new-sale">
             <button>
-                + New Sale
+                + Nueva Venta
             </button>
         </Link>
 
