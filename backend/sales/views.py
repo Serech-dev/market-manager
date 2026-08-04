@@ -7,6 +7,8 @@ from rest_framework.views import APIView
 
 from .models import Sale
 from .serializers import SaleSerializer
+from .utils import filter_sales_by_period
+
 
 
 class SaleListCreateView(generics.ListCreateAPIView):
@@ -15,49 +17,32 @@ class SaleListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = Sale.objects.all()
 
-        date = self.request.query_params.get("date")
-
-        if date:
-            queryset = queryset.filter(date=date)
-
-        return queryset
-
-class SaleSummaryView(APIView):
-    def get(self, request):
-        sales = Sale.objects.all()
-
-        date = request.query_params.get("date")
-        month = request.query_params.get("month")
-
-        if date:
-            sales = sales.filter(date=date)
-
-        elif month:
-            year, month_num = month.split("-")
-            sales = sales.filter(
-                date__year=int(year),
-                date__month=int(month_num),
-            )
-
-        else:
-            date = datetime.now()
-
-        gross = sales.aggregate(
-            total=Sum("gross_amount")
-        )["total"] or 0
-
-        investment = sales.aggregate(
-            total=Sum("investment_amount")
-        )["total"] or 0
-
-        earnings = gross - investment
-
-        return Response({
-            "gross": gross,
-            "investment": investment,
-            "earnings": earnings,
-        })
+        return filter_sales_by_period(
+            queryset,
+            self.request.query_params
+        )
 
 class SaleDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
+
+class SaleSummaryView(APIView):
+    def get(self, request):
+        sales = filter_sales_by_period(
+            Sale.objects.all(),
+            request.query_params
+        )
+
+        totals = sales.aggregate(
+            gross=Sum("gross_amount"),
+            investment=Sum("investment_amount"),
+        )
+
+        gross = totals["gross"] or 0
+        investment = totals["investment"] or 0
+
+        return Response({
+            "gross": gross,
+            "investment": investment,
+            "earnings": gross - investment,
+        })
