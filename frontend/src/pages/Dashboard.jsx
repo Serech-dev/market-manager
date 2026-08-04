@@ -11,8 +11,23 @@ function Dashboard() {
         investment: 0,
         earnings: 0,
     });
-
     const [sales, setSales] = useState([]);
+
+    async function handleDelete(id) {
+        try {
+            await api.delete(`sales/${id}/`);
+
+            setSales((current) =>
+                current.filter((sale) => sale.id !== id)
+            );
+
+            const summaryResponse = await api.get("sales/summary/");
+            setSummary(summaryResponse.data);
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     useEffect(() => {
         api.get("sales/summary/")
@@ -63,6 +78,7 @@ function Dashboard() {
             <SaleCard
                 key={sale.id}
                 sale={sale}
+                onDelete={handleDelete}
             />
         ))}
     </div>

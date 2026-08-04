@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import SaleListCreateView, SaleSummaryView
+from .views import SaleListCreateView, SaleSummaryView, SaleDeleteView
 
 urlpatterns = [
     path(
@@ -12,5 +12,10 @@ urlpatterns = [
         "sales/summary/",
         SaleSummaryView.as_view(),
         name="sale-summary",
-    )
+    ),
+    path(
+    "sales/<int:pk>/",
+    SaleDeleteView.as_view(),
+    name="sale-delete",
+    ),
 ]

@@ -48,3 +48,7 @@ class SaleSummaryView(APIView):
             "investment": investment,
             "earnings": earnings,
         })
+
+class SaleDeleteView(generics.DestroyAPIView):
+    queryset = Sale.objects.all()
+    serializer_class = SaleSerializer
