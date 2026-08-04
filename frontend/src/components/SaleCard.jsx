@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+
+
 function SaleCard({ sale, onDelete }) {
     return (
         <div className="sale-card">
@@ -15,6 +18,12 @@ function SaleCard({ sale, onDelete }) {
             >
             Eliminar
             </button>
+
+            <Link to={`/sales/${sale.id}/edit`}>
+                <button>
+                    Editar
+                </button>
+            </Link>
         </div>
     );
 }

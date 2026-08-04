@@ -1,6 +1,11 @@
 CHANGELOG
 
 
+V 0.1.4
+
+-add full CRUD functionality for sales
+-add new editing page and delete/edit button
+
 V 0.1.3
 
 -add new sale button to dashboard
