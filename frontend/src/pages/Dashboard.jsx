@@ -72,17 +72,17 @@ function Dashboard() {
 
         <div>
             <SummaryCard
-                title="Gross"
+                title="Bruto"
                 value={summary.gross}
             />
 
             <SummaryCard
-                title="Investment"
+                title="Inversion"
                 value={summary.investment}
             />
 
             <SummaryCard
-                title="Earnings"
+                title="Ganancia"
                 value={summary.earnings}
             />
         </div>
