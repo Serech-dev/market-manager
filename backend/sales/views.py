@@ -10,8 +10,17 @@ from .serializers import SaleSerializer
 
 
 class SaleListCreateView(generics.ListCreateAPIView):
-    queryset = Sale.objects.all()
     serializer_class = SaleSerializer
+
+    def get_queryset(self):
+        queryset = Sale.objects.all()
+
+        date = self.request.query_params.get("date")
+
+        if date:
+            queryset = queryset.filter(date=date)
+
+        return queryset
 
 class SaleSummaryView(APIView):
     def get(self, request):

@@ -12,6 +12,9 @@ function Dashboard() {
         earnings: 0,
     });
     const [sales, setSales] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(
+        new Date().toISOString().split("T")[0]
+    );
 
     async function handleDelete(id) {
         try {
@@ -21,8 +24,11 @@ function Dashboard() {
                 current.filter((sale) => sale.id !== id)
             );
 
-            const summaryResponse = await api.get("sales/summary/");
-            setSummary(summaryResponse.data);
+            const response = await api.get(
+                `sales/summary/?date=${selectedDate}`
+            );
+
+            setSummary(response.data);
 
         } catch (error) {
             console.error(error);
@@ -30,22 +36,37 @@ function Dashboard() {
     }
 
     useEffect(() => {
-        api.get("sales/summary/")
+        api.get(`sales/summary/?date=${selectedDate}`)
             .then((response) => {
                 setSummary(response.data);
+            })
+            .catch((error) => {
+                console.error(error);
             });
-        api.get("sales/")
+
+        api.get(`sales/?date=${selectedDate}`)
             .then((response) => {
                 setSales(response.data);
             })
             .catch((error) => {
                 console.error(error);
             });
-    }, []);
+    }, [selectedDate]);
 
     return (
     <div>
         <h1>Market Manager</h1>
+
+        <label>
+            Fecha:
+            <input
+                type="date"
+                value={selectedDate}
+                onChange={(event) => {
+                    setSelectedDate(event.target.value);
+                }}
+            />
+        </label>
 
         <h2>Resumen de Hoy</h2>
 
