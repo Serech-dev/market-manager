@@ -2,7 +2,7 @@ from datetime import datetime
 from rest_framework.exceptions import ValidationError
 
 
-def filter_sales_by_period(queryset, params):
+def apply_period_filter(queryset, params):
     date = params.get("date")
     month = params.get("month")
 

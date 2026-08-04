@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 from .models import Sale
 from .serializers import SaleSerializer
-from .utils import filter_sales_by_period
+from .utils import apply_period_filter
 
 
 
@@ -17,7 +17,7 @@ class SaleListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = Sale.objects.all()
 
-        return filter_sales_by_period(
+        return apply_period_filter(
             queryset,
             self.request.query_params
         )
@@ -28,7 +28,7 @@ class SaleDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class SaleSummaryView(APIView):
     def get(self, request):
-        sales = filter_sales_by_period(
+        sales = apply_period_filter(
             Sale.objects.all(),
             request.query_params
         )
