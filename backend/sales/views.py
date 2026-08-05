@@ -10,7 +10,6 @@ from .serializers import SaleSerializer
 from .utils import apply_period_filter
 
 
-
 class SaleListCreateView(generics.ListCreateAPIView):
     serializer_class = SaleSerializer
 

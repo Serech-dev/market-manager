@@ -1,6 +1,11 @@
 CHANGELOG
 
 
+V 0.1.5
+
+-add filtering functionality by month and day
+-add button to toggle filtering functionality by month and day
+
 V 0.1.4
 
 -add full CRUD functionality for sales
