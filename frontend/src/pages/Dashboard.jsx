@@ -11,10 +11,18 @@ function Dashboard() {
         investment: 0,
         earnings: 0,
     });
+
     const [sales, setSales] = useState([]);
+
     const [selectedDate, setSelectedDate] = useState(
         new Date().toISOString().split("T")[0]
     );
+
+    const [selectedMonth, setSelectedMonth] = useState(
+        new Date().toISOString().slice(0, 7)
+    );
+
+    const [filterMode, setFilterMode] = useState("day");
 
     async function handleDelete(id) {
         try {
@@ -36,7 +44,12 @@ function Dashboard() {
     }
 
     useEffect(() => {
-        api.get(`sales/summary/?date=${selectedDate}`)
+        const query =
+            filterMode === "day"
+                ? `date=${selectedDate}`
+                : `month=${selectedMonth}`;
+
+        api.get(`sales/summary/?${query}`)
             .then((response) => {
                 setSummary(response.data);
             })
@@ -44,28 +57,55 @@ function Dashboard() {
                 console.error(error);
             });
 
-        api.get(`sales/?date=${selectedDate}`)
+        api.get(`sales/?${query}`)
             .then((response) => {
                 setSales(response.data);
             })
             .catch((error) => {
                 console.error(error);
             });
-    }, [selectedDate]);
+
+    }, [selectedDate, selectedMonth, filterMode]);
 
     return (
     <div>
         <h1>Market Manager</h1>
 
+        <div>
+            <button
+                type="button"
+                onClick={() => setFilterMode("day")}
+            >
+                Día
+            </button>
+
+            <button
+                type="button"
+                onClick={() => setFilterMode("month")}
+            >
+                Mes
+            </button>
+        </div>
+
         <label>
             Fecha:
-            <input
-                type="date"
-                value={selectedDate}
-                onChange={(event) => {
-                    setSelectedDate(event.target.value);
-                }}
-            />
+            {filterMode === "day" ? (
+                <input
+                    type="date"
+                    value={selectedDate}
+                    onChange={(event) => {
+                        setSelectedDate(event.target.value);
+                    }}
+                />
+            ) : (
+                <input
+                    type="month"
+                    value={selectedMonth}
+                    onChange={(event) => {
+                        setSelectedMonth(event.target.value);
+                    }}
+                />
+            )}
         </label>
 
         <h2>Resumen de Hoy</h2>
