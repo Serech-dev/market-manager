@@ -3,6 +3,7 @@ import api from "../services/api";
 import SummaryCard from "../components/SummaryCard";
 import SaleCard from "../components/SaleCard";
 import { Link } from "react-router-dom";
+import "../styles/dashboard.css";
 
 
 function Dashboard() {
@@ -68,19 +69,23 @@ function Dashboard() {
     }, [selectedDate, selectedMonth, filterMode]);
 
     return (
-    <div>
+    <div className="dashboard">
         <h1>Market Manager</h1>
 
-        <div>
+        <div className="filter-container">
             <button
-                type="button"
+                className={`filter-button ${
+                    filterMode === "day" ? "active" : ""
+                }`}
                 onClick={() => setFilterMode("day")}
             >
                 Día
             </button>
 
             <button
-                type="button"
+                className={`filter-button ${
+                    filterMode === "month" ? "active" : ""
+                }`}
                 onClick={() => setFilterMode("month")}
             >
                 Mes
@@ -90,7 +95,7 @@ function Dashboard() {
         <label>
             Fecha:
             {filterMode === "day" ? (
-                <input
+                <input className="filter-input" 
                     type="date"
                     value={selectedDate}
                     onChange={(event) => {

@@ -1,0 +1,84 @@
+.dashboard {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #222;
+}
+
+.dashboard h1 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* Day / Month toggle */
+
+.filter-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.filter-button {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    background: #eeeeee;
+    color: #222;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.filter-button.active {
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+}
+
+/* Date / month input */
+
+.filter-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    margin-bottom: 20px;
+
+    border-radius: 8px;
+    border: 1px solid #bbb;
+
+    background: white;
+    color: #222;
+    font-size: 16px;
+}
+
+/* Summary */
+
+.summary-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+
+    border: 1px solid #ddd;
+}
+
+.summary-card h2 {
+    margin-top: 0;
+}
+
+/* Sales */
+
+.sales-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sale-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 15px;
+
+    border: 1px solid #ddd;
+}
