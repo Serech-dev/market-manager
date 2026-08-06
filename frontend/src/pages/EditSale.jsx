@@ -32,17 +32,54 @@ function EditSale() {
     }
 
     if (!sale) {
-        return <p>Cargando...</p>;
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
+                <p className="text-[var(--text-secondary)]">
+                    Cargando venta...
+                </p>
+            </div>
+        );
     }
 
     return (
-        <div>
-            <h1>Editar Venta</h1>
+        <div className="min-h-screen bg-[var(--background)] px-4 py-8">
+            <div className="mx-auto max-w-2xl space-y-6">
 
-            <SaleForm
-                initialSale={sale}
-                onSubmit={handleUpdateSale}
-            />
+                <button
+                    onClick={() => navigate(-1)}
+                    className="
+                        w-fit
+                        rounded-lg
+                        px-3
+                        py-2
+                        text-sm
+                        font-medium
+                        text-[var(--text-secondary)]
+                        transition
+                        hover:bg-[var(--surface-accent)]
+                    "
+                >
+                    ← Volver
+                </button>
+
+                <header>
+                    <h1 className="text-3xl font-bold text-[var(--text-primary)]">
+                        Editar Venta
+                    </h1>
+
+                    <p className="mt-1 text-[var(--text-secondary)]">
+                        Actualiza la información de la venta.
+                    </p>
+                </header>
+
+                <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
+                    <SaleForm
+                        initialSale={sale}
+                        onSubmit={handleUpdateSale}
+                    />
+                </section>
+
+            </div>
         </div>
     );
 }
