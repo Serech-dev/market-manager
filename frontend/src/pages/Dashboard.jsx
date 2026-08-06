@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import SummaryCard from "../components/SummaryCard";
+import FilterBar from "../components/FilterBar";
 import SaleCard from "../components/SaleCard";
 import { Link } from "react-router-dom";
-import "../styles/dashboard.css";
 
 
 function Dashboard() {
@@ -29,15 +29,22 @@ function Dashboard() {
         try {
             await api.delete(`sales/${id}/`);
 
-            setSales((current) =>
-                current.filter((sale) => sale.id !== id)
-            );
+            const query =
+                filterMode === "day"
+                    ? `date=${selectedDate}`
+                    : `month=${selectedMonth}`;
 
             const response = await api.get(
-                `sales/summary/?date=${selectedDate}`
+                `sales/summary/?${query}`
             );
 
             setSummary(response.data);
+
+            const salesResponse = await api.get(
+                `sales/?${query}`
+            );
+
+            setSales(salesResponse.data);
 
         } catch (error) {
             console.error(error);
@@ -69,86 +76,61 @@ function Dashboard() {
     }, [selectedDate, selectedMonth, filterMode]);
 
     return (
-    <div className="dashboard">
-        <h1>Market Manager</h1>
+        <div className="min-h-screen bg-gray-100 p-4">
+            <div className="mx-auto max-w-md space-y-4">
 
-        <div className="filter-container">
-            <button
-                className={`filter-button ${
-                    filterMode === "day" ? "active" : ""
-                }`}
-                onClick={() => setFilterMode("day")}
-            >
-                Día
-            </button>
+                <h1>Market Manager</h1>
 
-            <button
-                className={`filter-button ${
-                    filterMode === "month" ? "active" : ""
-                }`}
-                onClick={() => setFilterMode("month")}
-            >
-                Mes
-            </button>
-        </div>
-
-        <label>
-            Fecha:
-            {filterMode === "day" ? (
-                <input className="filter-input" 
-                    type="date"
-                    value={selectedDate}
-                    onChange={(event) => {
-                        setSelectedDate(event.target.value);
-                    }}
+                <FilterBar
+                    filterMode={filterMode}
+                    setFilterMode={setFilterMode}
+                    selectedDate={selectedDate}
+                    setSelectedDate={setSelectedDate}
+                    selectedMonth={selectedMonth}
+                    setSelectedMonth={setSelectedMonth}
                 />
-            ) : (
-                <input
-                    type="month"
-                    value={selectedMonth}
-                    onChange={(event) => {
-                        setSelectedMonth(event.target.value);
-                    }}
-                />
-            )}
-        </label>
 
-        <h2>Resumen de Hoy</h2>
+                <h2>Resumen</h2>
 
-        <div>
-            <SummaryCard
-                title="Bruto"
-                value={summary.gross}
-            />
+                <div className="grid grid-cols-1 gap-4">
+                    <SummaryCard 
+                        title="Ingresos"
+                        value={summary.gross}
+                    />
 
-            <SummaryCard
-                title="Inversion"
-                value={summary.investment}
-            />
+                    <SummaryCard
+                        title="Inversión"
+                        value={summary.investment}
+                    />
 
-            <SummaryCard
-                title="Ganancia"
-                value={summary.earnings}
-            />
+                    <SummaryCard
+                        title="Ganancia"
+                        value={summary.earnings}
+                    />
+                </div>
+
+                <Link to="/new-sale">
+                    <button>
+                        + Nueva Venta
+                    </button>
+                </Link>
+
+                <h2>Ventas</h2>
+
+                {sales.map((sale) => (
+                    <SaleCard
+                        key={sale.id}
+                        sale={sale}
+                        onDelete={handleDelete}
+                    />
+                ))}
+
+            </div>
         </div>
-
-        <Link to="/new-sale">
-            <button>
-                + Nueva Venta
-            </button>
-        </Link>
-
-        <h2>Ventas</h2>
-
-        {sales.map((sale) => (
-            <SaleCard
-                key={sale.id}
-                sale={sale}
-                onDelete={handleDelete}
-            />
-        ))}
-    </div>
     );
 }
 
 export default Dashboard;
+
+
+

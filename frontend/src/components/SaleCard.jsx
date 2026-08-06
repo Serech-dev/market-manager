@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 function SaleCard({ sale, onDelete }) {
     return (
-        <div className="sale-card">
+        <div className="bg-white rounded-xl p-4 border border-gray-200">
             <h3>{sale.description}</h3>
 
             <p>Bruto: ${sale.gross_amount}</p>
