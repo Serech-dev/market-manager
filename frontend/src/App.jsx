@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import Dashboard from "./pages/Dashboard";
 import EditSale from "./pages/EditSale";
@@ -6,6 +7,15 @@ import NewSale from "./pages/NewSale";
 
 function App() {
     return (
+
+        <>
+            <Toaster
+                position="top-center"
+                toastOptions={{
+                    duration: 2500,
+                }}
+            />
+
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Dashboard />} />
@@ -13,6 +23,7 @@ function App() {
                 <Route path="/sales/:id/edit" element={<EditSale />} />
             </Routes>
         </BrowserRouter>
+        </>
     );
 }
 

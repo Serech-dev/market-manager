@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import api from "../services/api";
 import SaleForm from "../components/SaleForm";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import api from "../services/api";
 
 function EditSale() {
     const { id } = useParams();
@@ -23,11 +24,19 @@ function EditSale() {
         try {
             await api.patch(`sales/${id}/`, updatedSale);
 
+            toast.success("Venta actualizada.");
+
             navigate("/");
-        } catch (error) {
-            console.error(
-                error.response?.data || error.message
-            );
+        }
+        catch (error) {
+            console.error(error);
+
+            if (error.response?.status === 400) {
+                toast.error("Verifique el monto ingresado.");
+                return;
+            }
+
+            toast.error("Ocurrió un error inesperado.");
         }
     }
 

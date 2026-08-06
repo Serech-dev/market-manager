@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import api from "../services/api";
 import SaleForm from "../components/SaleForm";
+import toast from "react-hot-toast";
+import api from "../services/api";
 
 function NewSale() {
     const navigate = useNavigate();
@@ -9,14 +10,18 @@ function NewSale() {
         try {
             const response = await api.post("sales/", sale);
 
-            console.log("Venta creada:", response.data);
+            toast.success("Venta creada correctamente.");
 
             navigate("/");
         } catch (error) {
-            console.error(
-                "Error creando venta:",
-                error.response?.data || error.message
-            );
+            console.error(error);
+
+            if (error.response?.status === 400) {
+                toast.error("Verifique el monto ingresado.");
+                return;
+            }
+
+            toast.error("Ocurrió un error inesperado.");
         }
     }
 

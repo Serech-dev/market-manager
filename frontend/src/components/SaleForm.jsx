@@ -69,28 +69,44 @@ function SaleForm({ onSubmit, initialSale }) {
                     Ingreso Bruto
                 </label>
 
-                <input
-                    id="gross_amount"
-                    type="number"
-                    name="gross_amount"
-                    value={sale.gross_amount}
-                    onChange={handleChange}
-                    className="
-                        w-full
-                        rounded-xl
-                        border
-                        border-[var(--border)]
-                        bg-[var(--surface)]
-                        px-4
-                        py-3
-                        text-[var(--text-primary)]
-                        outline-none
-                        transition
-                        focus:border-[var(--primary)]
-                        focus:ring-2
-                        focus:ring-[var(--primary)]/20
-                    "
-                />
+                    <div className="relative">
+                        <span
+                            className="
+                                absolute
+                                left-4
+                                top-1/2
+                                -translate-y-1/2
+                                text-[var(--text-secondary)]
+                                font-medium
+                            "
+                        >
+                            $
+                        </span>
+
+                    <input
+                        id="gross_amount"
+                        type="number"
+                        name="gross_amount"
+                        value={sale.gross_amount}
+                        onChange={handleChange}
+                        className="
+                            w-full
+                            rounded-xl
+                            border
+                            border-[var(--border)]
+                            bg-[var(--surface)]
+                            pl-8 
+                            pr-4
+                            py-3
+                            text-[var(--text-primary)]
+                            outline-none
+                            transition
+                            focus:border-[var(--primary)]
+                            focus:ring-2
+                            focus:ring-[var(--primary)]/20
+                        "
+                    />
+                </div>
             </div>
 
             <div className="space-y-2">
@@ -100,6 +116,20 @@ function SaleForm({ onSubmit, initialSale }) {
                 >
                     Inversión
                 </label>
+
+                <div className="relative">
+                        <span
+                            className="
+                                absolute
+                                left-4
+                                top-1/2
+                                -translate-y-1/2
+                                text-[var(--text-secondary)]
+                                font-medium
+                            "
+                        >
+                            $
+                        </span>
 
                 <input
                     id="investment_amount"
@@ -113,7 +143,8 @@ function SaleForm({ onSubmit, initialSale }) {
                         border
                         border-[var(--border)]
                         bg-[var(--surface)]
-                        px-4
+                        pl-8 
+                        pr-4
                         py-3
                         text-[var(--text-primary)]
                         outline-none
@@ -123,6 +154,7 @@ function SaleForm({ onSubmit, initialSale }) {
                         focus:ring-[var(--primary)]/20
                     "
                 />
+                </div>
             </div>
 
             <div className="space-y-2">

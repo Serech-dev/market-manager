@@ -26,28 +26,23 @@ function Dashboard() {
     const [filterMode, setFilterMode] = useState("day");
 
     async function handleDelete(id) {
+
+        const confirmed = window.confirm(
+            "¿Seguro que deseas eliminar esta venta?"
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
         try {
             await api.delete(`sales/${id}/`);
 
-            const query =
-                filterMode === "day"
-                    ? `date=${selectedDate}`
-                    : `month=${selectedMonth}`;
-
-            const response = await api.get(
-                `sales/summary/?${query}`
-            );
-
-            setSummary(response.data);
-
-            const salesResponse = await api.get(
-                `sales/?${query}`
-            );
-
-            setSales(salesResponse.data);
-
+            toast.success("Venta eliminada.");
+            fetchSales();
         } catch (error) {
             console.error(error);
+            toast.error("No se pudo eliminar la venta.");
         }
     }
 
