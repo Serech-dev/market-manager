@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
-import api from "../services/api";
+import ConfirmDialog from "../components/ConfirmDialog";
 import SummaryCard from "../components/SummaryCard";
 import FilterBar from "../components/FilterBar";
 import SaleCard from "../components/SaleCard";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import api from "../services/api";
 
 
 function Dashboard() {
@@ -25,21 +27,18 @@ function Dashboard() {
 
     const [filterMode, setFilterMode] = useState("day");
 
+    const [saleToDelete, setSaleToDelete] = useState(null);
+
     async function handleDelete(id) {
-
-        const confirmed = window.confirm(
-            "¿Seguro que deseas eliminar esta venta?"
-        );
-
-        if (!confirmed) {
-            return;
-        }
-
         try {
             await api.delete(`sales/${id}/`);
 
             toast.success("Venta eliminada.");
-            fetchSales();
+
+            setSales((currentSales) =>
+                currentSales.filter((sale) => sale.id !== id)
+            );
+
         } catch (error) {
             console.error(error);
             toast.error("No se pudo eliminar la venta.");
@@ -151,13 +150,23 @@ function Dashboard() {
                             <SaleCard
                                 key={sale.id}
                                 sale={sale}
-                                onDelete={handleDelete}
+                                onDelete={setSaleToDelete}
                             />
                         ))}
                     </div>
                 </section>
 
             </div>
+            <ConfirmDialog
+                isOpen={saleToDelete !== null}
+                title="Eliminar venta"
+                message="¿Estás seguro de que deseas eliminar esta venta? Esta acción no se puede deshacer."
+                onCancel={() => setSaleToDelete(null)}
+                onConfirm={() => {
+                    handleDelete(saleToDelete);
+                    setSaleToDelete(null);
+                }}
+            />
         </div>
     );
 }
