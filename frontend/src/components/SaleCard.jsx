@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { formatCurrency } from "../utils/formatCurrency";
+
 
 function SaleCard({ sale, onDelete }) {
     const navigate = useNavigate();
@@ -18,7 +20,7 @@ function SaleCard({ sale, onDelete }) {
                 </div>
 
                 <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-[var(--success)]">
-                    ${profit}
+                    {formatCurrency(profit)}
                 </span>
             </div>
 
@@ -26,14 +28,14 @@ function SaleCard({ sale, onDelete }) {
                 <div className="flex justify-between">
                     <span>Ingreso bruto</span>
                     <span className="font-semibold">
-                        ${sale.gross_amount}
+                        {formatCurrency(sale.gross_amount)}
                     </span>
                 </div>
 
                 <div className="flex justify-between">
                     <span>Inversión</span>
                     <span className="font-semibold">
-                        ${sale.investment_amount}
+                        {formatCurrency(sale.investment_amount)}
                     </span>
                 </div>
             </div>

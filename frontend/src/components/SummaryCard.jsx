@@ -1,3 +1,6 @@
+import { formatCurrency } from "../utils/formatCurrency";
+
+
 function SummaryCard({ title, value, variant }) {
     const isProfit = variant === "profit";
 
@@ -37,7 +40,7 @@ function SummaryCard({ title, value, variant }) {
                     }
                 `}
             >
-                ${value}
+                {formatCurrency(value)}
             </p>
         </div>
     );

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { formatCurrency } from "../utils/formatCurrency";
 
 
 function SaleForm({ onSubmit, initialSale }) {
