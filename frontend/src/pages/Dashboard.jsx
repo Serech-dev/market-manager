@@ -76,60 +76,96 @@ function Dashboard() {
     }, [selectedDate, selectedMonth, filterMode]);
 
     return (
-        <div className="min-h-screen bg-gray-100 p-4">
-            <div className="mx-auto max-w-md space-y-4">
+        <div className="min-h-screen bg-stone-400 px-4 py-8">
+            <div className="mx-auto max-w-5xl space-y-8">
 
-                <h1>Market Manager</h1>
+                <header>
+                    <h1 className="text-3xl font-bold text-slate-800">
+                        Market Manager
+                    </h1>
 
-                <FilterBar
-                    filterMode={filterMode}
-                    setFilterMode={setFilterMode}
-                    selectedDate={selectedDate}
-                    setSelectedDate={setSelectedDate}
-                    selectedMonth={selectedMonth}
-                    setSelectedMonth={setSelectedMonth}
-                />
+                    <p className="mt-1 text-slate-650">
+                        Controla tus ventas, inversiones y ganancias
+                    </p>
+                </header>
 
-                <h2>Resumen</h2>
 
-                <div className="grid grid-cols-1 gap-4">
-                    <SummaryCard 
-                        title="Ingresos"
-                        value={summary.gross}
+                <section className="rounded-2xl border border-stone-200 bg-stone-300 p-5 shadow-sm">
+                    <FilterBar
+                        filterMode={filterMode}
+                        setFilterMode={setFilterMode}
+                        selectedDate={selectedDate}
+                        setSelectedDate={setSelectedDate}
+                        selectedMonth={selectedMonth}
+                        setSelectedMonth={setSelectedMonth}
                     />
+                </section>
 
-                    <SummaryCard
-                        title="Inversión"
-                        value={summary.investment}
-                    />
 
-                    <SummaryCard
-                        title="Ganancia"
-                        value={summary.earnings}
-                    />
-                </div>
+                <section>
+                    <h2 className="mb-3 text-xl font-semibold text-slate-800">
+                        Resumen
+                    </h2>
+
+                    <div className="grid gap-4 md:grid-cols-3">
+                        <SummaryCard
+                            title="Ingresos"
+                            value={summary.gross}
+                        />
+
+                        <SummaryCard
+                            title="Inversión"
+                            value={summary.investment}
+                        />
+
+                        <SummaryCard
+                            title="Ganancia"
+                            value={summary.earnings}
+                        />
+                    </div>
+                </section>
+
 
                 <Link to="/new-sale">
-                    <button>
+                    <button
+                        className="
+                            mt-2
+                            w-full
+                            rounded-xl
+                            bg-blue-500
+                            py-3
+                            font-semibold
+                            text-white
+                            shadow-sm
+                            transition
+                            hover:bg-blue-600
+                        "
+                    >
                         + Nueva Venta
                     </button>
                 </Link>
 
-                <h2>Ventas</h2>
 
-                {sales.map((sale) => (
-                    <SaleCard
-                        key={sale.id}
-                        sale={sale}
-                        onDelete={handleDelete}
-                    />
-                ))}
+                <section>
+                    <h2 className="mb-3 text-xl font-semibold text-slate-800">
+                        Ventas
+                    </h2>
+
+                    <div className="space-y-4">
+                        {sales.map((sale) => (
+                            <SaleCard
+                                key={sale.id}
+                                sale={sale}
+                                onDelete={handleDelete}
+                            />
+                        ))}
+                    </div>
+                </section>
 
             </div>
         </div>
     );
 }
-
 export default Dashboard;
 
 

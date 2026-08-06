@@ -12,8 +12,8 @@ function FilterBar({
                 <button
                     className={`flex-1 rounded-lg p-3 ${
                         filterMode === "day"
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-200"
+                            ? "bg-blue-500 py-3 font-semibold text-white shadow-sm hover:bg-blue-600 transition w-full mt-2" 
+                            : "bg-gray-200 py-3 font-semibold shadow-sm hover:bg-gray-300 mt-2 py-3"
                     }`}
                     onClick={() => setFilterMode("day")}
                 >
@@ -23,8 +23,8 @@ function FilterBar({
                 <button
                     className={`flex-1 rounded-lg p-3 ${
                         filterMode === "month"
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-200"
+                            ? "bg-blue-500 py-3 font-semibold text-white shadow-sm hover:bg-blue-600 transition w-full mt-2"
+                            : "bg-gray-200 transition w-full mt-2 py-3 font-semibold hover:bg-gray-300"
                     }`}
                     onClick={() => setFilterMode("month")}
                 >

@@ -10,7 +10,7 @@ function EditSale() {
     const [sale, setSale] = useState(null);
 
     useEffect(() => {
-        api.get(`sales/${id}/`)
+        api.get(`sales/${id}`)
             .then((response) => {
                 setSale(response.data);
             })
