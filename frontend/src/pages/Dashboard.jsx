@@ -39,34 +39,34 @@ function Dashboard() {
                 currentSales.filter((sale) => sale.id !== id)
             );
 
+            fetchData();
+
         } catch (error) {
             console.error(error);
             toast.error("No se pudo eliminar la venta.");
         }
     }
 
-    useEffect(() => {
+    async function fetchData() {
         const query =
             filterMode === "day"
                 ? `date=${selectedDate}`
                 : `month=${selectedMonth}`;
 
-        api.get(`sales/summary/?${query}`)
-            .then((response) => {
-                setSummary(response.data);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        try {
+            const summaryResponse = await api.get(`sales/summary/?${query}`);
+            setSummary(summaryResponse.data);
 
-        api.get(`sales/?${query}`)
-            .then((response) => {
-                setSales(response.data);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+            const salesResponse = await api.get(`sales/?${query}`);
+            setSales(salesResponse.data);
 
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
+        fetchData();
     }, [selectedDate, selectedMonth, filterMode]);
 
     return (
