@@ -17,7 +17,7 @@ function NewSale() {
             console.error(error);
 
             if (error.response?.status === 400) {
-                toast.error("Verifique el monto ingresado.");
+                toast.error("Verifique el valor/es ingresado.");
                 return;
             }
 
