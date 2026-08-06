@@ -76,15 +76,15 @@ function Dashboard() {
     }, [selectedDate, selectedMonth, filterMode]);
 
     return (
-        <div className="min-h-screen bg-stone-400 px-4 py-8">
+        <div className="min-h-screen bg-[var(--surface)] px-4 py-8">
             <div className="mx-auto max-w-5xl space-y-8">
 
                 <header>
-                    <h1 className="text-3xl font-bold text-slate-800">
+                    <h1 className="text-[var(--text-primary)]">
                         Market Manager
                     </h1>
 
-                    <p className="mt-1 text-slate-650">
+                    <p className="mt-1 text-[var(--text-secondary)]">
                         Controla tus ventas, inversiones y ganancias
                     </p>
                 </header>
@@ -103,7 +103,7 @@ function Dashboard() {
 
 
                 <section>
-                    <h2 className="mb-3 text-xl font-semibold text-slate-800">
+                    <h2 className="mb-3 text-xl font-semibold text-[var(--text-primary)]">
                         Resumen
                     </h2>
 
@@ -132,13 +132,13 @@ function Dashboard() {
                             mt-2
                             w-full
                             rounded-xl
-                            bg-blue-500
+                            bg-[var(--primary)]
                             py-3
                             font-semibold
                             text-white
                             shadow-sm
                             transition
-                            hover:bg-blue-600
+                            hover:bg-[var(--primary-hover)]
                         "
                     >
                         + Nueva Venta
@@ -147,7 +147,7 @@ function Dashboard() {
 
 
                 <section>
-                    <h2 className="mb-3 text-xl font-semibold text-slate-800">
+                    <h2 className="mb-3 text-xl font-semibold text-[var(--text-primary)]">
                         Ventas
                     </h2>
 

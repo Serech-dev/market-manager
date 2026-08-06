@@ -10,10 +10,10 @@ function FilterBar({
         <div>
             <div className="flex gap-2">
                 <button
-                    className={`flex-1 rounded-lg p-3 ${
+                    className={`flex-1 rounded-lg py-3 font-semibold transition ${
                         filterMode === "day"
-                            ? "bg-blue-500 py-3 font-semibold text-white shadow-sm hover:bg-blue-600 transition w-full mt-2" 
-                            : "bg-gray-200 py-3 font-semibold shadow-sm hover:bg-gray-300 mt-2 py-3"
+                            ? "bg-[var(--primary)] text-white shadow-sm hover:bg-[var(--primary-hover)]"
+                            : "bg-[var(--surface)] text-[var(--text-secondary)] border border-[var(--border)] hover:bg-[var(--surface-accent)]"
                     }`}
                     onClick={() => setFilterMode("day")}
                 >
@@ -21,10 +21,10 @@ function FilterBar({
                 </button>
 
                 <button
-                    className={`flex-1 rounded-lg p-3 ${
+                    className={`flex-1 rounded-lg py-3 font-semibold transition ${
                         filterMode === "month"
-                            ? "bg-blue-500 py-3 font-semibold text-white shadow-sm hover:bg-blue-600 transition w-full mt-2"
-                            : "bg-gray-200 transition w-full mt-2 py-3 font-semibold hover:bg-gray-300"
+                            ? "bg-[var(--primary)] text-white shadow-sm hover:bg-[var(--primary-hover)]"
+                            : "bg-[var(--surface)] text-[var(--text-secondary)] border border-[var(--border)] hover:bg-[var(--surface-accent)]"
                     }`}
                     onClick={() => setFilterMode("month")}
                 >

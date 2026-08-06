@@ -5,10 +5,28 @@
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+
+  --background: #f1d6df;
+  --surface: #fff7f8;
+  --surface-accent: #f8e5e8;
+  
+  --text-primary: #4a3038;
+  --text-secondary: #8b6f75;
+
+  --border: #e6c4cc;
+
+  --primary: #a34f63;
+  --primary-hover: #8b3f52;
+
+  --success: #7c9b6f;
+  --warning: #c58b4e;
+  --danger: #c45b5b;
+  --danger-hover: #bb5757;
 }
 
 body {
   margin: 0;
+  background: var(--background);
 }
 
 #root {
