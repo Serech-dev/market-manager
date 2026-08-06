@@ -1,15 +1,44 @@
-function SummaryCard({ title, value }) {
-    return (
-        <div className="rounded-2xl border border-stone-200 bg-[var(--background)] p-5 shadow-sm">
+function SummaryCard({ title, value, variant }) {
+    const isProfit = variant === "profit";
 
-            <p className="text-sm text-[var(--text-primary)]">
+    return (
+        <div
+            className={`
+                rounded-2xl
+                border
+                p-5
+                shadow-sm
+                ${
+                    isProfit
+                        ? "border-green-200 bg-green-200"
+                        : "border-stone-200 bg-[var(--background)]"
+                }
+                ${isProfit ? "max-w-sm text-center" : ""}
+            `}
+        >
+            <p
+                className={`
+                    text-sm
+                    text-[var(--text-secondary)]
+                    ${isProfit ? "font-bold text-[var(--text-primary)]" : ""}
+                `}
+            >
                 {title}
             </p>
 
-            <p className="mt-2 text-2xl font-bold [var(--secondary)]">
+            <p
+                className={`
+                    mt-2
+                    font-bold
+                    ${
+                        isProfit
+                            ? "text-4xl text-green-700"
+                            : "text-2xl text-[var(--text-primary)]"
+                    }
+                `}
+            >
                 ${value}
             </p>
-
         </div>
     );
 }

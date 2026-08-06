@@ -101,21 +101,28 @@ function Dashboard() {
                         Resumen
                     </h2>
 
-                    <div className="grid gap-4 md:grid-cols-3">
-                        <SummaryCard
-                            title="Ingresos"
-                            value={summary.gross}
-                        />
+                    <div className="space-y-4">
 
-                        <SummaryCard
-                            title="Inversión"
-                            value={summary.investment}
-                        />
+                        <div className="flex justify-center">
+                            <SummaryCard
+                                title="Ganancia"
+                                value={summary.earnings}
+                                variant="profit"
+                            />
+                        </div>
 
-                        <SummaryCard
-                            title="Ganancia"
-                            value={summary.earnings}
-                        />
+                        <div className="grid grid-cols-2 gap-4">
+                            <SummaryCard
+                                title="Ingresos"
+                                value={summary.gross}
+                            />
+
+                            <SummaryCard
+                                title="Inversión"
+                                value={summary.investment}
+                            />
+                        </div>
+
                     </div>
                 </section>
 
@@ -123,7 +130,6 @@ function Dashboard() {
                 <Link to="/new-sale">
                     <button
                         className="
-                            mt-2
                             w-full
                             rounded-xl
                             bg-[var(--primary)]
@@ -140,12 +146,16 @@ function Dashboard() {
                 </Link>
 
 
-                <section>
-                    <h2 className="mb-3 text-xl font-semibold text-[var(--text-primary)]">
+                <section className="mt-10">
+                    <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                         Ventas
                     </h2>
 
-                    <div className="space-y-4">
+                    <p className="mt-1 text-[var(--text-secondary)]">
+                        Historial de ventas registradas
+                    </p>
+
+                    <div className="mt-5 space-y-4">
                         {sales.length === 0 ? (
                             <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 text-center">
                                 <p className="text-lg font-medium text-[var(--text-primary)]">
