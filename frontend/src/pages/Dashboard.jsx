@@ -146,13 +146,24 @@ function Dashboard() {
                     </h2>
 
                     <div className="space-y-4">
-                        {sales.map((sale) => (
+                        {sales.length === 0 ? (
+                            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 text-center">
+                                <p className="text-lg font-medium text-[var(--text-primary)]">
+                                    No hay ventas todavía.
+                                </p>
+
+                                <p className="mt-2 text-[var(--text-secondary)]">
+                                    Agrega tu primera venta para comenzar.
+                                </p>
+                            </div>
+                        ) : (
+                        sales.map((sale) => (
                             <SaleCard
                                 key={sale.id}
                                 sale={sale}
                                 onDelete={setSaleToDelete}
                             />
-                        ))}
+                        )))}
                     </div>
                 </section>
 

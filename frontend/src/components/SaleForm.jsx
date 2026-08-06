@@ -11,6 +11,8 @@ function SaleForm({ onSubmit, initialSale }) {
         }
     );
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     function handleChange(event) {
         setSale({
             ...sale,
@@ -18,10 +20,16 @@ function SaleForm({ onSubmit, initialSale }) {
         });
     }
 
-    function handleSubmit(event) {
-    event.preventDefault();
+    async function handleSubmit(e) {
+        e.preventDefault();
 
-    onSubmit(sale);
+        setIsSubmitting(true);
+
+        try {
+            await onSubmit(sale);
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     return (
@@ -190,6 +198,7 @@ function SaleForm({ onSubmit, initialSale }) {
             </div>
 
             <button
+                disabled={isSubmitting}
                 type="submit"
                 className="
                     w-full
@@ -204,7 +213,7 @@ function SaleForm({ onSubmit, initialSale }) {
                     hover:bg-[var(--primary-hover)]
                 "
             >
-                Guardar Venta
+                {isSubmitting ? "Guardando..." : "Guardar Venta"}
             </button>
         </form>
     );
