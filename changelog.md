@@ -1,6 +1,15 @@
 CHANGELOG
 
 
+V 0.2.0
+
+-update CSS based frontend to Tailwind
+-design theme and scheme for frontend across the whole app
+-add confirmation window to sale delete
+-add popup flair to creation, errors and deletion requests
+-add error specific warnings
+-add main theme color palette to index
+
 V 0.1.5
 
 -add filtering functionality by month and day
