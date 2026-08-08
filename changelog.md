@@ -1,6 +1,13 @@
 CHANGELOG
 
 
+V 0.2.1
+
+-configured django settings for deploy
+-configured react for deploy
+-changed .env and variable handling on settings and api.js for deploy
+-successfully deployed to Render (DB/Backend) and Vercel (Frontend)
+
 V 0.2.0
 
 -update CSS based frontend to Tailwind
