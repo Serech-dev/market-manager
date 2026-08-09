@@ -1,7 +1,7 @@
+import api, { getApiError } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import SaleForm from "../components/SaleForm";
 import toast from "react-hot-toast";
-import api from "../services/api";
 
 function NewSale() {
     const navigate = useNavigate();
@@ -16,12 +16,9 @@ function NewSale() {
         } catch (error) {
             console.error(error);
 
-            if (error.response?.status === 400) {
-                toast.error("Verifique el valor/es ingresado.");
-                return;
-            }
-
-            toast.error("Ocurrió un error inesperado.");
+            toast.error(
+                getApiError(error, "No se pudo crear la venta.")
+            );
         }
     }
 

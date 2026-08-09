@@ -1,11 +1,11 @@
 import ConfirmDialog from "../components/ConfirmDialog";
 import SummaryCard from "../components/SummaryCard";
+import api, { getApiError } from "../services/api";
 import FilterBar from "../components/FilterBar";
 import SaleCard from "../components/SaleCard";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import api from "../services/api";
 
 
 function Dashboard() {
@@ -27,6 +27,14 @@ function Dashboard() {
 
     const [filterMode, setFilterMode] = useState("day");
 
+    const [selectedDateFrom, setSelectedDateFrom] = useState(
+        new Date().toISOString().split("T")[0]
+    );
+
+    const [selectedDateTo, setSelectedDateTo] = useState(
+        new Date().toISOString().split("T")[0]
+    );
+
     const [saleToDelete, setSaleToDelete] = useState(null);
 
     async function handleDelete(id) {
@@ -43,7 +51,13 @@ function Dashboard() {
 
         } catch (error) {
             console.error(error);
-            toast.error("No se pudo eliminar la venta.");
+
+            toast.error(
+                getApiError(
+                    error,
+                    "No se pudo cargar la información."
+                )
+            );
         }
     }
 
@@ -51,7 +65,9 @@ function Dashboard() {
         const query =
             filterMode === "day"
                 ? `date=${selectedDate}`
-                : `month=${selectedMonth}`;
+                : filterMode === "month"
+                ? `month=${selectedMonth}`
+                : `date_from=${selectedDateFrom}&date_to=${selectedDateTo}`;
 
         try {
             const summaryResponse = await api.get(`sales/summary/?${query}`);
@@ -62,12 +78,25 @@ function Dashboard() {
 
         } catch (error) {
             console.error(error);
+
+            toast.error(
+                getApiError(
+                    error,
+                    "No se pudo cargar la información."
+                )
+            );
         }
     }
 
     useEffect(() => {
         fetchData();
-    }, [selectedDate, selectedMonth, filterMode]);
+    }, [
+        selectedDate,
+        selectedMonth,
+        selectedDateFrom,
+        selectedDateTo,
+        filterMode,
+    ]);
 
     return (
         <div className="min-h-screen bg-[var(--surface)] px-4 py-8">
@@ -92,6 +121,10 @@ function Dashboard() {
                         setSelectedDate={setSelectedDate}
                         selectedMonth={selectedMonth}
                         setSelectedMonth={setSelectedMonth}
+                        selectedDateFrom={selectedDateFrom}
+                        setSelectedDateFrom={setSelectedDateFrom}
+                        selectedDateTo={selectedDateTo}
+                        setSelectedDateTo={setSelectedDateTo}
                     />
                 </section>
 

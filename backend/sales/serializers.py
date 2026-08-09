@@ -4,6 +4,13 @@ from .models import Sale
 
 
 class SaleSerializer(serializers.ModelSerializer):
+    description = serializers.CharField(
+        error_messages={
+            "blank": "Descripción no puede estar vacío.",
+            "required": "Descripción no puede estar vacío.",
+        }
+    )
+
     class Meta:
         model = Sale
         fields = "__all__"
