@@ -55,13 +55,20 @@ function Dashboard() {
             toast.error(
                 getApiError(
                     error,
-                    "No se pudo cargar la información."
+                    "No se pudo eliminar la venta."
                 )
             );
         }
     }
 
     async function fetchData() {
+        if (
+            filterMode === "period" &&
+            selectedDateFrom > selectedDateTo
+        ) {
+            return;
+        }
+
         const query =
             filterMode === "day"
                 ? `date=${selectedDate}`
@@ -70,10 +77,16 @@ function Dashboard() {
                 : `date_from=${selectedDateFrom}&date_to=${selectedDateTo}`;
 
         try {
-            const summaryResponse = await api.get(`sales/summary/?${query}`);
+            const summaryResponse = await api.get(
+                `sales/summary/?${query}`
+            );
+
             setSummary(summaryResponse.data);
 
-            const salesResponse = await api.get(`sales/?${query}`);
+            const salesResponse = await api.get(
+                `sales/?${query}`
+            );
+
             setSales(salesResponse.data);
 
         } catch (error) {
@@ -97,6 +110,43 @@ function Dashboard() {
         selectedDateTo,
         filterMode,
     ]);
+
+    function getPeriodLabel() {
+        if (filterMode === "day") {
+            return new Date(`${selectedDate}T00:00:00`).toLocaleDateString(
+                "es-AR",
+                {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                }
+            );
+        }
+
+        if (filterMode === "month") {
+            return new Date(`${selectedMonth}-01T00:00:00`).toLocaleDateString(
+                "es-AR",
+                {
+                    month: "long",
+                    year: "numeric",
+                }
+            );
+        }
+
+        const from = new Date(
+            `${selectedDateFrom}T00:00:00`
+        ).toLocaleDateString("es-AR");
+
+        const to = new Date(
+            `${selectedDateTo}T00:00:00`
+        ).toLocaleDateString("es-AR");
+
+        return `${from} — ${to}`;
+    }
+
+    const invalidPeriod =
+        filterMode === "period" &&
+        selectedDateFrom > selectedDateTo;
 
     return (
         <div className="min-h-screen bg-[var(--surface)] px-4 py-8">
@@ -125,14 +175,21 @@ function Dashboard() {
                         setSelectedDateFrom={setSelectedDateFrom}
                         selectedDateTo={selectedDateTo}
                         setSelectedDateTo={setSelectedDateTo}
+                        invalidPeriod={invalidPeriod}
                     />
                 </section>
 
 
                 <section>
-                    <h2 className="mb-3 text-xl font-semibold text-[var(--text-primary)]">
-                        Resumen
-                    </h2>
+                    <div className="mb-3">
+                        <h2 className="text-xl font-semibold text-[var(--text-primary)]">
+                            Resumen
+                        </h2>
+
+                        <p className="mt-1 text-sm capitalize text-[var(--text-secondary)]">
+                            {getPeriodLabel()}
+                        </p>
+                    </div>
 
                     <div className="space-y-4">
 
@@ -192,21 +249,22 @@ function Dashboard() {
                         {sales.length === 0 ? (
                             <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 text-center">
                                 <p className="text-lg font-medium text-[var(--text-primary)]">
-                                    No hay ventas todavía.
+                                    No hay ventas en este período.
                                 </p>
 
                                 <p className="mt-2 text-[var(--text-secondary)]">
-                                    Agrega tu primera venta para comenzar.
+                                    No se encontraron ventas para {getPeriodLabel()}.
                                 </p>
                             </div>
                         ) : (
-                        sales.map((sale) => (
-                            <SaleCard
-                                key={sale.id}
-                                sale={sale}
-                                onDelete={setSaleToDelete}
-                            />
-                        )))}
+                            sales.map((sale) => (
+                                <SaleCard
+                                    key={sale.id}
+                                    sale={sale}
+                                    onDelete={setSaleToDelete}
+                                />
+                            ))
+                        )}
                     </div>
                 </section>
 

@@ -9,6 +9,7 @@ function FilterBar({
     setSelectedDateFrom,
     selectedDateTo,
     setSelectedDateTo,
+    invalidPeriod,
 }) {
     const buttonClass = (mode) =>
         `flex-1 rounded-lg py-3 font-semibold transition ${
@@ -67,36 +68,48 @@ function FilterBar({
                 />
             )}
 
+            {invalidPeriod && (
+                <p className="mt-2 text-sm text-red-600">
+                    La fecha de inicio no puede ser posterior a la fecha de fin.
+                </p>
+            )}
+
             {filterMode === "period" && (
-                <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <div>
-                        <label className="mb-1 block text-sm text-[var(--text-secondary)]">
-                            Desde
-                        </label>
+                <div className="mt-3">
+                    <p className="mb-2 text-sm text-[var(--text-secondary)]">
+                        Selecciona el período que quieres consultar
+                    </p>
 
-                        <input
-                            className="w-full rounded-lg border p-3"
-                            type="date"
-                            value={selectedDateFrom}
-                            onChange={(e) =>
-                                setSelectedDateFrom(e.target.value)
-                            }
-                        />
-                    </div>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <div>
+                            <label className="mb-1 block text-sm text-[var(--text-secondary)]">
+                                Desde
+                            </label>
 
-                    <div>
-                        <label className="mb-1 block text-sm text-[var(--text-secondary)]">
-                            Hasta
-                        </label>
+                            <input
+                                className="w-full rounded-lg border p-3"
+                                type="date"
+                                value={selectedDateFrom}
+                                onChange={(e) =>
+                                    setSelectedDateFrom(e.target.value)
+                                }
+                            />
+                        </div>
 
-                        <input
-                            className="w-full rounded-lg border p-3"
-                            type="date"
-                            value={selectedDateTo}
-                            onChange={(e) =>
-                                setSelectedDateTo(e.target.value)
-                            }
-                        />
+                        <div>
+                            <label className="mb-1 block text-sm text-[var(--text-secondary)]">
+                                Hasta
+                            </label>
+
+                            <input
+                                className="w-full rounded-lg border p-3"
+                                type="date"
+                                value={selectedDateTo}
+                                onChange={(e) =>
+                                    setSelectedDateTo(e.target.value)
+                                }
+                            />
+                        </div>
                     </div>
                 </div>
             )}
