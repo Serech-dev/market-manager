@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import api, { getApiError } from "../services/api";
 import SaleCard from "../components/SaleCard";
 import SummaryCard from "../components/SummaryCard";
+import AppNavigation from "../components/AppNavigation";
 import { formatCurrency } from "../utils/formatCurrency";
 import { formatProductName } from "../utils/formatProductName";
 

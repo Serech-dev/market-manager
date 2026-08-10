@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api, { getApiError } from "../services/api";
+import AppNavigation from "../components/AppNavigation";
 import { formatCurrency } from "../utils/formatCurrency";
 import { formatProductName } from "../utils/formatProductName";
 
@@ -41,22 +42,17 @@ function Products() {
         <div className="min-h-screen bg-[var(--surface)] px-4 py-8">
             <div className="mx-auto max-w-5xl space-y-8">
 
-                <header>
-                    <Link
-                        to="/"
-                        className="text-sm font-medium text-[var(--primary)]"
-                    >
-                        ← Volver al dashboard
-                    </Link>
-
-                    <h1 className="mt-4 text-3xl font-bold text-[var(--text-primary)]">
+                <header className="min-h-[72px]">
+                    <h1 className="text-3xl font-bold text-[var(--text-primary)]">
                         Productos
                     </h1>
 
                     <p className="mt-1 text-[var(--text-secondary)]">
-                        Consulta lo que vendes y cómo se comporta cada producto.
+                        Registro de productos vendidos
                     </p>
                 </header>
+
+                <AppNavigation />
 
                 <div>
                     <input

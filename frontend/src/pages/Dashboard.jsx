@@ -1,4 +1,5 @@
 import ConfirmDialog from "../components/ConfirmDialog";
+import AppNavigation from "../components/AppNavigation";
 import SummaryCard from "../components/SummaryCard";
 import api, { getApiError } from "../services/api";
 import FilterBar from "../components/FilterBar";
@@ -152,8 +153,8 @@ function Dashboard() {
         <div className="min-h-screen bg-[var(--surface)] px-4 py-8">
             <div className="mx-auto max-w-5xl space-y-8">
 
-                <header>
-                    <h1 className="text-[var(--text-primary)]">
+                <header className="min-h-[72px]">
+                    <h1 className="text-3xl font-bold text-[var(--text-primary)]">
                         Market Manager
                     </h1>
 
@@ -162,21 +163,7 @@ function Dashboard() {
                     </p>
                 </header>
 
-                <nav className="flex gap-2">
-                    <Link
-                        to="/"
-                        className="flex-1 rounded-lg bg-[var(--primary)] py-3 text-center font-semibold text-white shadow-sm"
-                    >
-                        Ventas
-                    </Link>
-
-                    <Link
-                        to="/products"
-                        className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--surface)] py-3 text-center font-semibold text-[var(--text-secondary)] transition hover:bg-[var(--surface-accent)]"
-                    >
-                        Productos
-                    </Link>
-                </nav>
+                <AppNavigation />
 
                 <section className="rounded-2xl border border-stone-200 bg-stone-300 p-5 shadow-sm">
                     <FilterBar
