@@ -1,12 +1,20 @@
 CHANGELOG
 
 
+V 0.3.0
+
+-configure and set up PWA support for mobile installation
+-add custom date-range filtering
+-add currency formatting
+-add contextual period summaries
+
+
 V 0.2.1
 
+-successfully deployed to Render (DB/Backend) and Vercel (Frontend)
 -configured django settings for deploy
 -configured react for deploy
 -changed .env and variable handling on settings and api.js for deploy
--successfully deployed to Render (DB/Backend) and Vercel (Frontend)
 
 V 0.2.0
 
