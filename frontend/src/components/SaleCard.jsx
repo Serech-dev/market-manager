@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "../utils/formatCurrency";
+import { formatProductName } from "../utils/formatProductName";
 
 
 function SaleCard({ sale, onDelete }) {
@@ -11,7 +12,7 @@ function SaleCard({ sale, onDelete }) {
             <div className="flex justify-between items-start mb-4">
                 <div>
                     <h3 className="text-lg font-bold text-gray-900">
-                        {sale.description}
+                        {formatProductName(sale.product?.name || sale.description)}
                     </h3>
 
                     <p className="text-sm text-gray-500">
