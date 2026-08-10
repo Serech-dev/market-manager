@@ -5,9 +5,9 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Sale
-from .serializers import SaleSerializer
+from .serializers import ProductSerializer, SaleSerializer
 from .utils import apply_period_filter
+from .models import Product, Sale
 
 
 class SaleListCreateView(generics.ListCreateAPIView):
@@ -45,3 +45,7 @@ class SaleSummaryView(APIView):
             "investment": investment,
             "earnings": gross - investment,
         })
+
+class ProductListView(generics.ListCreateAPIView):
+    queryset = Product.objects.all().order_by("name")
+    serializer_class = ProductSerializer

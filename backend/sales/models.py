@@ -17,7 +17,33 @@ class Category(models.Model):
         return self.name
 
 
+class Product(models.Model):
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(self.name.strip().lower().split())
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
 class Sale(models.Model):
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="sales",
+    )
+
     gross_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,

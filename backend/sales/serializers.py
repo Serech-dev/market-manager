@@ -1,14 +1,22 @@
 from rest_framework import serializers
 
-from .models import Sale
+from .models import Product, Sale
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ["id", "name"]
 
 
 class SaleSerializer(serializers.ModelSerializer):
     description = serializers.CharField(
+        required=False,
+        allow_blank=True,
         error_messages={
             "blank": "La descripción no puede estar vacía.",
             "required": "La descripción no puede estar vacía.",
-        }
+        },
     )
 
     gross_amount = serializers.DecimalField(
@@ -36,6 +44,17 @@ class SaleSerializer(serializers.ModelSerializer):
         ordering = ["-date", "-created_at"]
 
     def validate(self, attrs):
+        product = attrs.get("product")
+        description = attrs.get("description", "").strip()
+
+        if not product and not description:
+            raise serializers.ValidationError({
+                "product": "Selecciona un producto o ingresa uno nuevo."
+            })
+
+        if product:
+            attrs["description"] = product.name
+
         if attrs["investment_amount"] > attrs["gross_amount"]:
             raise serializers.ValidationError({
                 "investment_amount": (

@@ -1,6 +1,11 @@
 from django.urls import path
 
-from .views import SaleDetailView, SaleListCreateView, SaleSummaryView
+from .views import (
+    ProductListView,
+    SaleDetailView,
+    SaleListCreateView,
+    SaleSummaryView,
+)
 
 urlpatterns = [
     path(
@@ -14,8 +19,13 @@ urlpatterns = [
         name="sale-summary",
     ),
     path(
-    "sales/<int:pk>/",
-    SaleDetailView.as_view(),
-    name="sale-detail",
-),
+        "sales/<int:pk>/",
+        SaleDetailView.as_view(),
+        name="sale-detail",
+    ),
+    path(
+        "products/",
+        ProductListView.as_view(),
+        name="product-list",
+    ),
 ]
