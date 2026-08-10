@@ -3,7 +3,7 @@ import { formatCurrency } from "../utils/formatCurrency";
 import { formatProductName } from "../utils/formatProductName";
 
 
-function SaleCard({ sale, onDelete }) {
+function SaleCard({ sale, onDelete, showActions = true }) {
     const navigate = useNavigate();
     const profit = sale.gross_amount - sale.investment_amount;
 
@@ -41,21 +41,23 @@ function SaleCard({ sale, onDelete }) {
                 </div>
             </div>
 
-            <div className="mt-5 flex gap-3">
-                <button
-                    className="flex-1 rounded-lg bg-[var(--primary)] py-2 text-white hover:bg-[var(--primary-hover)]"
-                    onClick={() => navigate(`/sales/${sale.id}/edit`)}
-                >
-                    Editar
-                </button>
+            {showActions && (
+                <div className="mt-5 flex gap-3">
+                    <button
+                        className="flex-1 rounded-lg bg-[var(--primary)] py-2 text-white hover:bg-[var(--primary-hover)]"
+                        onClick={() => navigate(`/sales/${sale.id}/edit`)}
+                    >
+                        Editar
+                    </button>
 
-                <button
-                    className="flex-1 rounded-lg bg-[var(--danger)] py-2 text-white hover:bg-[var(--danger-hover)]"
-                    onClick={() => onDelete(sale.id)}
-                >
-                    Eliminar
-                </button>
-            </div>
+                    <button
+                        className="flex-1 rounded-lg bg-[var(--danger)] py-2 text-white hover:bg-[var(--danger-hover)]"
+                        onClick={() => onDelete(sale.id)}
+                    >
+                        Eliminar
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

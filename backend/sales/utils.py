@@ -8,12 +8,21 @@ def apply_period_filter(queryset, params):
     month = params.get("month")
     date_from = params.get("date_from")
     date_to = params.get("date_to")
+    product = params.get("product")
 
-    filters = [bool(date), bool(month), bool(date_from or date_to)]
-
-    if sum(filters) > 1:
+    if date and month:
         raise ValidationError(
-            "Usa solamente un tipo de filtro."
+            "Usa fecha o mes, no ambos."
+        )
+
+    if date and (date_from or date_to):
+        raise ValidationError(
+            "Usa una fecha específica o un período."
+        )
+
+    if month and (date_from or date_to):
+        raise ValidationError(
+            "Usa un mes o un período."
         )
 
     if date:
@@ -24,12 +33,12 @@ def apply_period_filter(queryset, params):
             ).date()
         except ValueError:
             raise ValidationError(
-                "Formato de fecha inválido. Usa AAAA-MM-DD."
+                "Formato de fecha inválido. Usa YYYY-MM-DD."
             )
 
-        return queryset.filter(date=parsed_date)
+        queryset = queryset.filter(date=parsed_date)
 
-    if month:
+    elif month:
         try:
             year, month_num = month.split("-")
             year = int(year)
@@ -37,18 +46,18 @@ def apply_period_filter(queryset, params):
 
         except ValueError:
             raise ValidationError(
-                "Formato de mes inválido. Usa AAAA-MM."
+                "Formato de mes inválido. Usa YYYY-MM."
             )
 
-        return queryset.filter(
+        queryset = queryset.filter(
             date__year=year,
             date__month=month_num,
         )
 
-    if date_from or date_to:
+    elif date_from or date_to:
         if not date_from or not date_to:
             raise ValidationError(
-                "Debes ingresar una fecha de inicio y una fecha de fin."
+                "Debes indicar fecha de inicio y fecha de fin."
             )
 
         try:
@@ -64,7 +73,7 @@ def apply_period_filter(queryset, params):
 
         except ValueError:
             raise ValidationError(
-                "Formato de fecha inválido. Usa AAAA-MM-DD."
+                "Formato de fecha inválido. Usa YYYY-MM-DD."
             )
 
         if parsed_from > parsed_to:
@@ -72,10 +81,25 @@ def apply_period_filter(queryset, params):
                 "La fecha de inicio no puede ser posterior a la fecha de fin."
             )
 
-        return queryset.filter(
+        queryset = queryset.filter(
             date__range=(parsed_from, parsed_to)
         )
 
-    return queryset.filter(
-        date=datetime.now().date()
-    )
+    elif not product:
+        queryset = queryset.filter(
+            date=datetime.now().date()
+        )
+
+    if product:
+        try:
+            product = int(product)
+        except ValueError:
+            raise ValidationError(
+                "Producto inválido."
+            )
+
+        queryset = queryset.filter(
+            product_id=product
+        )
+
+    return queryset
