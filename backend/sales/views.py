@@ -1,13 +1,14 @@
-from datetime import datetime
-
-from django.db.models import Sum
-from rest_framework import generics
+from django.db.models import Avg, Count, Max, Min, Sum, Value
+from django.db.models.functions import Coalesce
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import generics
 
-from .serializers import ProductSerializer, SaleSerializer
+from .serializers import ProductAnalyticsSerializer, ProductSerializer, SaleSerializer
 from .utils import apply_period_filter
 from .models import Product, Sale
+
+from decimal import Decimal
 
 
 class SaleListCreateView(generics.ListCreateAPIView):
@@ -49,3 +50,25 @@ class SaleSummaryView(APIView):
 class ProductListView(generics.ListCreateAPIView):
     queryset = Product.objects.all().order_by("name")
     serializer_class = ProductSerializer
+
+class ProductAnalyticsView(generics.RetrieveAPIView):
+    serializer_class = ProductAnalyticsSerializer
+
+    def get_queryset(self):
+        return Product.objects.annotate(
+            sales_count=Count("sales"),
+            gross=Coalesce(
+                Sum("sales__gross_amount"),
+                Value(Decimal("0")),
+            ),
+            investment=Coalesce(
+                Sum("sales__investment_amount"),
+                Value(Decimal("0")),
+            ),
+            average_sale=Coalesce(
+                Avg("sales__gross_amount"),
+                Value(Decimal("0")),
+            ),
+            first_sale=Min("sales__date"),
+            last_sale=Max("sales__date"),
+        )
