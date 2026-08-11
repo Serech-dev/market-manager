@@ -2,15 +2,14 @@ from decimal import Decimal
 
 from django.db.models import Avg, Count, Max, Sum, Value
 from django.db.models.functions import Coalesce
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import generics
 
-from .serializers import ProductAnalyticsSerializer, ProductSerializer, SaleSerializer
-from .utils import apply_period_filter
 from .models import Product, Sale
-
-
+from .serializers import (ProductAnalyticsSerializer, ProductSerializer,
+                          SaleSerializer)
+from .utils import apply_period_filter
 
 
 class SaleListCreateView(generics.ListCreateAPIView):

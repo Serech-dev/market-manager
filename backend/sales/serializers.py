@@ -1,5 +1,4 @@
 from django.db.models import Avg, Sum
-
 from rest_framework import serializers
 
 from .models import Product, Sale
