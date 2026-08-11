@@ -23,6 +23,10 @@ class Product(models.Model):
         unique=True,
     )
 
+    active = models.BooleanField(
+        default=True,
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True,
     )

@@ -37,6 +37,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "earnings",
             "last_sale",
         ]
+        read_only_fields = ["active"]
 
 
 class SaleSerializer(serializers.ModelSerializer):

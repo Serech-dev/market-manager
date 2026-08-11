@@ -2,9 +2,10 @@ from decimal import Decimal
 
 from django.db.models import Avg, Count, Max, Sum, Value
 from django.db.models.functions import Coalesce
-from rest_framework import generics
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import generics
 
 from .models import Product, Sale
 from .serializers import (ProductAnalyticsSerializer, ProductSerializer,
@@ -70,7 +71,7 @@ class ProductListView(generics.ListCreateAPIView):
                 Value(Decimal("0")),
             ),
             last_sale=Max("sales__date"),
-        )
+        ).filter(active=True)
 
         sort = self.request.query_params.get("sort", "name")
 
@@ -136,3 +137,17 @@ class ProductAnalyticsView(generics.RetrieveAPIView):
         serializer = self.get_serializer(analytics)
 
         return Response(serializer.data)
+
+class ProductArchiveView(generics.UpdateAPIView):
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+
+    def perform_update(self, serializer):
+        product = self.get_object()
+
+        if product.sales.exists():
+            raise ValidationError(
+                "No se puede archivar un producto que tiene ventas registradas."
+            )
+
+        serializer.save(active=False)
