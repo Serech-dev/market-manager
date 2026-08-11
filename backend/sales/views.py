@@ -4,8 +4,8 @@ from django.db.models import Avg, Count, Max, Sum, Value
 from django.db.models.functions import Coalesce
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from rest_framework import generics, status
 from rest_framework.views import APIView
-from rest_framework import generics
 
 from .models import Product, Sale
 from .serializers import (ProductAnalyticsSerializer, ProductSerializer,
@@ -88,6 +88,48 @@ class ProductListView(generics.ListCreateAPIView):
             sort_options.get(sort, "name")
         )
 
+    def create(self, request, *args, **kwargs):
+        name = " ".join(
+            request.data.get("name", "").strip().lower().split()
+        )
+
+        if not name:
+            return Response(
+                {"name": "El nombre no puede estar vacío."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        existing_product = Product.objects.filter(
+            name=name
+        ).first()
+
+        if existing_product:
+            if existing_product.active:
+                return Response(
+                    {"name": "El producto ya existe."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            existing_product.active = True
+            existing_product.save(
+                update_fields=["active"]
+            )
+
+            return Response(
+                self.get_serializer(existing_product).data,
+                status=status.HTTP_200_OK,
+            )
+
+        serializer = self.get_serializer(
+            data={"name": name}
+        )
+        serializer.is_valid(raise_exception=True)
+        product = serializer.save()
+
+        return Response(
+            self.get_serializer(product).data,
+            status=status.HTTP_201_CREATED,
+        )
 class ProductAnalyticsView(generics.RetrieveAPIView):
     serializer_class = ProductAnalyticsSerializer
     queryset = Product.objects.all()
