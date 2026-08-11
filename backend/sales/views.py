@@ -1,7 +1,6 @@
-from datetime import datetime
 from decimal import Decimal
 
-from django.db.models import Avg, Count, Max, Min, Q, Sum, Value
+from django.db.models import Avg, Count, Max, Sum, Value
 from django.db.models.functions import Coalesce
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -51,8 +50,43 @@ class SaleSummaryView(APIView):
         })
 
 class ProductListView(generics.ListCreateAPIView):
-    queryset = Product.objects.all().order_by("name")
     serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        queryset = Product.objects.annotate(
+            sales_count=Count("sales"),
+            gross=Coalesce(
+                Sum("sales__gross_amount"),
+                Value(Decimal("0")),
+            ),
+            investment=Coalesce(
+                Sum("sales__investment_amount"),
+                Value(Decimal("0")),
+            ),
+            earnings=Coalesce(
+                Sum("sales__gross_amount"),
+                Value(Decimal("0")),
+            ) - Coalesce(
+                Sum("sales__investment_amount"),
+                Value(Decimal("0")),
+            ),
+            last_sale=Max("sales__date"),
+        )
+
+        sort = self.request.query_params.get("sort", "name")
+
+        sort_options = {
+            "name": "name",
+            "sales": "-sales_count",
+            "gross": "-gross",
+            "earnings": "-earnings",
+            "recent": "-last_sale",
+            "oldest": "created_at",
+        }
+
+        return queryset.order_by(
+            sort_options.get(sort, "name")
+        )
 
 class ProductAnalyticsView(generics.RetrieveAPIView):
     serializer_class = ProductAnalyticsSerializer

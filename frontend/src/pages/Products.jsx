@@ -11,11 +11,15 @@ function Products() {
     const [search, setSearch] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
+    const [sort, setSort] = useState("name");
 
     useEffect(() => {
         async function fetchProducts() {
             try {
-                const response = await api.get("products/");
+                const response = await api.get(
+                    `products/?sort=${sort}`
+                );
+
                 setProducts(response.data);
             } catch (error) {
                 console.error(error);
@@ -32,7 +36,7 @@ function Products() {
         }
 
         fetchProducts();
-    }, []);
+    }, [sort]);
 
     const filteredProducts = products.filter((product) =>
         product.name.includes(search.trim().toLowerCase())
@@ -54,7 +58,7 @@ function Products() {
 
                 <AppNavigation />
 
-                <div>
+                <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
                     <input
                         type="search"
                         placeholder="Buscar producto..."
@@ -76,6 +80,29 @@ function Products() {
                             focus:ring-[var(--primary)]/20
                         "
                     />
+
+                    <select
+                        value={sort}
+                        onChange={(e) => setSort(e.target.value)}
+                        className="
+                            rounded-xl
+                            border
+                            border-[var(--border)]
+                            bg-[var(--surface)]
+                            px-4
+                            py-3
+                            text-[var(--text-primary)]
+                            outline-none
+                            focus:border-[var(--primary)]
+                        "
+                    >
+                        <option value="name">A–Z</option>
+                        <option value="sales">Más vendidos</option>
+                        <option value="gross">Mayor ingreso</option>
+                        <option value="earnings">Mayor ganancia</option>
+                        <option value="recent">Venta más reciente</option>
+                        <option value="oldest">Producto más antiguo</option>
+                    </select>
                 </div>
 
                 {isLoading && (
@@ -129,6 +156,48 @@ function Products() {
                                 <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                                     {formatProductName(product.name)}
                                 </h2>
+
+                                <div className="mt-4 space-y-2 text-sm">
+                                    <div className="flex justify-between">
+                                        <span className="text-[var(--text-secondary)]">
+                                            Ventas
+                                        </span>
+
+                                        <span className="font-semibold text-[var(--text-primary)]">
+                                            {product.sales_count}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex justify-between">
+                                        <span className="text-[var(--text-secondary)]">
+                                            Ingresos
+                                        </span>
+
+                                        <span className="font-semibold text-[var(--text-primary)]">
+                                            {formatCurrency(product.gross)}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex justify-between">
+                                        <span className="text-[var(--text-secondary)]">
+                                            Ganancia
+                                        </span>
+
+                                        <span className="font-semibold text-[var(--success)]">
+                                            {formatCurrency(product.earnings)}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex justify-between">
+                                        <span className="text-[var(--text-secondary)]">
+                                            Última venta
+                                        </span>
+
+                                        <span className="font-medium text-[var(--text-primary)]">
+                                            {product.last_sale || "Sin ventas"}
+                                        </span>
+                                    </div>
+                                </div>
 
                                 <p className="mt-2 text-sm text-[var(--text-secondary)]">
                                     Ver estadísticas del producto

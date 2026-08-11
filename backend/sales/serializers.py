@@ -6,9 +6,38 @@ from .models import Product, Sale
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    sales_count = serializers.IntegerField(read_only=True)
+    gross = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        read_only=True,
+    )
+    investment = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        read_only=True,
+    )
+    earnings = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        read_only=True,
+    )
+    last_sale = serializers.DateField(
+        allow_null=True,
+        read_only=True,
+    )
+
     class Meta:
         model = Product
-        fields = ["id", "name"]
+        fields = [
+            "id",
+            "name",
+            "sales_count",
+            "gross",
+            "investment",
+            "earnings",
+            "last_sale",
+        ]
 
 
 class SaleSerializer(serializers.ModelSerializer):
