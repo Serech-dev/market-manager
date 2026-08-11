@@ -83,45 +83,29 @@ class SaleSerializer(serializers.ModelSerializer):
         return Sale.objects.create(**validated_data)
 
 
-class ProductAnalyticsSerializer(serializers.ModelSerializer):
-    sales_count = serializers.IntegerField(read_only=True)
-
+class ProductAnalyticsSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    sales_count = serializers.IntegerField()
     gross = serializers.DecimalField(
         max_digits=12,
         decimal_places=2,
-        read_only=True,
     )
-
     investment = serializers.DecimalField(
         max_digits=12,
         decimal_places=2,
-        read_only=True,
     )
-
-    earnings = serializers.SerializerMethodField()
-
+    earnings = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+    )
     average_sale = serializers.DecimalField(
         max_digits=12,
         decimal_places=2,
-        read_only=True,
     )
-
-    first_sale = serializers.DateField(read_only=True)
-    last_sale = serializers.DateField(read_only=True)
-
-    def get_earnings(self, obj):
-        return obj.gross - obj.investment
-
-    class Meta:
-        model = Product
-        fields = [
-            "id",
-            "name",
-            "sales_count",
-            "gross",
-            "investment",
-            "earnings",
-            "average_sale",
-            "first_sale",
-            "last_sale",
-        ]
+    first_sale = serializers.DateField(
+        allow_null=True,
+    )
+    last_sale = serializers.DateField(
+        allow_null=True,
+    )

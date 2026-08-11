@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import SaleCard from "../components/SaleCard";
+import FilterBar from "../components/FilterBar";
 import { Link, useParams } from "react-router-dom";
 import api, { getApiError } from "../services/api";
-import SaleCard from "../components/SaleCard";
 import SummaryCard from "../components/SummaryCard";
 import AppNavigation from "../components/AppNavigation";
 import { formatCurrency } from "../utils/formatCurrency";
@@ -16,13 +17,46 @@ function ProductDetail() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
 
+    const [selectedDate, setSelectedDate] = useState(
+        new Date().toISOString().split("T")[0]
+    );
+
+    const [selectedMonth, setSelectedMonth] = useState(
+        new Date().toISOString().slice(0, 7)
+    );
+
+    const [filterMode, setFilterMode] = useState("month");
+
+    const [selectedDateFrom, setSelectedDateFrom] = useState(
+        new Date().toISOString().split("T")[0]
+    );
+
+    const [selectedDateTo, setSelectedDateTo] = useState(
+        new Date().toISOString().split("T")[0]
+    );
+
     useEffect(() => {
         async function fetchProductData() {
+            let periodQuery;
+
+            if (filterMode === "day") {
+                periodQuery = `date=${selectedDate}`;
+            } else if (filterMode === "month") {
+                periodQuery = `month=${selectedMonth}`;
+            } else {
+                periodQuery =
+                    `date_from=${selectedDateFrom}` +
+                    `&date_to=${selectedDateTo}`;
+            }
+
             try {
-                const [productResponse, salesResponse] = await Promise.all([
-                    api.get(`products/${id}/`),
-                    api.get(`sales/?product=${id}`),
-                ]);
+                const [productResponse, salesResponse] =
+                    await Promise.all([
+                        api.get(`products/${id}/?${periodQuery}`),
+                        api.get(
+                            `sales/?product=${id}&${periodQuery}`
+                        ),
+                    ]);
 
                 setProduct(productResponse.data);
                 setSales(salesResponse.data);
@@ -41,7 +75,14 @@ function ProductDetail() {
         }
 
         fetchProductData();
-    }, [id]);
+    }, [
+        id,
+        filterMode,
+        selectedDate,
+        selectedMonth,
+        selectedDateFrom,
+        selectedDateTo,
+    ]);
 
     if (isLoading) {
         return (
@@ -97,6 +138,20 @@ function ProductDetail() {
                     </p>
                 </header>
 
+                <section className="rounded-2xl border border-stone-200 bg-stone-300 p-5 shadow-sm">
+                    <FilterBar
+                        filterMode={filterMode}
+                        setFilterMode={setFilterMode}
+                        selectedDate={selectedDate}
+                        setSelectedDate={setSelectedDate}
+                        selectedMonth={selectedMonth}
+                        setSelectedMonth={setSelectedMonth}
+                        selectedDateFrom={selectedDateFrom}
+                        setSelectedDateFrom={setSelectedDateFrom}
+                        selectedDateTo={selectedDateTo}
+                        setSelectedDateTo={setSelectedDateTo}
+                    />
+                </section>
 
                 <section>
                     <div className="mb-3">
