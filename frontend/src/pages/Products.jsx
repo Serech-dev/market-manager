@@ -60,10 +60,13 @@ function Products() {
                     <Link
                         to="/products/new"
                         className="
-                            rounded-xl
+                            inline-flex
+                            items-center
+                            rounded-lg
                             bg-[var(--primary)]
-                            px-4
+                            px-3
                             py-2
+                            text-sm
                             font-semibold
                             text-white
                             shadow-sm
