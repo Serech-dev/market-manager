@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 import ProductDetail from "./pages/ProductDetail";
+import NewProduct from "./pages/NewProduct";
 import Dashboard from "./pages/Dashboard";
 import EditSale from "./pages/EditSale";
 import Products from "./pages/Products";
@@ -28,6 +29,10 @@ function App() {
                 <Route
                     path="/products/:id"
                     element={<ProductDetail />}
+                />
+                <Route
+                    path="/products/new"
+                    element={<NewProduct />}
                 />
             </Routes>
         </BrowserRouter>

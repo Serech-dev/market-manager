@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import api, { getApiError } from "../services/api";
 import AppNavigation from "../components/AppNavigation";
 import { formatCurrency } from "../utils/formatCurrency";
@@ -46,14 +46,33 @@ function Products() {
         <div className="min-h-screen bg-[var(--surface)] px-4 py-8">
             <div className="mx-auto max-w-5xl space-y-8">
 
-                <header className="min-h-[72px]">
-                    <h1 className="text-3xl font-bold text-[var(--text-primary)]">
-                        Productos
-                    </h1>
+                <header className="min-h-[72px] flex items-start justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold text-[var(--text-primary)]">
+                            Productos
+                        </h1>
 
-                    <p className="mt-1 text-[var(--text-secondary)]">
-                        Registro de productos vendidos
-                    </p>
+                        <p className="mt-1 text-[var(--text-secondary)]">
+                            Registro de productos vendidos
+                        </p>
+                    </div>
+
+                    <Link
+                        to="/products/new"
+                        className="
+                            rounded-xl
+                            bg-[var(--primary)]
+                            px-4
+                            py-2
+                            font-semibold
+                            text-white
+                            shadow-sm
+                            transition
+                            hover:bg-[var(--primary-hover)]
+                        "
+                    >
+                        + Nuevo producto
+                    </Link>
                 </header>
 
                 <AppNavigation />
