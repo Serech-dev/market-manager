@@ -3,6 +3,15 @@ CHANGELOG
 
 V 0.4.0
 
+-add product manual creation
+-add 0 sale product archiving
+-add quantities to sales
+-calculate price per unit on sales 
+-fix product sorting by last sale bug
+
+
+V 0.4.0
+
 -add product model and pages
 -add product analytics
 -add filtering by date on products
