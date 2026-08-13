@@ -29,8 +29,11 @@ class SaleListCreateView(generics.ListCreateAPIView):
 class SaleDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
+    permission_classes = [IsAuthenticated]
 
 class SaleSummaryView(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request):
         sales = apply_period_filter(
             Sale.objects.all(),
@@ -134,8 +137,9 @@ class ProductListView(generics.ListCreateAPIView):
             status=status.HTTP_201_CREATED,
         )
 class ProductAnalyticsView(generics.RetrieveAPIView):
-    serializer_class = ProductAnalyticsSerializer
     queryset = Product.objects.all()
+    serializer_class = ProductAnalyticsSerializer
+    permission_classes = [IsAuthenticated]
 
     def retrieve(self, request, *args, **kwargs):
         product = self.get_object()
@@ -184,8 +188,9 @@ class ProductAnalyticsView(generics.RetrieveAPIView):
         return Response(serializer.data)
 
 class ProductArchiveView(generics.UpdateAPIView):
-    serializer_class = ProductSerializer
     queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
 
     def perform_update(self, serializer):
         product = self.get_object()
