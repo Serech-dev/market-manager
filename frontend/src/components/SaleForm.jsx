@@ -1,3 +1,4 @@
+import { formatCurrency } from "../utils/formatCurrency";
 import { useEffect, useState } from "react";
 import api from "../services/api";
 
@@ -16,13 +17,19 @@ function formatProductName(name) {
 
 function SaleForm({ onSubmit, initialSale }) {
     const [sale, setSale] = useState(
-        initialSale || {
-            product: null,
-            description: "",
-            gross_amount: "",
-            investment_amount: "",
-            date: new Date().toISOString().split("T")[0],
-        }
+        initialSale
+            ? {
+                ...initialSale,
+                quantity: initialSale.quantity ?? 1,
+            }
+            : {
+                product: null,
+                description: "",
+                gross_amount: "",
+                investment_amount: "",
+                date: new Date().toISOString().split("T")[0],
+                quantity: 1,
+            }
     );
 
     const [products, setProducts] = useState([]);
@@ -99,6 +106,11 @@ function SaleForm({ onSubmit, initialSale }) {
         (product) => product.name === normalizedInput
     );
 
+    const unitPrice =
+    sale.quantity > 0 && Number(sale.gross_amount) > 0
+        ? Number(sale.gross_amount) / sale.quantity
+        : 0;
+
     return (
         <form
             onSubmit={handleSubmit}
@@ -112,97 +124,141 @@ function SaleForm({ onSubmit, initialSale }) {
                     Producto
                 </label>
 
-                <div className="relative">
-                    <input
-                        id="product"
-                        type="text"
-                        value={productInput}
-                        onChange={handleProductChange}
-                        onFocus={() => setShowSuggestions(true)}
-                        onBlur={() =>
-                            setTimeout(
-                                () => setShowSuggestions(false),
-                                150
-                            )
-                        }
-                        placeholder="¿Qué vendiste?"
-                        autoComplete="off"
-                        className="
-                            w-full
-                            rounded-xl
-                            border
-                            border-[var(--border)]
-                            bg-[var(--surface)]
-                            px-4
-                            py-3
-                            text-[var(--text-primary)]
-                            outline-none
-                            transition
-                            focus:border-[var(--primary)]
-                            focus:ring-2
-                            focus:ring-[var(--primary)]/20
-                        "
-                    />
-
-                    {showSuggestions && productInput.trim() && (
-                        <div
+                <div className="flex gap-3">
+                    <div className="relative flex-1">
+                        <input
+                            id="product"
+                            type="text"
+                            value={productInput}
+                            onChange={handleProductChange}
+                            onFocus={() => setShowSuggestions(true)}
+                            onBlur={() =>
+                                setTimeout(
+                                    () => setShowSuggestions(false),
+                                    150
+                                )
+                            }
+                            placeholder="¿Qué vendiste?"
+                            autoComplete="off"
                             className="
-                                absolute
-                                z-10
-                                mt-2
                                 w-full
-                                overflow-hidden
                                 rounded-xl
                                 border
                                 border-[var(--border)]
                                 bg-[var(--surface)]
-                                shadow-lg
+                                px-4
+                                py-3
+                                text-[var(--text-primary)]
+                                outline-none
+                                transition
+                                focus:border-[var(--primary)]
+                                focus:ring-2
+                                focus:ring-[var(--primary)]/20
                             "
-                        >
-                            {filteredProducts.map((product) => (
-                                <button
-                                    key={product.id}
-                                    type="button"
-                                    onMouseDown={(e) =>
-                                        e.preventDefault()
-                                    }
-                                    onClick={() =>
-                                        selectProduct(product)
-                                    }
-                                    className="
-                                        block
-                                        w-full
-                                        px-4
-                                        py-3
-                                        text-left
-                                        text-[var(--text-primary)]
-                                        transition
-                                        hover:bg-[var(--surface-accent)]
-                                    "
-                                >
-                                    {formatProductName(product.name)}
-                                </button>
-                            ))}
+                        />
 
-                            {!exactMatch && (
-                                <div
-                                    className="
-                                        border-t
-                                        border-[var(--border)]
-                                        px-4
-                                        py-3
-                                        text-sm
-                                        text-[var(--text-secondary)]
-                                    "
-                                >
-                                    Se creará un nuevo producto:
-                                    <span className="ml-1 font-medium text-[var(--text-primary)]">
-                                        {formatProductName(productInput)}
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-                    )}
+                        {showSuggestions && productInput.trim() && (
+                            <div
+                                className="
+                                    absolute
+                                    z-10
+                                    mt-2
+                                    w-full
+                                    overflow-hidden
+                                    rounded-xl
+                                    border
+                                    border-[var(--border)]
+                                    bg-[var(--surface)]
+                                    shadow-lg
+                                "
+                            >
+                                {filteredProducts.map((product) => (
+                                    <button
+                                        key={product.id}
+                                        type="button"
+                                        onMouseDown={(e) =>
+                                            e.preventDefault()
+                                        }
+                                        onClick={() =>
+                                            selectProduct(product)
+                                        }
+                                        className="
+                                            block
+                                            w-full
+                                            px-4
+                                            py-3
+                                            text-left
+                                            text-[var(--text-primary)]
+                                            transition
+                                            hover:bg-[var(--surface-accent)]
+                                        "
+                                    >
+                                        {formatProductName(product.name)}
+                                    </button>
+                                ))}
+
+                                {!exactMatch && (
+                                    <div
+                                        className="
+                                            border-t
+                                            border-[var(--border)]
+                                            px-4
+                                            py-3
+                                            text-sm
+                                            text-[var(--text-secondary)]
+                                        "
+                                    >
+                                        Se creará un nuevo producto:
+                                        <span className="ml-1 font-medium text-[var(--text-primary)]">
+                                            {formatProductName(productInput)}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <label
+                            htmlFor="quantity"
+                            className="block text-sm font-medium text-[var(--text-primary)]"
+                        >
+                            Cantidad
+                        </label>
+
+                        <input
+                            id="quantity"
+                            type="number"
+                            min="1"
+                            step="1"
+                            value={sale.quantity}
+                            onChange={(e) =>
+                                setSale({
+                                    ...sale,
+                                    quantity: Math.max(
+                                        1,
+                                        Number(e.target.value)
+                                    ),
+                                })
+                            }
+                            className="
+                                w-20
+                                rounded-xl
+                                border
+                                border-[var(--border)]
+                                bg-[var(--surface)]
+                                px-2
+                                py-3
+                                text-center
+                                text-[var(--text-primary)]
+                                outline-none
+                                transition
+                                focus:border-[var(--primary)]
+                                focus:ring-2
+                                focus:ring-[var(--primary)]/20
+                            "
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -252,6 +308,14 @@ function SaleForm({ onSubmit, initialSale }) {
                         "
                     />
                 </div>
+                {unitPrice > 0 && (
+                    <p className="mt-2 text-base font-medium text-[var(--text-primary)]">
+                        Precio por unidad:{" "}
+                        <span className="font-bold text-[var(--success)]">
+                            {formatCurrency(unitPrice)}
+                        </span>
+                    </p>
+                )}
             </div>
 
             <div className="space-y-2">

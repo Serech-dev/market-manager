@@ -48,8 +48,9 @@ class SaleSerializer(serializers.ModelSerializer):
             "blank": "La descripción no puede estar vacía.",
             "required": "La descripción no puede estar vacía.",
         },
-        unit_price = serializers.SerializerMethodField()
     )
+
+    unit_price = serializers.SerializerMethodField(read_only=True)
 
     gross_amount = serializers.DecimalField(
         max_digits=10,
@@ -84,6 +85,12 @@ class SaleSerializer(serializers.ModelSerializer):
                     "unit_price",
                 ]
         ordering = ["-date", "-created_at"]
+
+        read_only_fields = [
+            "id",
+            "created_at",
+            "unit_price",
+        ]
 
     def validate(self, attrs):
         product = attrs.get("product")
