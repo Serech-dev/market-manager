@@ -1,12 +1,13 @@
+import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import SaleCard from "../components/SaleCard";
 import FilterBar from "../components/FilterBar";
-import { Link, useParams } from "react-router-dom";
 import api, { getApiError } from "../services/api";
 import SummaryCard from "../components/SummaryCard";
 import AppNavigation from "../components/AppNavigation";
 import { formatCurrency } from "../utils/formatCurrency";
 import { formatProductName } from "../utils/formatProductName";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 
 function ProductDetail() {
@@ -34,6 +35,27 @@ function ProductDetail() {
     const [selectedDateTo, setSelectedDateTo] = useState(
         new Date().toISOString().split("T")[0]
     );
+
+    const navigate = useNavigate();
+
+    async function archiveProduct() {
+        try {
+            const response = await api.patch(
+                `products/${id}/archive/`
+            );
+
+            toast.success("Producto archivado.");
+            navigate("/products");
+        } catch (error) {
+
+            toast.error(
+                getApiError(
+                    error,
+                    "No se pudo archivar el producto."
+                )
+            );
+        }
+    }
 
     useEffect(() => {
         async function fetchProductData() {
@@ -316,6 +338,30 @@ function ProductDetail() {
                         )}
                     </div>
                 </section>
+
+                {product.sales_count === 0 && (
+                    <div className="flex justify-end pt-2">
+                        <button
+                            type="button"
+                            onClick={archiveProduct}
+                            className="
+                                rounded-xl
+                                border
+                                border-red-200
+                                px-4
+                                py-2
+                                text-sm
+                                font-medium
+                                text-red-600
+                                transition
+                                hover:bg-red-50
+                                hover:border-red-300
+                            "
+                        >
+                            Archivar producto
+                        </button>
+                    </div>
+                )}
 
             </div>
         </div>
