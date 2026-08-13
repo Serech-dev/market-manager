@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from django.db.models import Avg, Count, Max, Sum, Value
+from django.db.models import F, Avg, Count, Max, Sum, Value
 from django.db.models.functions import Coalesce
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -80,7 +80,7 @@ class ProductListView(generics.ListCreateAPIView):
             "sales": "-sales_count",
             "gross": "-gross",
             "earnings": "-earnings",
-            "recent": "-last_sale",
+            "recent": F("last_sale").desc(nulls_last=True),
             "oldest": "created_at",
         }
 
