@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.db.models import Avg, Count, F, Max, Sum, Value
 from django.db.models.functions import Coalesce
 from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -15,6 +16,7 @@ from .utils import apply_period_filter
 
 class SaleListCreateView(generics.ListCreateAPIView):
     serializer_class = SaleSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = Sale.objects.all()
@@ -51,6 +53,7 @@ class SaleSummaryView(APIView):
 
 class ProductListView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = Product.objects.annotate(
