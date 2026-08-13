@@ -1,7 +1,7 @@
 CHANGELOG
 
 
-V 0.4.5
+v0.4.5
 
 -add product manual creation
 -add 0 sale product archiving
@@ -10,7 +10,7 @@ V 0.4.5
 -fix product sorting by last sale bug
 
 
-V 0.4.0
+v0.4.0
 
 -add product model and pages
 -add product analytics
@@ -18,7 +18,7 @@ V 0.4.0
 -add a product listing page with sorting and visual elements
 
 
-V 0.3.0
+v0.3.0
 
 -configure and set up PWA support for mobile installation
 -add custom date-range filtering
@@ -26,7 +26,7 @@ V 0.3.0
 -add contextual period summaries
 
 
-V 0.2.1
+v0.2.1
 
 -successfully deployed to Render (DB/Backend) and Vercel (Frontend)
 -configured django settings for deploy
@@ -34,7 +34,7 @@ V 0.2.1
 -changed .env and variable handling on settings and api.js for deploy
 
 
-V 0.2.0
+v0.2.0
 
 -update CSS based frontend to Tailwind
 -design theme and scheme for frontend across the whole app
@@ -44,37 +44,37 @@ V 0.2.0
 -add main theme color palette to index
 
 
-V 0.1.5
+v0.1.5
 
 -add filtering functionality by month and day
 -add button to toggle filtering functionality by month and day
 
 
-V 0.1.4
+v0.1.4
 
 -add full CRUD functionality for sales
 -add new editing page and delete/edit button
 
 
-V 0.1.3
+v0.1.3
 
 -add new sale button to dashboard
 -add new "agregar venta" page 
 
 
-V 0.1.2
+v0.1.2
 
 -add basic frontend functionality
 -create basic frontend dashboard
 -add filtering to summary endpoint
 
 
-V 0.1.1
+v0.1.1
 
 -refactor codebase to use sales module and model instead of finances/transaction 
 
 
-V 0.1.0
+v0.1.0
 
 -first version of app
 -create transaction and category models
