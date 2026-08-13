@@ -48,6 +48,7 @@ class SaleSerializer(serializers.ModelSerializer):
             "blank": "La descripción no puede estar vacía.",
             "required": "La descripción no puede estar vacía.",
         },
+        unit_price = serializers.SerializerMethodField()
     )
 
     gross_amount = serializers.DecimalField(
@@ -71,7 +72,17 @@ class SaleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Sale
-        fields = "__all__"
+        fields = [
+                    "id",
+                    "product",
+                    "gross_amount",
+                    "investment_amount",
+                    "description",
+                    "date",
+                    "created_at",
+                    "quantity",
+                    "unit_price",
+                ]
         ordering = ["-date", "-created_at"]
 
     def validate(self, attrs):
@@ -91,7 +102,15 @@ class SaleSerializer(serializers.ModelSerializer):
                 )
             })
 
+        if attrs.get("quantity", 1) < 1:
+            raise serializers.ValidationError({
+                "quantity": "La cantidad debe ser mayor a 0."
+            })
+
         return attrs
+
+    def get_unit_price(self, obj):
+        return obj.gross_amount / obj.quantity
 
     def create(self, validated_data):
         product = validated_data.get("product")

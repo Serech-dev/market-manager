@@ -69,6 +69,8 @@ class Sale(models.Model):
         auto_now_add=True,
     )
 
+    quantity = models.PositiveIntegerField(default=1)
+
     class Meta:
         ordering = ["-date", "-created_at"]
 
