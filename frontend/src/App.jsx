@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import EditSale from "./pages/EditSale";
 import Products from "./pages/Products";
 import NewSale from "./pages/NewSale";
+import Login from "./pages/Login";
 
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
                     path="/products/new"
                     element={<NewProduct />}
                 />
+                <Route path="/login" element={<Login />} />
             </Routes>
         </BrowserRouter>
         </>
