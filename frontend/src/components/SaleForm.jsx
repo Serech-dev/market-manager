@@ -117,12 +117,21 @@ function SaleForm({ onSubmit, initialSale }) {
             className="space-y-6"
         >
             <div className="space-y-2">
-                <label
-                    htmlFor="product"
-                    className="block text-sm font-medium text-[var(--text-primary)]"
-                >
-                    Producto
-                </label>
+                <div className="flex gap-3">
+                    <label
+                        htmlFor="product"
+                        className="flex-1 text-sm font-medium text-[var(--text-primary)]"
+                    >
+                        Producto
+                    </label>
+
+                    <label
+                        htmlFor="quantity"
+                        className="w-24 text-center text-sm font-medium text-[var(--text-primary)]"
+                    >
+                        Cantidad
+                    </label>
+                </div>
 
                 <div className="flex gap-3">
                     <div className="relative flex-1">
@@ -218,13 +227,28 @@ function SaleForm({ onSubmit, initialSale }) {
                         )}
                     </div>
 
-                    <div className="space-y-2">
-                        <label
-                            htmlFor="quantity"
-                            className="block text-sm font-medium text-[var(--text-primary)]"
+                    <div className="flex h-[46px] w-24 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setSale({
+                                    ...sale,
+                                    quantity: Math.max(
+                                        1,
+                                        sale.quantity - 1
+                                    ),
+                                })
+                            }
+                            className="
+                                w-7
+                                text-lg
+                                text-[var(--text-secondary)]
+                                transition
+                                hover:bg-[var(--surface-accent)]
+                            "
                         >
-                            Cantidad
-                        </label>
+                            −
+                        </button>
 
                         <input
                             id="quantity"
@@ -242,22 +266,34 @@ function SaleForm({ onSubmit, initialSale }) {
                                 })
                             }
                             className="
-                                w-20
-                                rounded-xl
-                                border
-                                border-[var(--border)]
-                                bg-[var(--surface)]
-                                px-2
-                                py-3
+                                min-w-0
+                                flex-1
+                                bg-transparent
+                                px-1
                                 text-center
                                 text-[var(--text-primary)]
                                 outline-none
-                                transition
-                                focus:border-[var(--primary)]
-                                focus:ring-2
-                                focus:ring-[var(--primary)]/20
                             "
                         />
+
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setSale({
+                                    ...sale,
+                                    quantity: sale.quantity + 1,
+                                })
+                            }
+                            className="
+                                w-7
+                                text-lg
+                                text-[var(--text-secondary)]
+                                transition
+                                hover:bg-[var(--surface-accent)]
+                            "
+                        >
+                            +
+                        </button>
                     </div>
                 </div>
             </div>
