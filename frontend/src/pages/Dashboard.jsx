@@ -1,11 +1,11 @@
 import ConfirmDialog from "../components/ConfirmDialog";
 import AppNavigation from "../components/AppNavigation";
+import { Link, useNavigate } from "react-router-dom";
 import SummaryCard from "../components/SummaryCard";
 import api, { getApiError } from "../services/api";
 import FilterBar from "../components/FilterBar";
 import SaleCard from "../components/SaleCard";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
 
@@ -145,6 +145,17 @@ function Dashboard() {
         return `${from} — ${to}`;
     }
 
+    const user = JSON.parse(
+        localStorage.getItem("authUser") || "null"
+    );
+
+    function handleLogout() {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("authUser");
+
+        navigate("/login");
+    }
+
     const invalidPeriod =
         filterMode === "period" &&
         selectedDateFrom > selectedDateTo;
@@ -153,14 +164,44 @@ function Dashboard() {
         <div className="min-h-screen bg-[var(--surface)] px-4 py-8">
             <div className="mx-auto max-w-5xl space-y-8">
 
-                <header className="min-h-[72px]">
-                    <h1 className="text-3xl font-bold text-[var(--text-primary)]">
-                        Market Manager
-                    </h1>
+                <header className="flex min-h-[72px] items-center justify-between gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold text-[var(--text-primary)]">
+                            Market Manager
+                        </h1>
 
-                    <p className="mt-1 text-[var(--text-secondary)]">
-                        Controla tus ventas, inversiones y ganancias
-                    </p>
+                        <p className="mt-1 text-[var(--text-secondary)]">
+                            Controla tus ventas, inversiones y ganancias
+                        </p>
+                    </div>
+
+                    <div className="max-w-[160px] shrink-0 text-right">
+                        <p
+                            className="
+                                truncate
+                                text-sm
+                                font-medium
+                                text-[var(--text-secondary)]
+                            "
+                            title={user?.email}
+                        >
+                            {user?.email}
+                        </p>
+
+                        <button
+                            type="button"
+                            onClick={handleLogout}
+                            className="
+                                text-sm
+                                font-medium
+                                text-[var(--primary)]
+                                transition
+                                hover:opacity-80
+                            "
+                        >
+                            Cerrar sesión
+                        </button>
+                    </div>
                 </header>
 
                 <AppNavigation />
