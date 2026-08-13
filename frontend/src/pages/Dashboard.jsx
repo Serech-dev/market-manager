@@ -16,6 +16,8 @@ function Dashboard() {
         earnings: 0,
     });
 
+    const navigate = useNavigate();
+    
     const [sales, setSales] = useState([]);
 
     const [selectedDate, setSelectedDate] = useState(
