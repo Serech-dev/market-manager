@@ -219,7 +219,7 @@ function Dashboard() {
 
                 <AppNavigation />
 
-                <section className="rounded-2xl border border-stone-200 bg-stone-300 p-5 shadow-sm">
+                <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-accent)] p-5 shadow-sm">
                     <FilterBar
                         filterMode={filterMode}
                         setFilterMode={setFilterMode}
