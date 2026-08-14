@@ -1,22 +1,6 @@
 from django.db import models
 
 
-class Category(models.Model):
-    TRANSACTION_TYPES = [
-        ("income", "Income"),
-        ("expense", "Expense"),
-    ]
-
-    name = models.CharField(max_length=100)
-    transaction_type = models.CharField(
-        max_length=10,
-        choices=TRANSACTION_TYPES,
-    )
-
-    def __str__(self):
-        return self.name
-
-
 class Product(models.Model):
     name = models.CharField(
         max_length=255,

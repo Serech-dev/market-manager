@@ -1,6 +1,20 @@
 CHANGELOG
 
 
+v0.6.0
+
+-implement color theme system
+-create account menu dropdown containing theme and auth interactions
+-change Frontend code to respect CSS color palettes from themes
+-redesign headers for product list dashboard
+
+v0.5.0
+
+-implement Frontend controlled auth system
+-implement Token authentication system
+-remove unused/deprecated django modules
+-clean up django settings 
+
 v0.4.5
 
 -add product manual creation
