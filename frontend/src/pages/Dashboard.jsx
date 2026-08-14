@@ -17,7 +17,7 @@ function Dashboard() {
     });
 
     const navigate = useNavigate();
-    
+
     const [sales, setSales] = useState([]);
 
     const [selectedDate, setSelectedDate] = useState(
@@ -151,11 +151,17 @@ function Dashboard() {
         localStorage.getItem("authUser") || "null"
     );
 
-    function handleLogout() {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("authUser");
+    async function handleLogout() {
+        try {
+            await api.post("auth/logout/");
+        } catch (error) {
+            console.error(error);
+        } finally {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("authUser");
 
-        navigate("/login");
+            navigate("/login");
+        }
     }
 
     const invalidPeriod =
