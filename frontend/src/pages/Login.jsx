@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 import api, { getApiError } from "../services/api";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 
 function Login() {
@@ -51,6 +51,14 @@ function Login() {
             setIsSubmitting(false);
         }
     }
+
+    useEffect(() => {
+        const token = localStorage.getItem("authToken");
+
+        if (token) {
+            navigate("/", { replace: true });
+        }
+    }, [navigate]);
 
     return (
         <div className="min-h-screen bg-[var(--surface)] px-4 py-8">
