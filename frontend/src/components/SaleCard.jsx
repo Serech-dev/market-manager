@@ -51,7 +51,7 @@ function SaleCard({ sale, onDelete, showActions = true }) {
                     </button>
 
                     <button
-                        className="flex-1 rounded-lg bg-[var(--danger)] py-2 text-white hover:bg-[var(--danger-hover)]"
+                        className="flex-1 rounded-lg bg-[var(--danger)] py-2 text-white hover:brightness-90]"
                         onClick={() => onDelete(sale.id)}
                     >
                         Eliminar

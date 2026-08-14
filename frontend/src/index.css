@@ -5,11 +5,13 @@
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+}
 
+[data-theme="pastel"] {
   --background: #f1d6df;
   --surface: #fff7f8;
   --surface-accent: #f8e5e8;
-  
+
   --text-primary: #4a3038;
   --text-secondary: #8b6f75;
 
@@ -21,7 +23,42 @@
   --success: #7c9b6f;
   --warning: #c58b4e;
   --danger: #c45b5b;
-  --danger-hover: #bb5757;
+}
+
+[data-theme="blue"] {
+  --background: #dce8f2;
+  --surface: #f7fbff;
+  --surface-accent: #e8f1f8;
+
+  --text-primary: #263746;
+  --text-secondary: #667b8c;
+
+  --border: #c4d7e5;
+
+  --primary: #467da8;
+  --primary-hover: #396b91;
+
+  --success: #668f72;
+  --warning: #b58a4d;
+  --danger: #b85c5c;
+}
+
+[data-theme="dark"] {
+  --background: #1e1e22;
+  --surface: #29292f;
+  --surface-accent: #34343c;
+
+  --text-primary: #f1edf0;
+  --text-secondary: #aaa2a8;
+
+  --border: #44444d;
+
+  --primary: #c56b82;
+  --primary-hover: #b35a72;
+
+  --success: #82a878;
+  --warning: #d09a58;
+  --danger: #d46b6b;
 }
 
 body {
