@@ -6,5 +6,5 @@ export function setTheme(theme) {
 }
 
 export function getSavedTheme() {
-    return localStorage.getItem(THEME_KEY) || "pastel";
+    return localStorage.getItem(THEME_KEY) || "default";
 }

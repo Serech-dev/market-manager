@@ -7,6 +7,25 @@
   -webkit-font-smoothing: antialiased;
 }
 
+[data-theme="default"] {
+  --background: #f4f4f5;
+  --surface: #ffffff;
+  --surface-accent: #e4e4e7;
+  --surface-muted: #f9fafb;
+
+  --text-primary: #27272a;
+  --text-secondary: #71717a;
+
+  --border: #d4d4d8;
+
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+
+  --success: #4d8a63;
+  --warning: #b7791f;
+  --danger: #c65353;
+}
+
 [data-theme="pastel"] {
   --background: #f1d6df;
   --surface: #fff7f8;
