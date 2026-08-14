@@ -1,4 +1,5 @@
 import ConfirmDialog from "../components/ConfirmDialog";
+import ThemeSelector from "../components/ThemeSelector";
 import AppNavigation from "../components/AppNavigation";
 import { Link, useNavigate } from "react-router-dom";
 import SummaryCard from "../components/SummaryCard";
@@ -209,6 +210,10 @@ function Dashboard() {
                         >
                             Cerrar sesión
                         </button>
+
+                        <div className="text-right">
+                            <ThemeSelector />
+                        </div>
                     </div>
                 </header>
 

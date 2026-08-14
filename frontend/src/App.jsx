@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { useEffect } from "react";
 
 import ProductDetail from "./pages/ProductDetail";
 import NewProduct from "./pages/NewProduct";
@@ -10,15 +9,9 @@ import Products from "./pages/Products";
 import NewSale from "./pages/NewSale";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { getSavedTheme, setTheme } from "./utils/themes";
-
 
 
 function App() {
-
-    useEffect(() => {
-        setTheme(getSavedTheme());
-    }, []);
 
     return (
 
