@@ -48,7 +48,21 @@ function FilterBar({
 
             {filterMode === "day" && (
                 <input
-                    className="mt-3 w-full rounded-lg border p-3"
+                    className="
+                        mt-3
+                        w-full
+                        rounded-lg
+                        border
+                        border-[var(--border)]
+                        bg-[var(--surface)]
+                        p-3
+                        text-[var(--text-primary)]
+                        outline-none
+                        transition
+                        focus:border-[var(--primary)]
+                        focus:ring-2
+                        focus:ring-[var(--primary)]/20
+                    "
                     type="date"
                     value={selectedDate}
                     onChange={(e) =>
@@ -59,7 +73,21 @@ function FilterBar({
 
             {filterMode === "month" && (
                 <input
-                    className="mt-3 w-full rounded-lg border p-3"
+                    className="
+                        mt-3
+                        w-full
+                        rounded-lg
+                        border
+                        border-[var(--border)]
+                        bg-[var(--surface)]
+                        p-3
+                        text-[var(--text-primary)]
+                        outline-none
+                        transition
+                        focus:border-[var(--primary)]
+                        focus:ring-2
+                        focus:ring-[var(--primary)]/20
+                    "
                     type="month"
                     value={selectedMonth}
                     onChange={(e) =>
@@ -69,7 +97,7 @@ function FilterBar({
             )}
 
             {invalidPeriod && (
-                <p className="mt-2 text-sm text-red-600">
+                <p className="mt-2 text-sm text-[var(--danger-text)]">
                     La fecha de inicio no puede ser posterior a la fecha de fin.
                 </p>
             )}
@@ -87,7 +115,21 @@ function FilterBar({
                             </label>
 
                             <input
-                                className="w-full rounded-lg border p-3"
+                                className="
+                                    mt-3
+                                    w-full
+                                    rounded-lg
+                                    border
+                                    border-[var(--border)]
+                                    bg-[var(--surface)]
+                                    p-3
+                                    text-[var(--text-primary)]
+                                    outline-none
+                                    transition
+                                    focus:border-[var(--primary)]
+                                    focus:ring-2
+                                    focus:ring-[var(--primary)]/20
+                                "
                                 type="date"
                                 value={selectedDateFrom}
                                 onChange={(e) =>
@@ -102,12 +144,24 @@ function FilterBar({
                             </label>
 
                             <input
-                                className="w-full rounded-lg border p-3"
+                                className="
+                                    mt-3
+                                    w-full
+                                    rounded-lg
+                                    border
+                                    border-[var(--border)]
+                                    bg-[var(--surface)]
+                                    p-3
+                                    text-[var(--text-primary)]
+                                    outline-none
+                                    transition
+                                    focus:border-[var(--primary)]
+                                    focus:ring-2
+                                    focus:ring-[var(--primary)]/20
+                                "
                                 type="date"
-                                value={selectedDateTo}
-                                onChange={(e) =>
-                                    setSelectedDateTo(e.target.value)
-                                }
+                                value={selectedDate}
+                                onChange={(e) => setSelectedDate(e.target.value)}
                             />
                         </div>
                     </div>

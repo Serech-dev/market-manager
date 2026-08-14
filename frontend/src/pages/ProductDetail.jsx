@@ -347,15 +347,15 @@ function ProductDetail() {
                             className="
                                 rounded-xl
                                 border
-                                border-red-200
+                                border-[var(--danger-border)]
                                 px-4
                                 py-2
                                 text-sm
                                 font-medium
-                                text-red-600
+                                text-[var(--danger-text)]
                                 transition
-                                hover:bg-red-50
-                                hover:border-red-300
+                                hover:bg-[var(--danger-hover-bg)]
+                                hover:border-[var(--danger-hover-border)]
                             "
                         >
                             Archivar producto

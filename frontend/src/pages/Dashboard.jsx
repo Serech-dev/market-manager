@@ -170,7 +170,7 @@ function Dashboard() {
         selectedDateFrom > selectedDateTo;
 
     return (
-        <div className="min-h-screen bg-[var(--surface)] px-4 py-8">
+        <div className="min-h-screen bg-[var(--background)] px-4 py-8">
             <div className="mx-auto max-w-5xl space-y-8">
 
                 <header className="flex min-h-[72px] items-center justify-between gap-4">
@@ -211,9 +211,7 @@ function Dashboard() {
                             Cerrar sesión
                         </button>
 
-                        <div className="text-right">
-                            <ThemeSelector />
-                        </div>
+                        <ThemeSelector />
                     </div>
                 </header>
 
@@ -273,22 +271,23 @@ function Dashboard() {
                 </section>
 
 
-                <Link to="/new-sale">
-                    <button
-                        className="
-                            w-full
-                            rounded-xl
-                            bg-[var(--primary)]
-                            py-3
-                            font-semibold
-                            text-white
-                            shadow-sm
-                            transition
-                            hover:bg-[var(--primary-hover)]
-                        "
-                    >
-                        + Nueva Venta
-                    </button>
+                <Link
+                    to="/new-sale"
+                    className="
+                        block
+                        w-full
+                        rounded-xl
+                        bg-[var(--primary)]
+                        py-3
+                        text-center
+                        font-semibold
+                        text-white
+                        shadow-sm
+                        transition
+                        hover:bg-[var(--primary-hover)]
+                    "
+                >
+                    + Nueva Venta
                 </Link>
 
 

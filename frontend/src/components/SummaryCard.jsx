@@ -13,8 +13,8 @@ function SummaryCard({ title, value, variant }) {
                 shadow-sm
                 ${
                     isProfit
-                        ? "border-green-200 bg-green-200"
-                        : "border-stone-200 bg-[var(--background)]"
+                        ? "border-[var(--success-border)] bg-[var(--success-bg)]"
+                        : "border-[var(--border)] bg-[var(--background)]"
                 }
                 ${isProfit ? "max-w-sm text-center" : ""}
             `}
@@ -22,8 +22,11 @@ function SummaryCard({ title, value, variant }) {
             <p
                 className={`
                     text-sm
-                    text-[var(--text-secondary)]
-                    ${isProfit ? "font-bold text-[var(--text-primary)]" : ""}
+                    ${
+                        isProfit
+                            ? "font-bold text-[var(--success-text)]"
+                            : "text-[var(--text-secondary)]"
+                    }
                 `}
             >
                 {title}
@@ -35,7 +38,7 @@ function SummaryCard({ title, value, variant }) {
                     font-bold
                     ${
                         isProfit
-                            ? "text-4xl text-green-700"
+                            ? "text-4xl text-[var(--success)]"
                             : "text-2xl text-[var(--text-primary)]"
                     }
                 `}

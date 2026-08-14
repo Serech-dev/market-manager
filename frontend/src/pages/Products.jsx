@@ -158,7 +158,7 @@ function Products() {
                 )}
 
                 {!isLoading && !error && filteredProducts.length > 0 && (
-                    <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="grid gap-4 sm:grid-cols-2]">
                         {filteredProducts.map((product) => (
                             <Link
                                 key={product.id}
