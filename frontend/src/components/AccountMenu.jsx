@@ -56,7 +56,6 @@ function AccountMenu({ user, onLogout }) {
                 onClick={() => setIsOpen((current) => !current)}
                 className="
                     flex
-                    max-w-[220px]
                     items-center
                     gap-2
                     rounded-xl
@@ -73,9 +72,7 @@ function AccountMenu({ user, onLogout }) {
                     hover:bg-[var(--surface-accent)]
                 "
             >
-                <span className="truncate">
-                    {user?.email}
-                </span>
+                <span>Opciones de Cuenta</span>
 
                 <span
                     className={`
