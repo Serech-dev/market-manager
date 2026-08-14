@@ -2,6 +2,7 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import ThemeSelector from "../components/ThemeSelector";
 import AppNavigation from "../components/AppNavigation";
 import { Link, useNavigate } from "react-router-dom";
+import AccountMenu from "../components/AccountMenu";
 import SummaryCard from "../components/SummaryCard";
 import api, { getApiError } from "../services/api";
 import FilterBar from "../components/FilterBar";
@@ -185,33 +186,10 @@ function Dashboard() {
                     </div>
 
                     <div className="max-w-[160px] shrink-0 text-right">
-                        <p
-                            className="
-                                truncate
-                                text-sm
-                                font-medium
-                                text-[var(--text-secondary)]
-                            "
-                            title={user?.email}
-                        >
-                            {user?.email}
-                        </p>
-
-                        <button
-                            type="button"
-                            onClick={handleLogout}
-                            className="
-                                text-sm
-                                font-medium
-                                text-[var(--primary)]
-                                transition
-                                hover:opacity-80
-                            "
-                        >
-                            Cerrar sesión
-                        </button>
-
-                        <ThemeSelector />
+                        <AccountMenu
+                            user={user}
+                            onLogout={handleLogout}
+                        />
                     </div>
                 </header>
 

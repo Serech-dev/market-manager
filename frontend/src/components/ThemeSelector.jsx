@@ -14,25 +14,17 @@ function ThemeSelector() {
 
     return (
         <div>
-            <label
-                htmlFor="theme"
-                className="block text-sm font-medium text-[var(--text-primary)]"
-            >
-                Tema
-            </label>
-
             <select
                 id="theme"
                 value={theme}
                 onChange={handleChange}
                 className="
-                    mt-1
                     rounded-lg
                     border
                     border-[var(--border)]
                     bg-[var(--surface)]
-                    px-3
-                    py-2
+                    px-2
+                    py-1.5
                     text-sm
                     text-[var(--text-primary)]
                     outline-none
