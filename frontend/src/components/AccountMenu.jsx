@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { logout } from "../services/auth";
 import ThemeSelector from "./ThemeSelector";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 
 
 function AccountMenu({ user, onLogout }) {
@@ -37,9 +39,11 @@ function AccountMenu({ user, onLogout }) {
         };
     }, []);
 
+    const navigate = useNavigate();
+
     function handleLogout() {
-        setIsOpen(false);
-        onLogout();
+        logout();
+        navigate("/login");
     }
 
     return (

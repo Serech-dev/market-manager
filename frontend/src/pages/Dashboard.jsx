@@ -1,14 +1,14 @@
+import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
+import SaleCard from "../components/SaleCard";
+import FilterBar from "../components/FilterBar";
+import api, { getApiError } from "../services/api";
+import SummaryCard from "../components/SummaryCard";
+import AccountMenu from "../components/AccountMenu";
+import { Link, useNavigate } from "react-router-dom";
 import ConfirmDialog from "../components/ConfirmDialog";
 import ThemeSelector from "../components/ThemeSelector";
 import AppNavigation from "../components/AppNavigation";
-import { Link, useNavigate } from "react-router-dom";
-import AccountMenu from "../components/AccountMenu";
-import SummaryCard from "../components/SummaryCard";
-import api, { getApiError } from "../services/api";
-import FilterBar from "../components/FilterBar";
-import SaleCard from "../components/SaleCard";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 
 
 function Dashboard() {
@@ -153,19 +153,6 @@ function Dashboard() {
         localStorage.getItem("authUser") || "null"
     );
 
-    async function handleLogout() {
-        try {
-            await api.post("auth/logout/");
-        } catch (error) {
-            console.error(error);
-        } finally {
-            localStorage.removeItem("authToken");
-            localStorage.removeItem("authUser");
-
-            navigate("/login");
-        }
-    }
-
     const invalidPeriod =
         filterMode === "period" &&
         selectedDateFrom > selectedDateTo;
@@ -174,7 +161,7 @@ function Dashboard() {
         <div className="min-h-screen bg-[var(--background)] px-4 py-8">
             <div className="mx-auto max-w-5xl space-y-8">
 
-                <header className="flex min-h-[72px] items-center justify-between gap-4">
+                <header className="flex min-h-[72px] items-start justify-between gap-4">
                     <div>
                         <h1 className="text-3xl font-bold text-[var(--text-primary)]">
                             Market Manager
@@ -185,11 +172,8 @@ function Dashboard() {
                         </p>
                     </div>
 
-                    <div className="max-w-[160px] shrink-0 text-right">
-                        <AccountMenu
-                            user={user}
-                            onLogout={handleLogout}
-                        />
+                    <div className="flex shrink-0 flex-col items-end gap-2">
+                        <AccountMenu user={user} />
                     </div>
                 </header>
 

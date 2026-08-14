@@ -32,6 +32,7 @@ class LoginView(APIView):
             },
         })
 
+#Current logout handled by FrontEnd
 class LogoutView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]

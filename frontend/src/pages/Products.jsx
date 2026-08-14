@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api, { getApiError } from "../services/api";
+import AccountMenu from "../components/AccountMenu";
 import AppNavigation from "../components/AppNavigation";
 import { formatCurrency } from "../utils/formatCurrency";
 import { formatProductName } from "../utils/formatProductName";
@@ -12,6 +13,9 @@ function Products() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
     const [sort, setSort] = useState("name");
+    const user = JSON.parse(
+        localStorage.getItem("authUser") || "null"
+    );
 
     useEffect(() => {
         async function fetchProducts() {
@@ -46,7 +50,7 @@ function Products() {
         <div className="min-h-screen bg-[var(--surface)] px-4 py-8">
             <div className="mx-auto max-w-5xl space-y-8">
 
-                <header className="min-h-[72px] flex items-start justify-between">
+                <header className="flex min-h-[72px] items-start justify-between gap-4">
                     <div>
                         <h1 className="text-3xl font-bold text-[var(--text-primary)]">
                             Productos
@@ -57,25 +61,22 @@ function Products() {
                         </p>
                     </div>
 
-                    <Link
-                        to="/products/new"
-                        className="
-                            inline-flex
-                            items-center
-                            rounded-lg
-                            bg-[var(--primary)]
-                            px-3
-                            py-2
-                            text-sm
-                            font-semibold
-                            text-white
-                            shadow-sm
-                            transition
-                            hover:bg-[var(--primary-hover)]
-                        "
-                    >
-                        + Nuevo producto
-                    </Link>
+                    <div className="flex shrink-0 flex-col items-center gap-2">
+                        <AccountMenu user={user} />
+
+                        <Link
+                            to="/products/new"
+                            className="
+                                text-sm
+                                font-medium
+                                text-[var(--primary)]
+                                transition
+                                hover:text-[var(--primary-hover)]
+                            "
+                        >
+                            + Nuevo producto
+                        </Link>
+                    </div>
                 </header>
 
                 <AppNavigation />
