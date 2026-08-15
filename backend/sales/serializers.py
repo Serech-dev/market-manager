@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Product, Sale
+from .models import Product, ProductCategory, Sale
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -29,11 +29,18 @@ class ProductSerializer(serializers.ModelSerializer):
         read_only=True,
     )
 
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=ProductCategory.objects.all(),
+        required=False,
+        allow_null=True,
+    )
+
     class Meta:
         model = Product
         fields = [
             "id",
             "name",
+            "category",
             "sales_count",
             "gross",
             "investment",
@@ -45,6 +52,38 @@ class ProductSerializer(serializers.ModelSerializer):
             "user",
             "active",
         ]
+
+    def validate(self, attrs):
+        category = attrs.get("category")
+
+        if category and category.user != self.context["request"].user:
+            raise serializers.ValidationError({
+                "category": "La categoría no pertenece a tu cuenta."
+            })
+
+        return attrs
+
+
+class ProductCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductCategory
+        fields = [
+            "id",
+            "name",
+        ]
+        read_only_fields = [
+            "id",
+        ]
+
+    def validate_name(self, value):
+        value = " ".join(value.strip().lower().split())
+
+        if not value:
+            raise serializers.ValidationError(
+                "El nombre no puede estar vacío."
+            )
+
+        return value
 
 
 class SaleSerializer(serializers.ModelSerializer):

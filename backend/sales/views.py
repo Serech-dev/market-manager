@@ -9,8 +9,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Product, Sale
-from .serializers import (ProductAnalyticsSerializer, ProductSerializer,
+from .models import Product, ProductCategory, Sale
+from .serializers import (ProductAnalyticsSerializer, ProductCategorySerializer, ProductSerializer,
                           SaleSerializer)
 from .utils import apply_period_filter
 
@@ -64,6 +64,21 @@ class SaleSummaryView(APIView):
             "investment": investment,
             "earnings": gross - investment,
         })
+
+
+class ProductCategoryListCreateView(generics.ListCreateAPIView):
+    serializer_class = ProductCategorySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return ProductCategory.objects.filter(
+            user=self.request.user,
+        ).order_by("name")
+
+    def perform_create(self, serializer):
+        serializer.save(
+            user=self.request.user,
+        )
 
 
 class ProductListView(generics.ListCreateAPIView):

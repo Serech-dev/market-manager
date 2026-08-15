@@ -1,6 +1,7 @@
 from django.urls import path
 
-from .views import (ProductAnalyticsView, ProductArchiveView, ProductListView,
+from .views import (ProductAnalyticsView, ProductArchiveView, 
+                    ProductCategoryListCreateView, ProductListView,
                     SaleDetailView, SaleListCreateView, SaleSummaryView)
 
 urlpatterns = [
@@ -33,5 +34,9 @@ urlpatterns = [
     "products/<int:pk>/archive/",
     ProductArchiveView.as_view(),
     name="product-archive",
-),
+    ),
+    path(
+    "product-categories/",
+    ProductCategoryListCreateView.as_view(),
+    ),
 ]
