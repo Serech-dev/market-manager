@@ -1,10 +1,16 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Product(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="products",
+    )
+
     name = models.CharField(
         max_length=255,
-        unique=True,
     )
 
     active = models.BooleanField(
@@ -16,7 +22,9 @@ class Product(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        self.name = " ".join(self.name.strip().lower().split())
+        self.name = " ".join(
+            self.name.strip().lower().split()
+        )
         super().save(*args, **kwargs)
 
     def __str__(self):

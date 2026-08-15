@@ -20,25 +20,35 @@ class SaleListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Sale.objects.all()
+        queryset = Sale.objects.filter(
+            product__user=self.request.user,
+        )
 
         return apply_period_filter(
             queryset,
-            self.request.query_params
+            self.request.query_params,
         )
 
+    
 class SaleDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Sale.objects.all()
     serializer_class = SaleSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Sale.objects.filter(
+            product__user=self.request.user,
+        )
+
 
 class SaleSummaryView(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
         sales = apply_period_filter(
-            Sale.objects.all(),
-            request.query_params
+            Sale.objects.filter(
+                product__user=request.user,
+            ),
+            request.query_params,
         )
 
         totals = sales.aggregate(
@@ -55,12 +65,15 @@ class SaleSummaryView(APIView):
             "earnings": gross - investment,
         })
 
+
 class ProductListView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Product.objects.annotate(
+        queryset = Product.objects.filter(
+            user=self.request.user,
+        ).annotate(
             sales_count=Count("sales"),
             gross=Coalesce(
                 Sum("sales__gross_amount"),
@@ -107,7 +120,8 @@ class ProductListView(generics.ListCreateAPIView):
             )
 
         existing_product = Product.objects.filter(
-            name=name
+            user=request.user,
+            name=name,
         ).first()
 
         if existing_product:
@@ -131,16 +145,24 @@ class ProductListView(generics.ListCreateAPIView):
             data={"name": name}
         )
         serializer.is_valid(raise_exception=True)
-        product = serializer.save()
+        product = serializer.save(
+            user=request.user,
+        )
 
         return Response(
             self.get_serializer(product).data,
             status=status.HTTP_201_CREATED,
         )
+
+    
 class ProductAnalyticsView(generics.RetrieveAPIView):
-    queryset = Product.objects.all()
     serializer_class = ProductAnalyticsSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Product.objects.filter(
+            user=self.request.user,
+        )
 
     def retrieve(self, request, *args, **kwargs):
         product = self.get_object()
@@ -188,10 +210,15 @@ class ProductAnalyticsView(generics.RetrieveAPIView):
 
         return Response(serializer.data)
 
+
 class ProductArchiveView(generics.UpdateAPIView):
-    queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Product.objects.filter(
+            user=self.request.user,
+        )
 
     def perform_update(self, serializer):
         product = self.get_object()

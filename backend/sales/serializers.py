@@ -1,4 +1,3 @@
-from django.db.models import Avg, Sum
 from rest_framework import serializers
 
 from .models import Product, Sale
@@ -6,21 +5,25 @@ from .models import Product, Sale
 
 class ProductSerializer(serializers.ModelSerializer):
     sales_count = serializers.IntegerField(read_only=True)
+
     gross = serializers.DecimalField(
         max_digits=12,
         decimal_places=2,
         read_only=True,
     )
+
     investment = serializers.DecimalField(
         max_digits=12,
         decimal_places=2,
         read_only=True,
     )
+
     earnings = serializers.DecimalField(
         max_digits=12,
         decimal_places=2,
         read_only=True,
     )
+
     last_sale = serializers.DateField(
         allow_null=True,
         read_only=True,
@@ -37,7 +40,11 @@ class ProductSerializer(serializers.ModelSerializer):
             "earnings",
             "last_sale",
         ]
-        read_only_fields = ["active"]
+        read_only_fields = [
+            "id",
+            "user",
+            "active",
+        ]
 
 
 class SaleSerializer(serializers.ModelSerializer):
@@ -113,6 +120,11 @@ class SaleSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 "quantity": "La cantidad debe ser mayor a 0."
             })
+        
+        if product and product.user != self.context["request"].user:
+            raise serializers.ValidationError({
+                "product": "El producto no pertenece a tu cuenta."
+            })
 
         return attrs
 
@@ -129,7 +141,8 @@ class SaleSerializer(serializers.ModelSerializer):
             )
 
             product, _ = Product.objects.get_or_create(
-                name=normalized_name
+                user=self.context["request"].user,
+                name=normalized_name,
             )
 
         validated_data["product"] = product
