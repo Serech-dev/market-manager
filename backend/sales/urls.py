@@ -36,7 +36,12 @@ urlpatterns = [
     name="product-archive",
     ),
     path(
-    "product-categories/",
+    "categories/",
     ProductCategoryListCreateView.as_view(),
+    ),
+    path(
+        "products/<int:pk>/",
+        ProductAnalyticsView.as_view(),
+        name="product-analytics",
     ),
 ]

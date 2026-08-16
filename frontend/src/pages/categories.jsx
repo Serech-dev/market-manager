@@ -1,38 +1,68 @@
-import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import CreateMenu from "../components/CreateMenu";
-import api, { getApiError } from "../services/api";
+import { Link } from "react-router-dom";
 import AccountMenu from "../components/AccountMenu";
+import CreateMenu from "../components/CreateMenu";
 import AppNavigation from "../components/AppNavigation";
-import { formatCurrency } from "../utils/formatCurrency";
 import { capitalizeWords } from "../utils/capitalizeWords";
+import { formatCurrency } from "../utils/formatCurrency";
+import api, { getApiError } from "../services/api";
+import FilterBar from "../components/FilterBar";
 
 
-function Products() {
-    const [products, setProducts] = useState([]);
+function Categories() {
+    const [categories, setCategories] = useState([]);
     const [search, setSearch] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
     const [sort, setSort] = useState("name");
+
+    const [selectedDate, setSelectedDate] = useState(
+        new Date().toISOString().split("T")[0]
+    );
+    const [selectedMonth, setSelectedMonth] = useState(
+        new Date().toISOString().slice(0, 7)
+    );
+    const [filterMode, setFilterMode] = useState("month");
+    const [selectedDateFrom, setSelectedDateFrom] = useState(
+        new Date().toISOString().split("T")[0]
+    );
+    const [selectedDateTo, setSelectedDateTo] = useState(
+        new Date().toISOString().split("T")[0]
+    );
     const user = JSON.parse(
         localStorage.getItem("authUser") || "null"
     );
 
+    const invalidPeriod =
+        filterMode === "period" &&
+        selectedDateFrom > selectedDateTo;
+
     useEffect(() => {
-        async function fetchProducts() {
+        async function fetchCategories() {
+            if (invalidPeriod) {
+                return;
+            }
+
+            const query =
+                filterMode === "day"
+                    ? `date=${selectedDate}`
+                    : filterMode === "month"
+                    ? `month=${selectedMonth}`
+                    : `date_from=${selectedDateFrom}&date_to=${selectedDateTo}`;
+
             try {
                 const response = await api.get(
-                    `products/?sort=${sort}`
+                    `categories/?${query}`
                 );
 
-                setProducts(response.data);
+                setCategories(response.data);
             } catch (error) {
                 console.error(error);
 
                 setError(
                     getApiError(
                         error,
-                        "No se pudieron cargar los productos."
+                        "No se pudieron cargar las categorías."
                     )
                 );
             } finally {
@@ -40,41 +70,64 @@ function Products() {
             }
         }
 
-        fetchProducts();
-    }, [sort]);
+        fetchCategories();
+    }, [
+        selectedDate,
+        selectedMonth,
+        selectedDateFrom,
+        selectedDateTo,
+        filterMode,
+    ]);
 
-    const filteredProducts = products.filter((product) =>
-        product.name.includes(search.trim().toLowerCase())
+    const filteredCategories = categories.filter((category) =>
+        category.name.includes(
+            search.trim().toLowerCase()
+        )
     );
 
     return (
         <div className="min-h-screen bg-[var(--surface)] px-4 py-8">
             <div className="mx-auto max-w-5xl space-y-8">
 
-                <header className="flex min-h-[72px] items-start justify-between gap-4">
+                <header className="flex min-h-[72px] flex-col items-start gap-3">
+                    <Link
+                        to="/products"
+                        className="text-sm font-medium text-[var(--primary)] transition hover:opacity-80"
+                    >
+                        ← Productos
+                    </Link>
+
                     <div>
                         <h1 className="text-3xl font-bold text-[var(--text-primary)]">
-                            Productos
+                            Categorías
                         </h1>
 
                         <p className="mt-1 text-[var(--text-secondary)]">
-                            Registro de productos vendidos
+                            Comparación de productos y ventas por categoría
                         </p>
-                    </div>
-
-                    <div className="flex shrink-0 flex-col items-center gap-2">
-                        <AccountMenu user={user} />
-
-                        <CreateMenu />
                     </div>
                 </header>
 
-                <AppNavigation />
+                <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-accent)] p-5 shadow-sm">
+                    <FilterBar
+                        filterMode={filterMode}
+                        setFilterMode={setFilterMode}
+                        selectedDate={selectedDate}
+                        setSelectedDate={setSelectedDate}
+                        selectedMonth={selectedMonth}
+                        setSelectedMonth={setSelectedMonth}
+                        selectedDateFrom={selectedDateFrom}
+                        setSelectedDateFrom={setSelectedDateFrom}
+                        selectedDateTo={selectedDateTo}
+                        setSelectedDateTo={setSelectedDateTo}
+                        invalidPeriod={invalidPeriod}
+                    />
+                </section>
 
                 <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
                     <input
                         type="search"
-                        placeholder="Buscar producto..."
+                        placeholder="Buscar categoría..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="
@@ -94,26 +147,6 @@ function Products() {
                         "
                     />
 
-                    <Link
-                        to="/categories"
-                        className="
-                            rounded-xl
-                            border
-                            border-[var(--border)]
-                            bg-[var(--surface)]
-                            px-4
-                            py-3
-                            text-center
-                            font-medium
-                            text-[var(--text-primary)]
-                            transition
-                            hover:border-[var(--primary)]
-                            hover:text-[var(--primary)]
-                        "
-                    >
-                        Categorías
-                    </Link>
-
                     <select
                         value={sort}
                         onChange={(e) => setSort(e.target.value)}
@@ -130,18 +163,18 @@ function Products() {
                         "
                     >
                         <option value="name">A–Z</option>
-                        <option value="sales">Más vendidos</option>
+                        <option value="products">Más productos</option>
+                        <option value="sales">Más ventas</option>
                         <option value="gross">Mayor ingreso</option>
                         <option value="earnings">Mayor ganancia</option>
                         <option value="recent">Venta más reciente</option>
-                        <option value="oldest">Producto más antiguo</option>
                     </select>
                 </div>
 
                 {isLoading && (
                     <div className="rounded-2xl border border-[var(--border)] p-8 text-center">
                         <p className="text-[var(--text-secondary)]">
-                            Cargando productos...
+                            Cargando categorías...
                         </p>
                     </div>
                 )}
@@ -154,26 +187,25 @@ function Products() {
                     </div>
                 )}
 
-                {!isLoading && !error && filteredProducts.length === 0 && (
+                {!isLoading && !error && filteredCategories.length === 0 && (
                     <div className="rounded-2xl border border-[var(--border)] p-8 text-center">
                         <p className="text-lg font-medium text-[var(--text-primary)]">
-                            No se encontraron productos.
+                            No se encontraron categorías.
                         </p>
 
                         <p className="mt-2 text-[var(--text-secondary)]">
                             {search
                                 ? "Prueba con otro término de búsqueda."
-                                : "Los productos aparecerán aquí cuando registres ventas."}
+                                : "Las categorías aparecerán aquí cuando las crees."}
                         </p>
                     </div>
                 )}
 
-                {!isLoading && !error && filteredProducts.length > 0 && (
-                    <div className="grid gap-4 sm:grid-cols-2]">
-                        {filteredProducts.map((product) => (
-                            <Link
-                                key={product.id}
-                                to={`/products/${product.id}`}
+                {!isLoading && !error && filteredCategories.length > 0 && (
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        {filteredCategories.map((category) => (
+                            <div
+                                key={category.id}
                                 className="
                                     rounded-2xl
                                     border
@@ -181,29 +213,30 @@ function Products() {
                                     bg-[var(--surface)]
                                     p-5
                                     shadow-sm
-                                    transition
-                                    hover:-translate-y-0.5
-                                    hover:shadow-md
                                 "
                             >
                                 <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-                                    {capitalizeWords(product.name)}
+                                    {capitalizeWords(category.name)}
                                 </h2>
 
-                                {product.category_name && (
-                                    <p className="mt-1 text-sm font-semibold text-[var(--text-secondary)]">
-                                        {capitalizeWords(product.category_name)}
-                                    </p>
-                                )}
-
                                 <div className="mt-4 space-y-2 text-sm">
+                                    <div className="flex justify-between">
+                                        <span className="text-[var(--text-secondary)]">
+                                            Productos
+                                        </span>
+
+                                        <span className="font-semibold text-[var(--text-primary)]">
+                                            {category.products_count}
+                                        </span>
+                                    </div>
+
                                     <div className="flex justify-between">
                                         <span className="text-[var(--text-secondary)]">
                                             Ventas
                                         </span>
 
                                         <span className="font-semibold text-[var(--text-primary)]">
-                                            {product.sales_count}
+                                            {category.sales_count}
                                         </span>
                                     </div>
 
@@ -213,7 +246,7 @@ function Products() {
                                         </span>
 
                                         <span className="font-semibold text-[var(--text-primary)]">
-                                            {formatCurrency(product.gross)}
+                                            {formatCurrency(category.gross)}
                                         </span>
                                     </div>
 
@@ -223,7 +256,7 @@ function Products() {
                                         </span>
 
                                         <span className="font-semibold text-[var(--success)]">
-                                            {formatCurrency(product.earnings)}
+                                            {formatCurrency(category.earnings)}
                                         </span>
                                     </div>
 
@@ -233,15 +266,11 @@ function Products() {
                                         </span>
 
                                         <span className="font-medium text-[var(--text-primary)]">
-                                            {product.last_sale || "Sin ventas"}
+                                            {category.last_sale || "Sin ventas"}
                                         </span>
                                     </div>
                                 </div>
-
-                                <p className="mt-2 text-sm text-[var(--text-secondary)]">
-                                    Ver estadísticas del producto
-                                </p>
-                            </Link>
+                            </div>
                         ))}
                     </div>
                 )}
@@ -251,4 +280,4 @@ function Products() {
     );
 }
 
-export default Products;
+export default Categories;

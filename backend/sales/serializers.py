@@ -24,6 +24,11 @@ class ProductSerializer(serializers.ModelSerializer):
         allow_null=True,
         read_only=True,
     )
+    category_name = serializers.CharField(
+        source="category.name",
+        read_only=True,
+        allow_null=True,
+    )   
 
     class Meta:
         model = Product
@@ -31,6 +36,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "category",
+            "category_name",
             "sales_count",
             "gross",
             "investment",
@@ -59,14 +65,52 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ProductCategorySerializer(serializers.ModelSerializer):
+    products_count = serializers.IntegerField(
+        read_only=True,
+    )
+    sales_count = serializers.IntegerField(
+        read_only=True,
+    )
+    gross = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        read_only=True,
+    )
+    investment = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        read_only=True,
+    )
+    earnings = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        read_only=True,
+    )
+    last_sale = serializers.DateField(
+        allow_null=True,
+        read_only=True,
+    )
+
     class Meta:
         model = ProductCategory
         fields = [
             "id",
             "name",
+            "products_count",
+            "sales_count",
+            "gross",
+            "investment",
+            "earnings",
+            "last_sale",
         ]
         read_only_fields = [
             "id",
+            "products_count",
+            "sales_count",
+            "gross",
+            "investment",
+            "earnings",
+            "last_sale",
         ]
 
     def validate_name(self, value):
@@ -209,6 +253,28 @@ class ProductAnalyticsSerializer(serializers.Serializer):
     )
     first_sale = serializers.DateField(
         allow_null=True,
+    )
+    last_sale = serializers.DateField(
+        allow_null=True,
+    )
+
+
+class ProductCategoryAnalyticsSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    products_count = serializers.IntegerField()
+    sales_count = serializers.IntegerField()
+    gross = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+    )
+    investment = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+    )
+    earnings = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
     )
     last_sale = serializers.DateField(
         allow_null=True,

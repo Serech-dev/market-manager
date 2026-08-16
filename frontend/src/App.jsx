@@ -9,6 +9,7 @@ import EditSale from "./pages/EditSale";
 import Products from "./pages/Products";
 import NewSale from "./pages/NewSale";
 import Login from "./pages/Login";
+import Categories from "./pages/categories";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 
@@ -44,6 +45,10 @@ function App() {
                     <Route
                     path="/products/categories/new"
                     element={<NewCategory />}
+                    />
+                    <Route
+                        path="/categories"
+                        element={<Categories />}
                     />
                 </Route>
             </Routes>

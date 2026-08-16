@@ -17,7 +17,7 @@ function NewProduct() {
     useEffect(() => {
         async function fetchCategories() {
             try {
-                const response = await api.get("product-categories/");
+                const response = await api.get("categories/");
                 setCategories(response.data);
             } catch (error) {
                 console.error(error);

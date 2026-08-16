@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from django.db.models import Avg, Count, F, Max, Sum, Value
+from django.db.models import Avg, Count, F, Q, Max, Sum, Value
 from django.db.models.functions import Coalesce
 from rest_framework import generics, status
 
@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Product, ProductCategory, Sale
-from .serializers import (ProductAnalyticsSerializer, ProductCategorySerializer, ProductSerializer,
+from .serializers import (ProductAnalyticsSerializer, ProductCategoryAnalyticsSerializer, ProductCategorySerializer, ProductSerializer,
                           SaleSerializer)
 from .utils import apply_period_filter
 
@@ -71,10 +71,85 @@ class ProductCategoryListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return ProductCategory.objects.filter(
+        queryset = ProductCategory.objects.filter(
             user=self.request.user,
-        ).order_by("name")
+        )
 
+        sales = Sale.objects.filter(
+            product__category__user=self.request.user,
+        )
+
+        sales = apply_period_filter(
+            sales,
+            self.request.query_params,
+        )
+
+        sales_filter = Q(
+            products__sales__in=sales,
+        )
+
+        queryset = queryset.annotate(
+            products_count=Count(
+                "products",
+                distinct=True,
+            ),
+            sales_count=Count(
+                "products__sales",
+                filter=sales_filter,
+            ),
+            gross=Coalesce(
+                Sum(
+                    "products__sales__gross_amount",
+                    filter=sales_filter,
+                ),
+                Value(Decimal("0")),
+            ),
+            investment=Coalesce(
+                Sum(
+                    "products__sales__investment_amount",
+                    filter=sales_filter,
+                ),
+                Value(Decimal("0")),
+            ),
+            earnings=Coalesce(
+                Sum(
+                    "products__sales__gross_amount",
+                    filter=sales_filter,
+                ),
+                Value(Decimal("0")),
+            ) - Coalesce(
+                Sum(
+                    "products__sales__investment_amount",
+                    filter=sales_filter,
+                ),
+                Value(Decimal("0")),
+            ),
+            last_sale=Max(
+                "products__sales__date",
+                filter=sales_filter,
+            ),
+        )
+
+        sort = self.request.query_params.get(
+            "sort",
+            "name",
+        )
+
+        sort_options = {
+            "name": "name",
+            "products": "-products_count",
+            "sales": "-sales_count",
+            "gross": "-gross",
+            "earnings": "-earnings",
+            "recent": F("last_sale").desc(
+                nulls_last=True,
+            ),
+        }
+
+        return queryset.order_by(
+            sort_options.get(sort, "name")
+        )
+    
     def create(self, request, *args, **kwargs):
         name = " ".join(
             request.data.get("name", "").strip().lower().split()
@@ -293,3 +368,61 @@ class ProductArchiveView(generics.UpdateAPIView):
 
         serializer.save(active=False)
 
+
+class ProductCategoryAnalyticsView(generics.RetrieveAPIView):
+    serializer_class = ProductCategoryAnalyticsSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return ProductCategory.objects.filter(
+            user=self.request.user,
+        )
+
+    def retrieve(self, request, *args, **kwargs):
+        category = self.get_object()
+
+        sales = Sale.objects.filter(
+            product__category=category,
+        )
+        sales = apply_period_filter(sales, request.query_params)
+
+        analytics = {
+            "id": category.id,
+            "name": category.name,
+            "products_count": category.products.count(),
+            "sales_count": sales.count(),
+            "gross": sales.aggregate(
+                total=Coalesce(
+                    Sum("gross_amount"),
+                    Value(Decimal("0")),
+                )
+            )["total"],
+            "investment": sales.aggregate(
+                total=Coalesce(
+                    Sum("investment_amount"),
+                    Value(Decimal("0")),
+                )
+            )["total"],
+            "average_sale": sales.aggregate(
+                average=Coalesce(
+                    Avg("gross_amount"),
+                    Value(Decimal("0")),
+                )
+            )["average"],
+            "first_sale": sales.order_by("date").values_list(
+                "date",
+                flat=True,
+            ).first(),
+            "last_sale": sales.order_by("-date").values_list(
+                "date",
+                flat=True,
+            ).first(),
+        }
+
+        analytics["earnings"] = (
+            analytics["gross"] - analytics["investment"]
+        )
+
+        serializer = self.get_serializer(analytics)
+
+        return Response(serializer.data)

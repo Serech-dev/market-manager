@@ -17,7 +17,7 @@ function NewCategory() {
         setError("");
 
         try {
-            await api.post("product-categories/", {
+            await api.post("categories/", {
                 name,
             });
 
