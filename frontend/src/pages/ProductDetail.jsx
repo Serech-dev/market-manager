@@ -17,8 +17,11 @@ function ProductDetail() {
     const [sales, setSales] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
+    const [nameError, setNameError] = useState("");
 
-    const [isEditing, setIsEditing] = useState(false);
+    const [editingName, setEditingName] = useState(false);
+    const [editingCategory, setEditingCategory] = useState(false);
+
     const [editName, setEditName] = useState("");
     const [editCategory, setEditCategory] = useState("");
     const [categories, setCategories] = useState([]);
@@ -57,15 +60,23 @@ function ProductDetail() {
         fetchCategories();
     }, []);
 
-    async function handleSaveProduct() {
+    async function handleSaveProduct(field) {
         setIsSaving(true);
+
+        if (field === "name") {
+            setNameError("");
+        }
 
         try {
             const response = await api.patch(
                 `products/${id}/`,
                 {
-                    name: editName,
-                    category: editCategory || null,
+                    name: field === "name"
+                        ? editName
+                        : product.name,
+                    category: field === "category"
+                        ? editCategory || null
+                        : product.category,
                 }
             );
 
@@ -74,17 +85,33 @@ function ProductDetail() {
                 ...response.data,
             }));
 
-            setIsEditing(false);
+            if (field === "name") {
+                setEditingName(false);
+            }
+
+            if (field === "category") {
+                setEditingCategory(false);
+            }
+
             toast.success("Producto actualizado.");
         } catch (error) {
             console.error(error);
 
-            toast.error(
-                getApiError(
-                    error,
-                    "No se pudo actualizar el producto."
-                )
-            );
+            if (field === "name") {
+                setNameError(
+                    getApiError(
+                        error,
+                        "No se pudo actualizar el nombre."
+                    )
+                );
+            } else {
+                toast.error(
+                    getApiError(
+                        error,
+                        "No se pudo actualizar el producto."
+                    )
+                );
+            }
         } finally {
             setIsSaving(false);
         }
@@ -203,107 +230,140 @@ function ProductDetail() {
                         ← Productos
                     </Link>
 
-                    <div className="mt-4 flex items-center gap-3">
-                        <h1 className="text-3xl font-bold text-[var(--text-primary)]">
-                            {capitalizeWords(product.name)}
-                        </h1>
+                    <div className="mt-4">
+                        <div className="flex items-center gap-2">
+                            {editingName ? (
+                                <div className="flex items-start gap-2">
+                                    <div className="w-full max-w-md">
+                                        <input
+                                            type="text"
+                                            value={editName}
+                                            onChange={(event) => {
+                                                setEditName(event.target.value);
+                                                setNameError("");
+                                            }}
+                                            autoFocus
+                                            className="
+                                                w-full
+                                                rounded-xl
+                                                border
+                                                border-[var(--border)]
+                                                bg-[var(--surface)]
+                                                px-3
+                                                py-2
+                                                text-2xl
+                                                font-bold
+                                                text-[var(--text-primary)]
+                                                outline-none
+                                                focus:border-[var(--primary)]
+                                                focus:ring-2
+                                                focus:ring-[var(--primary)]/20
+                                            "
+                                        />
 
-                        {!isEditing && (
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setEditName(product.name);
-                                    setEditCategory(product.category || "");
-                                    setIsEditing(true);
-                                }}
-                                className="
-                                    rounded-lg
-                                    border
-                                    border-[var(--border)]
-                                    px-3
-                                    py-1.5
-                                    text-sm
-                                    font-medium
-                                    text-[var(--text-secondary)]
-                                    transition
-                                    hover:bg-[var(--surface-accent)]
-                                    hover:text-[var(--text-primary)]
-                                "
-                            >
-                                Editar
-                            </button>
-                        )}
-                    </div>
+                                        {nameError && (
+                                            <p className="mt-2 text-sm text-[var(--danger)]">
+                                                {nameError}
+                                            </p>
+                                        )}
+                                    </div>
 
-                    {isEditing && (
-                        <div
-                            className="
-                                mt-4
-                                max-w-xl
-                                rounded-xl
-                                border
-                                border-[var(--border)]
-                                bg-[var(--surface-accent)]
-                                p-4
-                            "
-                        >
-                            <div className="space-y-4">
-                                <div>
-                                    <label
-                                        htmlFor="edit-product-name"
-                                        className="block text-sm font-medium text-[var(--text-primary)]"
-                                    >
-                                        Nombre
-                                    </label>
-
-                                    <input
-                                        id="edit-product-name"
-                                        type="text"
-                                        value={editName}
-                                        onChange={(event) =>
-                                            setEditName(event.target.value)
-                                        }
+                                    <button
+                                        type="button"
+                                        onClick={() => handleSaveProduct("name")}
+                                        disabled={isSaving || !editName.trim()}
                                         className="
-                                            mt-1
-                                            w-full
-                                            rounded-xl
+                                            rounded-lg
+                                            bg-[var(--primary)]
+                                            px-3
+                                            py-2
+                                            text-sm
+                                            font-semibold
+                                            text-white
+                                            transition
+                                            hover:bg-[var(--primary-hover)]
+                                            disabled:cursor-not-allowed
+                                            disabled:opacity-50
+                                        "
+                                    >
+                                        {isSaving ? "..." : "Guardar"}
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setEditingName(false)}
+                                        className="
+                                            rounded-lg
                                             border
                                             border-[var(--border)]
-                                            bg-[var(--surface)]
-                                            px-4
-                                            py-3
-                                            text-[var(--text-primary)]
-                                            outline-none
-                                            focus:border-[var(--primary)]
-                                            focus:ring-2
-                                            focus:ring-[var(--primary)]/20
+                                            px-3
+                                            py-2
+                                            text-sm
+                                            font-medium
+                                            text-[var(--text-secondary)]
+                                            transition
+                                            hover:bg-[var(--surface-accent)]
+                                            hover:text-[var(--text-primary)]
                                         "
-                                    />
-                                </div>
-
-                                <div>
-                                    <label
-                                        htmlFor="edit-product-category"
-                                        className="block text-sm font-medium text-[var(--text-primary)]"
                                     >
-                                        Categoría
-                                    </label>
+                                        Cancelar
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-3">
+                                    <h1 className="text-3xl font-bold text-[var(--text-primary)]">
+                                        {capitalizeWords(product.name)}
+                                    </h1>
 
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setEditName(product.name);
+                                            setNameError("");
+                                            setEditingCategory(false);
+                                            setEditingName(true);
+                                        }}
+                                        className="
+                                            rounded-lg
+                                            border
+                                            border-[var(--border)]
+                                            px-3
+                                            py-1.5
+                                            text-sm
+                                            font-medium
+                                            text-[var(--text-secondary)]
+                                            transition
+                                            hover:bg-[var(--surface-accent)]
+                                            hover:text-[var(--primary)]
+                                        "
+                                    >
+                                        Editar
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="mt-3 flex items-center gap-2">
+                            <span className="text-sm font-medium text-[var(--text-secondary)]">
+                                Categoría:
+                            </span>
+
+                            {editingCategory ? (
+                                <>
                                     <select
-                                        id="edit-product-category"
                                         value={editCategory}
                                         onChange={(event) =>
                                             setEditCategory(event.target.value)
                                         }
+                                        autoFocus
                                         className="
-                                            mt-1
-                                            w-full
                                             rounded-xl
                                             border
                                             border-[var(--border)]
                                             bg-[var(--surface)]
-                                            px-4
-                                            py-3
+                                            px-3
+                                            py-2
+                                            text-sm
                                             text-[var(--text-primary)]
                                             outline-none
                                             focus:border-[var(--primary)]
@@ -321,37 +381,16 @@ function ProductDetail() {
                                             </option>
                                         ))}
                                     </select>
-                                </div>
-
-                                <div className="flex justify-end gap-3">
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsEditing(false)}
-                                        className="
-                                            rounded-xl
-                                            border
-                                            border-[var(--border)]
-                                            px-4
-                                            py-2
-                                            text-sm
-                                            font-semibold
-                                            text-[var(--text-primary)]
-                                            transition
-                                            hover:bg-[var(--background)]
-                                        "
-                                    >
-                                        Cancelar
-                                    </button>
 
                                     <button
                                         type="button"
-                                        onClick={handleSaveProduct}
-                                        disabled={isSaving || !editName.trim()}
+                                        onClick={() => handleSaveProduct("category")}
+                                        disabled={isSaving}
                                         className="
-                                            rounded-xl
+                                            rounded-lg
                                             bg-[var(--primary)]
-                                            px-4
-                                            py-2
+                                            px-3
+                                            py-1.5
                                             text-sm
                                             font-semibold
                                             text-white
@@ -361,16 +400,68 @@ function ProductDetail() {
                                             disabled:opacity-50
                                         "
                                     >
-                                        {isSaving ? "Guardando..." : "Guardar"}
+                                        {isSaving ? "..." : "Guardar"}
                                     </button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
 
-                    <p className="mt-1 text-[var(--text-secondary)]">
-                        Rendimiento histórico del producto
-                    </p>
+                                    <button
+                                        type="button"
+                                        onClick={() => setEditingCategory(false)}
+                                        className="
+                                            rounded-lg
+                                            border
+                                            border-[var(--border)]
+                                            px-3
+                                            py-1.5
+                                            text-sm
+                                            font-medium
+                                            text-[var(--text-secondary)]
+                                            transition
+                                            hover:bg-[var(--surface-accent)]
+                                            hover:text-[var(--text-primary)]
+                                        "
+                                    >
+                                        Cancelar
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="text-sm font-medium text-[var(--text-primary)]">
+                                        {product.category_name
+                                            ? capitalizeWords(product.category_name)
+                                            : "Sin categoría"}
+                                    </span>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setEditCategory(
+                                                product.category
+                                                    ? String(product.category)
+                                                    : ""
+                                            );
+                                            setEditingName(false);
+                                            setEditingCategory(true);
+                                        }}
+                                        className="
+                                            rounded-lg
+                                            border
+                                            border-[var(--border)]
+                                            px-2.5
+                                            py-1
+                                            text-xs
+                                            font-medium
+                                            text-[var(--text-secondary)]
+                                            transition
+                                            hover:bg-[var(--surface-accent)]
+                                            hover:text-[var(--primary)]
+                                        "
+                                    >
+                                        Editar
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
                 </header>
 
                 <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-accent)] p-5 shadow-sm">
@@ -391,7 +482,7 @@ function ProductDetail() {
                 <section>
                     <div className="mb-3">
                         <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-                            Resumen
+                            Rendimiento histórico
                         </h2>
 
                         <p className="mt-1 text-sm text-[var(--text-secondary)]">

@@ -72,6 +72,27 @@ function Products() {
                 <AppNavigation />
 
                 <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+
+                    <Link
+                        to="/categories"
+                        className="
+                            rounded-xl
+                            border
+                            border-[var(--border)]
+                            bg-[var(--surface)]
+                            px-4
+                            py-3
+                            text-center
+                            font-medium
+                            text-[var(--text-primary)]
+                            transition
+                            hover:border-[var(--primary)]
+                            hover:text-[var(--primary)]
+                        "
+                    >
+                        Categorías
+                    </Link>
+                    
                     <input
                         type="search"
                         placeholder="Buscar producto..."
@@ -93,26 +114,6 @@ function Products() {
                             focus:ring-[var(--primary)]/20
                         "
                     />
-
-                    <Link
-                        to="/categories"
-                        className="
-                            rounded-xl
-                            border
-                            border-[var(--border)]
-                            bg-[var(--surface)]
-                            px-4
-                            py-3
-                            text-center
-                            font-medium
-                            text-[var(--text-primary)]
-                            transition
-                            hover:border-[var(--primary)]
-                            hover:text-[var(--primary)]
-                        "
-                    >
-                        Categorías
-                    </Link>
 
                     <select
                         value={sort}

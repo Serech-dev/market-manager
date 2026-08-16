@@ -289,6 +289,32 @@ class ProductAnalyticsView(generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         product = self.get_object()
 
+        name = request.data.get("name")
+
+        if name is not None:
+            name = " ".join(
+                name.strip().lower().split()
+            )
+
+            if not name:
+                return Response(
+                    {"name": "El nombre no puede estar vacío."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            existing_product = Product.objects.filter(
+                user=request.user,
+                name=name,
+            ).exclude(
+                pk=product.pk,
+            ).first()
+
+            if existing_product:
+                return Response(
+                    {"name": "El producto ya existe."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         serializer = ProductSerializer(
             product,
             data=request.data,
