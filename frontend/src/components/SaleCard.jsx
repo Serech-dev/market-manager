@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "../utils/formatCurrency";
-import { formatProductName } from "../utils/formatProductName";
+import { capitalizeWords } from "../utils/capitalizeWords";
 
 
 function SaleCard({ sale, onDelete, showActions = true }) {
@@ -12,7 +12,7 @@ function SaleCard({ sale, onDelete, showActions = true }) {
             <div className="flex justify-between items-start mb-4">
                 <div>
                     <h3 className="text-lg font-bold text-gray-900">
-                        {formatProductName(sale.product?.name || sale.description)}
+                        {capitalizeWords(sale.product?.name || sale.description)}
                     </h3>
 
                     <p className="text-sm text-gray-500">

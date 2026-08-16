@@ -5,34 +5,24 @@ from .models import Product, ProductCategory, Sale
 
 class ProductSerializer(serializers.ModelSerializer):
     sales_count = serializers.IntegerField(read_only=True)
-
     gross = serializers.DecimalField(
         max_digits=12,
         decimal_places=2,
         read_only=True,
     )
-
     investment = serializers.DecimalField(
         max_digits=12,
         decimal_places=2,
         read_only=True,
     )
-
     earnings = serializers.DecimalField(
         max_digits=12,
         decimal_places=2,
         read_only=True,
     )
-
     last_sale = serializers.DateField(
         allow_null=True,
         read_only=True,
-    )
-
-    category = serializers.PrimaryKeyRelatedField(
-        queryset=ProductCategory.objects.all(),
-        required=False,
-        allow_null=True,
     )
 
     class Meta:
@@ -49,8 +39,12 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             "id",
-            "user",
             "active",
+            "sales_count",
+            "gross",
+            "investment",
+            "earnings",
+            "last_sale",
         ]
 
     def validate(self, attrs):
@@ -193,6 +187,9 @@ class SaleSerializer(serializers.ModelSerializer):
 class ProductAnalyticsSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
+    category = serializers.IntegerField(
+        allow_null=True,
+    )
     sales_count = serializers.IntegerField()
     gross = serializers.DecimalField(
         max_digits=12,

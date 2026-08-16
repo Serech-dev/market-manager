@@ -75,9 +75,41 @@ class ProductCategoryListCreateView(generics.ListCreateAPIView):
             user=self.request.user,
         ).order_by("name")
 
-    def perform_create(self, serializer):
-        serializer.save(
-            user=self.request.user,
+    def create(self, request, *args, **kwargs):
+        name = " ".join(
+            request.data.get("name", "").strip().lower().split()
+        )
+
+        if not name:
+            return Response(
+                {"name": "El nombre no puede estar vacío."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        existing_category = ProductCategory.objects.filter(
+            user=request.user,
+            name=name,
+        ).first()
+
+        if existing_category:
+            return Response(
+                {"name": "La categoría ya existe."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = self.get_serializer(
+            data={"name": name}
+        )
+
+        serializer.is_valid(raise_exception=True)
+
+        category = serializer.save(
+            user=request.user
+        )
+
+        return Response(
+            self.get_serializer(category).data,
+            status=status.HTTP_201_CREATED,
         )
 
 
@@ -170,7 +202,7 @@ class ProductListView(generics.ListCreateAPIView):
         )
 
     
-class ProductAnalyticsView(generics.RetrieveAPIView):
+class ProductAnalyticsView(generics.RetrieveUpdateAPIView):
     serializer_class = ProductAnalyticsSerializer
     permission_classes = [IsAuthenticated]
 
@@ -178,6 +210,21 @@ class ProductAnalyticsView(generics.RetrieveAPIView):
         return Product.objects.filter(
             user=self.request.user,
         )
+
+    def update(self, request, *args, **kwargs):
+        product = self.get_object()
+
+        serializer = ProductSerializer(
+            product,
+            data=request.data,
+            partial=True,
+            context={"request": request},
+        )
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
         product = self.get_object()
@@ -188,6 +235,7 @@ class ProductAnalyticsView(generics.RetrieveAPIView):
         analytics = {
             "id": product.id,
             "name": product.name,
+            "category": product.category_id,
             "sales_count": sales.count(),
             "gross": sales.aggregate(
                 total=Coalesce(

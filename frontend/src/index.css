@@ -36,9 +36,9 @@
 }
 
 [data-theme="cherry"] {
-  --background: #f6e3e9;
+  --background: #f3dee5;
   --surface: #fff8fa;
-  --surface-accent: #f3d2dc;
+  --surface-accent: #e9cbd3;
   --surface-muted: #fbeef2;
 
   --text-primary: #482832;
@@ -92,7 +92,7 @@
 }
 
 [data-theme="forest"] {
-  --background: #e5eee7;
+  --background: #eeede5;
   --surface: #f7fbf8;
   --surface-accent: #d5e5da;
   --surface-muted: #edf5ef;

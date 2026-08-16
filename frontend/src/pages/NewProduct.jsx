@@ -1,14 +1,32 @@
-import { useState } from "react";
+import toast from "react-hot-toast";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api, { getApiError } from "../services/api";
+import { capitalizeWords } from "../utils/capitalizeWords";
+
 
 function NewProduct() {
     const navigate = useNavigate();
 
     const [name, setName] = useState("");
+    const [category, setCategory] = useState("");
+    const [categories, setCategories] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
 
+    useEffect(() => {
+        async function fetchCategories() {
+            try {
+                const response = await api.get("product-categories/");
+                setCategories(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        fetchCategories();
+    }, []);
+    
     async function handleSubmit(event) {
         event.preventDefault();
 
@@ -18,8 +36,10 @@ function NewProduct() {
         try {
             await api.post("products/", {
                 name,
+                category: category || null,
             });
 
+            toast.success("Producto creado.");
             navigate("/products");
         } catch (error) {
             console.error(error);
@@ -99,6 +119,47 @@ function NewProduct() {
                             {error}
                         </p>
                     )}
+
+                    <div>
+                        <label
+                            htmlFor="category"
+                            className="block text-sm font-medium text-[var(--text-primary)]"
+                        >
+                            Categoría
+                        </label>
+
+                        <select
+                            id="category"
+                            value={category}
+                            onChange={(event) => setCategory(event.target.value)}
+                            className="
+                                mt-1
+                                w-full
+                                rounded-xl
+                                border
+                                border-[var(--border)]
+                                bg-[var(--surface)]
+                                px-4
+                                py-3
+                                text-[var(--text-primary)]
+                                outline-none
+                                transition
+                                focus:border-[var(--primary)]
+                                focus:ring-2
+                                focus:ring-[var(--primary)]/20
+                            "
+                        >
+                            <option value="">
+                                Sin categoría
+                            </option>
+
+                            {categories.map((item) => (
+                                <option key={item.id} value={item.id}>
+                                    {capitalizeWords(item.name)}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
 
                     <div className="mt-6 flex gap-3">
                         <button

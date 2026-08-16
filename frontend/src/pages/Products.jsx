@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import CreateMenu from "../components/CreateMenu";
 import api, { getApiError } from "../services/api";
 import AccountMenu from "../components/AccountMenu";
 import AppNavigation from "../components/AppNavigation";
 import { formatCurrency } from "../utils/formatCurrency";
-import { formatProductName } from "../utils/formatProductName";
+import { capitalizeWords } from "../utils/capitalizeWords";
 
 
 function Products() {
@@ -64,18 +65,7 @@ function Products() {
                     <div className="flex shrink-0 flex-col items-center gap-2">
                         <AccountMenu user={user} />
 
-                        <Link
-                            to="/products/new"
-                            className="
-                                text-sm
-                                font-medium
-                                text-[var(--primary)]
-                                transition
-                                hover:text-[var(--primary-hover)]
-                            "
-                        >
-                            + Nuevo producto
-                        </Link>
+                        <CreateMenu />
                     </div>
                 </header>
 
@@ -177,7 +167,7 @@ function Products() {
                                 "
                             >
                                 <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-                                    {formatProductName(product.name)}
+                                    {capitalizeWords(product.name)}
                                 </h2>
 
                                 <div className="mt-4 space-y-2 text-sm">

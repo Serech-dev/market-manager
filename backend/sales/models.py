@@ -54,6 +54,14 @@ class Product(models.Model):
         auto_now_add=True,
     )
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "name"],
+                name="unique_product_per_user",
+            )
+        ]
+
     def save(self, *args, **kwargs):
         self.name = " ".join(
             self.name.strip().lower().split()
