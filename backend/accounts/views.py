@@ -1,11 +1,11 @@
+from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status
 
-from .serializers import LoginSerializer
+from .serializers import LoginSerializer, RegisterSerializer
 
 
 class LoginView(APIView):
@@ -43,4 +43,26 @@ class LogoutView(APIView):
         return Response(
             {"detail": "Sesión cerrada correctamente."},
             status=status.HTTP_200_OK,
+        )
+
+class RegisterView(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = RegisterSerializer(
+            data=request.data
+        )
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.save()
+
+        return Response(
+            {
+                "user": {
+                    "id": user.id,
+                    "email": user.email,
+                }
+            },
+            status=status.HTTP_201_CREATED,
         )

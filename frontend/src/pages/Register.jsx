@@ -4,47 +4,45 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 
-function Login() {
+function Register() {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [passwordConfirm, setPasswordConfirm] = useState("");
+
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     async function handleSubmit(event) {
         event.preventDefault();
 
+        if (password !== passwordConfirm) {
+            toast.error("Las contraseñas no coinciden.");
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
-            const response = await api.post(
-                "auth/login/",
+            await api.post(
+                "auth/register/",
                 {
                     email,
                     password,
+                    password_confirm: passwordConfirm,
                 }
             );
 
-            localStorage.setItem(
-                "authToken",
-                response.data.token
-            );
+            toast.success("Cuenta creada.");
 
-            localStorage.setItem(
-                "authUser",
-                JSON.stringify(response.data.user)
-            );
-
-            toast.success("Sesión iniciada.");
-
-            navigate("/");
+            navigate("/login");
         } catch (error) {
             console.error(error);
 
             toast.error(
                 getApiError(
                     error,
-                    "No se pudo iniciar sesión."
+                    "No se pudo crear la cuenta."
                 )
             );
         } finally {
@@ -70,7 +68,7 @@ function Login() {
                         </h1>
 
                         <p className="mt-1 text-[var(--text-secondary)]">
-                            Iniciá sesión para continuar.
+                            Crear una cuenta.
                         </p>
                     </div>
 
@@ -90,9 +88,7 @@ function Login() {
                                 id="email"
                                 type="email"
                                 value={email}
-                                onChange={(event) =>
-                                    setEmail(event.target.value)
-                                }
+                                onChange={(event) => setEmail(event.target.value)}
                                 autoComplete="email"
                                 required
                                 className="
@@ -125,10 +121,41 @@ function Login() {
                                 id="password"
                                 type="password"
                                 value={password}
-                                onChange={(event) =>
-                                    setPassword(event.target.value)
-                                }
-                                autoComplete="current-password"
+                                onChange={(event) => setPassword(event.target.value)}
+                                autoComplete="new-password"
+                                required
+                                className="
+                                    w-full
+                                    rounded-xl
+                                    border
+                                    border-[var(--border)]
+                                    bg-[var(--background)]
+                                    px-4
+                                    py-3
+                                    text-[var(--text-primary)]
+                                    outline-none
+                                    transition
+                                    focus:border-[var(--primary)]
+                                    focus:ring-2
+                                    focus:ring-[var(--primary)]/20
+                                "
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label
+                                htmlFor="password-confirm"
+                                className="block text-sm font-medium text-[var(--text-primary)]"
+                            >
+                                Repetir contraseña
+                            </label>
+
+                            <input
+                                id="password-confirm"
+                                type="password"
+                                value={passwordConfirm}
+                                onChange={(event) => setPasswordConfirm(event.target.value)}
+                                autoComplete="new-password"
                                 required
                                 className="
                                     w-full
@@ -167,8 +194,8 @@ function Login() {
                             "
                         >
                             {isSubmitting
-                                ? "Ingresando..."
-                                : "Iniciar sesión"}
+                                ? "Creando cuenta..."
+                                : "Crear cuenta"}
                         </button>
                     </form>
                 </div>
@@ -177,4 +204,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default Register;

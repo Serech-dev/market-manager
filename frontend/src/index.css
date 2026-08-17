@@ -7,34 +7,6 @@
   -webkit-font-smoothing: antialiased;
 }
 
-[data-theme="lavender"] {
-  --background: #f1f0f7;
-  --surface: #faf9fd;
-  --surface-accent: #e8e5f2;
-  --surface-muted: #f5f3fa;
-
-  --text-primary: #302d3d;
-  --text-secondary: #777287;
-
-  --border: #d9d5e4;
-
-  --primary: #7667a8;
-  --primary-hover: #655795;
-
-  --success: #648b70;
-  --success-text: #3f664c;
-  --success-bg: #dcebdc;
-  --success-border: #c4ddc7;
-
-  --warning: #b88745;
-  --danger: #b95f68;
-  --danger-bg: #f3dfe2;
-  --danger-border: #e4c2c7;
-
-  --control-icon: #777287;
-  --control-icon-hover: #7667a8;
-}
-
 [data-theme="cherry"] {
   --background: #f3dee5;
   --surface: #e3d2d7;
