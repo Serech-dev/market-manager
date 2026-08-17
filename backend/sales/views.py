@@ -286,6 +286,56 @@ class ProductAnalyticsView(generics.RetrieveUpdateAPIView):
             user=self.request.user,
         )
 
+    def get_analytics(self, product, request):
+        sales = Sale.objects.filter(product=product)
+        sales = apply_period_filter(sales, request.query_params)
+
+        analytics = {
+            "id": product.id,
+            "name": product.name,
+            "category": product.category_id,
+            "category_name": (
+                product.category.name
+                if product.category
+                else None
+            ),
+            "price": product.price,
+            "investment_price": product.investment_price,
+            "sales_count": sales.count(),
+            "gross": sales.aggregate(
+                total=Coalesce(
+                    Sum("gross_amount"),
+                    Value(Decimal("0")),
+                )
+            )["total"],
+            "investment": sales.aggregate(
+                total=Coalesce(
+                    Sum("investment_amount"),
+                    Value(Decimal("0")),
+                )
+            )["total"],
+            "average_sale": sales.aggregate(
+                average=Coalesce(
+                    Avg("gross_amount"),
+                    Value(Decimal("0")),
+                )
+            )["average"],
+            "first_sale": sales.order_by("date").values_list(
+                "date",
+                flat=True,
+            ).first(),
+            "last_sale": sales.order_by("-date").values_list(
+                "date",
+                flat=True,
+            ).first(),
+        }
+
+        analytics["earnings"] = (
+            analytics["gross"] - analytics["investment"]
+        )
+
+        return analytics
+
     def update(self, request, *args, **kwargs):
         product = self.get_object()
 
@@ -325,50 +375,16 @@ class ProductAnalyticsView(generics.RetrieveUpdateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        return Response(serializer.data)
+        analytics = self.get_analytics(product, request)
+
+        return Response(
+            self.get_serializer(analytics).data
+        )
 
     def retrieve(self, request, *args, **kwargs):
         product = self.get_object()
 
-        sales = Sale.objects.filter(product=product)
-        sales = apply_period_filter(sales, request.query_params)
-
-        analytics = {
-            "id": product.id,
-            "name": product.name,
-            "category": product.category_id,
-            "sales_count": sales.count(),
-            "gross": sales.aggregate(
-                total=Coalesce(
-                    Sum("gross_amount"),
-                    Value(Decimal("0")),
-                )
-            )["total"],
-            "investment": sales.aggregate(
-                total=Coalesce(
-                    Sum("investment_amount"),
-                    Value(Decimal("0")),
-                )
-            )["total"],
-            "average_sale": sales.aggregate(
-                average=Coalesce(
-                    Avg("gross_amount"),
-                    Value(Decimal("0")),
-                )
-            )["average"],
-            "first_sale": sales.order_by("date").values_list(
-                "date",
-                flat=True,
-            ).first(),
-            "last_sale": sales.order_by("-date").values_list(
-                "date",
-                flat=True,
-            ).first(),
-        }
-
-        analytics["earnings"] = (
-            analytics["gross"] - analytics["investment"]
-        )
+        analytics = self.get_analytics(product, request)
 
         serializer = self.get_serializer(analytics)
 

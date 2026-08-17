@@ -275,6 +275,16 @@ class ProductAnalyticsSerializer(serializers.Serializer):
         max_digits=12,
         decimal_places=2,
     )
+    price = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        allow_null=True,
+    )
+    investment_price = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        allow_null=True,
+    )
     average_sale = serializers.DecimalField(
         max_digits=12,
         decimal_places=2,
@@ -283,6 +293,9 @@ class ProductAnalyticsSerializer(serializers.Serializer):
         allow_null=True,
     )
     last_sale = serializers.DateField(
+        allow_null=True,
+    )
+    category_name = serializers.CharField(
         allow_null=True,
     )
 

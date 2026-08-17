@@ -27,6 +27,15 @@ function ProductDetail() {
     const [categories, setCategories] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
 
+    const [editingPrice, setEditingPrice] = useState(false);
+    const [editingInvestmentPrice, setEditingInvestmentPrice] = useState(false);
+
+    const [editPrice, setEditPrice] = useState("");
+    const [editInvestmentPrice, setEditInvestmentPrice] = useState("");
+
+    const [priceError, setPriceError] = useState("");
+    const [investmentPriceError, setInvestmentPriceError] = useState("");
+
     const [selectedDate, setSelectedDate] = useState(
         new Date().toISOString().split("T")[0]
     );
@@ -67,17 +76,47 @@ function ProductDetail() {
             setNameError("");
         }
 
+        if (field === "price") {
+            setPriceError("");
+        }
+
+        if (field === "investment_price") {
+            setInvestmentPriceError("");
+        }
+
+        let updates = {};
+
+        if (field === "name") {
+            updates = {
+                name: editName,
+            };
+        }
+
+        if (field === "category") {
+            updates = {
+                category: editCategory || null,
+            };
+        }
+
+        if (field === "price") {
+            updates = {
+                price: editPrice === "" ? null : editPrice,
+            };
+        }
+
+        if (field === "investment_price") {
+            updates = {
+                investment_price:
+                    editInvestmentPrice === ""
+                        ? null
+                        : editInvestmentPrice,
+            };
+        }
+
         try {
             const response = await api.patch(
                 `products/${id}/`,
-                {
-                    name: field === "name"
-                        ? editName
-                        : product.name,
-                    category: field === "category"
-                        ? editCategory || null
-                        : product.category,
-                }
+                updates
             );
 
             setProduct((current) => ({
@@ -93,24 +132,31 @@ function ProductDetail() {
                 setEditingCategory(false);
             }
 
+            if (field === "price") {
+                setEditingPrice(false);
+            }
+
+            if (field === "investment_price") {
+                setEditingInvestmentPrice(false);
+            }
+
             toast.success("Producto actualizado.");
         } catch (error) {
             console.error(error);
 
+            const message = getApiError(
+                error,
+                "No se pudo actualizar el producto."
+            );
+
             if (field === "name") {
-                setNameError(
-                    getApiError(
-                        error,
-                        "No se pudo actualizar el nombre."
-                    )
-                );
+                setNameError(message);
+            } else if (field === "price") {
+                setPriceError(message);
+            } else if (field === "investment_price") {
+                setInvestmentPriceError(message);
             } else {
-                toast.error(
-                    getApiError(
-                        error,
-                        "No se pudo actualizar el producto."
-                    )
-                );
+                toast.error(message);
             }
         } finally {
             setIsSaving(false);
@@ -230,236 +276,483 @@ function ProductDetail() {
                         ← Productos
                     </Link>
 
-                    <div className="mt-4">
-                        <div className="flex items-center gap-2">
-                            {editingName ? (
-                                <div className="flex items-start gap-2">
-                                    <div className="w-full max-w-md">
-                                        <input
-                                            type="text"
-                                            value={editName}
-                                            onChange={(event) => {
-                                                setEditName(event.target.value);
+                    <div className="mt-4 grid gap-5 md:grid-cols-[1fr_auto]">
+                        {/* Product information */}
+                        <div className="min-w-0">
+                            <div className="flex items-center gap-3">
+                                {editingName ? (
+                                    <div className="flex items-start gap-2">
+                                        <div className="w-full max-w-md">
+                                            <input
+                                                type="text"
+                                                value={editName}
+                                                onChange={(event) => {
+                                                    setEditName(event.target.value);
+                                                    setNameError("");
+                                                }}
+                                                autoFocus
+                                                className="
+                                                    w-full
+                                                    rounded-xl
+                                                    border
+                                                    border-[var(--border)]
+                                                    bg-[var(--surface)]
+                                                    px-3
+                                                    py-2
+                                                    text-2xl
+                                                    font-bold
+                                                    text-[var(--text-primary)]
+                                                    outline-none
+                                                    focus:border-[var(--primary)]
+                                                    focus:ring-2
+                                                    focus:ring-[var(--primary)]/20
+                                                "
+                                            />
+
+                                            {nameError && (
+                                                <p className="mt-2 text-sm text-[var(--danger)]">
+                                                    {nameError}
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => handleSaveProduct("name")}
+                                            disabled={isSaving || !editName.trim()}
+                                            className="
+                                                rounded-lg
+                                                bg-[var(--primary)]
+                                                px-3
+                                                py-2
+                                                text-sm
+                                                font-semibold
+                                                text-white
+                                                transition
+                                                hover:bg-[var(--primary-hover)]
+                                                disabled:cursor-not-allowed
+                                                disabled:opacity-50
+                                            "
+                                        >
+                                            {isSaving ? "..." : "Guardar"}
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => setEditingName(false)}
+                                            className="
+                                                rounded-lg
+                                                border
+                                                border-[var(--border)]
+                                                px-3
+                                                py-2
+                                                text-sm
+                                                font-medium
+                                                text-[var(--text-secondary)]
+                                                transition
+                                                hover:bg-[var(--surface-accent)]
+                                                hover:text-[var(--text-primary)]
+                                            "
+                                        >
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <h1 className="text-3xl font-bold text-[var(--text-primary)]">
+                                            {capitalizeWords(product.name)}
+                                        </h1>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setEditName(product.name);
                                                 setNameError("");
+                                                setEditingCategory(false);
+                                                setEditingPrice(false);
+                                                setEditingInvestmentPrice(false);
+                                                setEditingName(true);
                                             }}
+                                            className="
+                                                rounded-lg
+                                                border
+                                                border-[var(--border)]
+                                                px-3
+                                                py-1.5
+                                                text-sm
+                                                font-medium
+                                                text-[var(--text-secondary)]
+                                                transition
+                                                hover:bg-[var(--surface-accent)]
+                                                hover:text-[var(--primary)]
+                                            "
+                                        >
+                                            Editar
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+
+                            <div className="mt-3 flex items-center gap-2">
+                                <span className="text-sm font-medium text-[var(--text-secondary)]">
+                                    Categoría:
+                                </span>
+
+                                {editingCategory ? (
+                                    <>
+                                        <select
+                                            value={editCategory}
+                                            onChange={(event) =>
+                                                setEditCategory(event.target.value)
+                                            }
                                             autoFocus
                                             className="
-                                                w-full
                                                 rounded-xl
                                                 border
                                                 border-[var(--border)]
                                                 bg-[var(--surface)]
                                                 px-3
                                                 py-2
-                                                text-2xl
-                                                font-bold
+                                                text-sm
                                                 text-[var(--text-primary)]
                                                 outline-none
                                                 focus:border-[var(--primary)]
                                                 focus:ring-2
                                                 focus:ring-[var(--primary)]/20
                                             "
-                                        />
+                                        >
+                                            <option value="">
+                                                Sin categoría
+                                            </option>
 
-                                        {nameError && (
-                                            <p className="mt-2 text-sm text-[var(--danger)]">
-                                                {nameError}
-                                            </p>
-                                        )}
-                                    </div>
+                                            {categories.map((item) => (
+                                                <option
+                                                    key={item.id}
+                                                    value={item.id}
+                                                >
+                                                    {capitalizeWords(item.name)}
+                                                </option>
+                                            ))}
+                                        </select>
 
-                                    <button
-                                        type="button"
-                                        onClick={() => handleSaveProduct("name")}
-                                        disabled={isSaving || !editName.trim()}
-                                        className="
-                                            rounded-lg
-                                            bg-[var(--primary)]
-                                            px-3
-                                            py-2
-                                            text-sm
-                                            font-semibold
-                                            text-white
-                                            transition
-                                            hover:bg-[var(--primary-hover)]
-                                            disabled:cursor-not-allowed
-                                            disabled:opacity-50
-                                        "
-                                    >
-                                        {isSaving ? "..." : "Guardar"}
-                                    </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleSaveProduct("category")}
+                                            disabled={isSaving}
+                                            className="
+                                                rounded-lg
+                                                bg-[var(--primary)]
+                                                px-3
+                                                py-1.5
+                                                text-sm
+                                                font-semibold
+                                                text-white
+                                                transition
+                                                hover:bg-[var(--primary-hover)]
+                                                disabled:cursor-not-allowed
+                                                disabled:opacity-50
+                                            "
+                                        >
+                                            {isSaving ? "..." : "Guardar"}
+                                        </button>
 
-                                    <button
-                                        type="button"
-                                        onClick={() => setEditingName(false)}
-                                        className="
-                                            rounded-lg
-                                            border
-                                            border-[var(--border)]
-                                            px-3
-                                            py-2
-                                            text-sm
-                                            font-medium
-                                            text-[var(--text-secondary)]
-                                            transition
-                                            hover:bg-[var(--surface-accent)]
-                                            hover:text-[var(--text-primary)]
-                                        "
-                                    >
-                                        Cancelar
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-3">
-                                    <h1 className="text-3xl font-bold text-[var(--text-primary)]">
-                                        {capitalizeWords(product.name)}
-                                    </h1>
+                                        <button
+                                            type="button"
+                                            onClick={() => setEditingCategory(false)}
+                                            className="
+                                                rounded-lg
+                                                border
+                                                border-[var(--border)]
+                                                px-3
+                                                py-1.5
+                                                text-sm
+                                                font-medium
+                                                text-[var(--text-secondary)]
+                                                transition
+                                                hover:bg-[var(--surface-accent)]
+                                                hover:text-[var(--text-primary)]
+                                            "
+                                        >
+                                            Cancelar
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="text-sm font-medium text-[var(--text-primary)]">
+                                            {product.category_name
+                                                ? capitalizeWords(product.category_name)
+                                                : "Sin categoría"}
+                                        </span>
 
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setEditName(product.name);
-                                            setNameError("");
-                                            setEditingCategory(false);
-                                            setEditingName(true);
-                                        }}
-                                        className="
-                                            rounded-lg
-                                            border
-                                            border-[var(--border)]
-                                            px-3
-                                            py-1.5
-                                            text-sm
-                                            font-medium
-                                            text-[var(--text-secondary)]
-                                            transition
-                                            hover:bg-[var(--surface-accent)]
-                                            hover:text-[var(--primary)]
-                                        "
-                                    >
-                                        Editar
-                                    </button>
-                                </div>
-                            )}
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setEditCategory(
+                                                    product.category
+                                                        ? String(product.category)
+                                                        : ""
+                                                );
+                                                setEditingName(false);
+                                                setEditingPrice(false);
+                                                setEditingInvestmentPrice(false);
+                                                setEditingCategory(true);
+                                            }}
+                                            className="
+                                                rounded-lg
+                                                border
+                                                border-[var(--border)]
+                                                px-2.5
+                                                py-1
+                                                text-xs
+                                                font-medium
+                                                text-[var(--text-secondary)]
+                                                transition
+                                                hover:bg-[var(--surface-accent)]
+                                                hover:text-[var(--primary)]
+                                            "
+                                        >
+                                            Editar
+                                        </button>
+                                    </>
+                                )}
+                            </div>
                         </div>
 
-                        <div className="mt-3 flex items-center gap-2">
-                            <span className="text-sm font-medium text-[var(--text-secondary)]">
-                                Categoría:
-                            </span>
+                        {/* Prices */}
+                        <div className="flex flex-col gap-4 md:min-w-[240px] md:justify-center">
+                            {/* Price */}
+                            <div>
+                                <p className="text-sm font-medium text-[var(--text-secondary)]">
+                                    Precio por unidad
+                                </p>
 
-                            {editingCategory ? (
-                                <>
-                                    <select
-                                        value={editCategory}
-                                        onChange={(event) =>
-                                            setEditCategory(event.target.value)
-                                        }
-                                        autoFocus
-                                        className="
-                                            rounded-xl
-                                            border
-                                            border-[var(--border)]
-                                            bg-[var(--surface)]
-                                            px-3
-                                            py-2
-                                            text-sm
-                                            text-[var(--text-primary)]
-                                            outline-none
-                                            focus:border-[var(--primary)]
-                                            focus:ring-2
-                                            focus:ring-[var(--primary)]/20
-                                        "
-                                    >
-                                        <option value="">
-                                            Sin categoría
-                                        </option>
+                                {editingPrice ? (
+                                    <div className="mt-1">
+                                        <div className="flex gap-2">
+                                            <div className="relative flex-1">
+                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]">
+                                                    $
+                                                </span>
 
-                                        {categories.map((item) => (
-                                            <option key={item.id} value={item.id}>
-                                                {capitalizeWords(item.name)}
-                                            </option>
-                                        ))}
-                                    </select>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    step="0.01"
+                                                    value={editPrice}
+                                                    onChange={(event) => {
+                                                        setEditPrice(event.target.value);
+                                                        setPriceError("");
+                                                    }}
+                                                    autoFocus
+                                                    className="
+                                                        w-full
+                                                        rounded-xl
+                                                        border
+                                                        border-[var(--border)]
+                                                        bg-[var(--surface)]
+                                                        py-2
+                                                        pl-7
+                                                        pr-3
+                                                        text-[var(--text-primary)]
+                                                        outline-none
+                                                        focus:border-[var(--primary)]
+                                                        focus:ring-2
+                                                        focus:ring-[var(--primary)]/20
+                                                    "
+                                                />
+                                            </div>
 
-                                    <button
-                                        type="button"
-                                        onClick={() => handleSaveProduct("category")}
-                                        disabled={isSaving}
-                                        className="
-                                            rounded-lg
-                                            bg-[var(--primary)]
-                                            px-3
-                                            py-1.5
-                                            text-sm
-                                            font-semibold
-                                            text-white
-                                            transition
-                                            hover:bg-[var(--primary-hover)]
-                                            disabled:cursor-not-allowed
-                                            disabled:opacity-50
-                                        "
-                                    >
-                                        {isSaving ? "..." : "Guardar"}
-                                    </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleSaveProduct("price")}
+                                                disabled={isSaving}
+                                                className="
+                                                    rounded-lg
+                                                    bg-[var(--primary)]
+                                                    px-3
+                                                    text-sm
+                                                    font-semibold
+                                                    text-white
+                                                    hover:bg-[var(--primary-hover)]
+                                                    disabled:opacity-50
+                                                "
+                                            >
+                                                {isSaving ? "..." : "Guardar"}
+                                            </button>
+                                        </div>
 
-                                    <button
-                                        type="button"
-                                        onClick={() => setEditingCategory(false)}
-                                        className="
-                                            rounded-lg
-                                            border
-                                            border-[var(--border)]
-                                            px-3
-                                            py-1.5
-                                            text-sm
-                                            font-medium
-                                            text-[var(--text-secondary)]
-                                            transition
-                                            hover:bg-[var(--surface-accent)]
-                                            hover:text-[var(--text-primary)]
-                                        "
-                                    >
-                                        Cancelar
-                                    </button>
-                                </>
-                            ) : (
-                                <>
-                                    <span className="text-sm font-medium text-[var(--text-primary)]">
-                                        {product.category_name
-                                            ? capitalizeWords(product.category_name)
-                                            : "Sin categoría"}
-                                    </span>
+                                        {priceError && (
+                                            <p className="mt-2 text-sm text-[var(--danger)]">
+                                                {priceError}
+                                            </p>
+                                        )}
 
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setEditCategory(
-                                                product.category
-                                                    ? String(product.category)
-                                                    : ""
-                                            );
-                                            setEditingName(false);
-                                            setEditingCategory(true);
-                                        }}
-                                        className="
-                                            rounded-lg
-                                            border
-                                            border-[var(--border)]
-                                            px-2.5
-                                            py-1
-                                            text-xs
-                                            font-medium
-                                            text-[var(--text-secondary)]
-                                            transition
-                                            hover:bg-[var(--surface-accent)]
-                                            hover:text-[var(--primary)]
-                                        "
-                                    >
-                                        Editar
-                                    </button>
-                                </>
-                            )}
+                                        <button
+                                            type="button"
+                                            onClick={() => setEditingPrice(false)}
+                                            className="
+                                                mt-2
+                                                text-sm
+                                                font-medium
+                                                text-[var(--text-secondary)]
+                                                hover:text-[var(--text-primary)]
+                                            "
+                                        >
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="mt-1 flex items-center gap-3">
+                                        <span className="text-lg font-bold text-[var(--success)]">
+                                            {product.price != null
+                                                ? formatCurrency(product.price)
+                                                : "Sin establecer"}
+                                        </span>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setEditPrice(
+                                                    product.price != null
+                                                        ? String(product.price)
+                                                        : ""
+                                                );
+                                                setEditingName(false);
+                                                setEditingCategory(false);
+                                                setEditingInvestmentPrice(false);
+                                                setEditingPrice(true);
+                                            }}
+                                            className="
+                                                text-xs
+                                                font-medium
+                                                text-[var(--primary)]
+                                                hover:opacity-80
+                                            "
+                                        >
+                                            Editar
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Investment */}
+                            <div>
+                                <p className="text-sm font-medium text-[var(--text-secondary)]">
+                                    Inversión por unidad
+                                </p>
+
+                                {editingInvestmentPrice ? (
+                                    <div className="mt-1">
+                                        <div className="flex gap-2">
+                                            <div className="relative flex-1">
+                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]">
+                                                    $
+                                                </span>
+
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    step="0.01"
+                                                    value={editInvestmentPrice}
+                                                    onChange={(event) => {
+                                                        setEditInvestmentPrice(event.target.value);
+                                                        setInvestmentPriceError("");
+                                                    }}
+                                                    autoFocus
+                                                    className="
+                                                        w-full
+                                                        rounded-xl
+                                                        border
+                                                        border-[var(--border)]
+                                                        bg-[var(--surface)]
+                                                        py-2
+                                                        pl-7
+                                                        pr-3
+                                                        text-[var(--text-primary)]
+                                                        outline-none
+                                                        focus:border-[var(--primary)]
+                                                        focus:ring-2
+                                                        focus:ring-[var(--primary)]/20
+                                                    "
+                                                />
+                                            </div>
+
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleSaveProduct("investment_price")
+                                                }
+                                                disabled={isSaving}
+                                                className="
+                                                    rounded-lg
+                                                    bg-[var(--primary)]
+                                                    px-3
+                                                    text-sm
+                                                    font-semibold
+                                                    text-white
+                                                    hover:bg-[var(--primary-hover)]
+                                                    disabled:opacity-50
+                                                "
+                                            >
+                                                {isSaving ? "..." : "Guardar"}
+                                            </button>
+                                        </div>
+
+                                        {investmentPriceError && (
+                                            <p className="mt-2 text-sm text-[var(--danger)]">
+                                                {investmentPriceError}
+                                            </p>
+                                        )}
+
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setEditingInvestmentPrice(false)
+                                            }
+                                            className="
+                                                mt-2
+                                                text-sm
+                                                font-medium
+                                                text-[var(--text-secondary)]
+                                                hover:text-[var(--text-primary)]
+                                            "
+                                        >
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="mt-1 flex items-center gap-3">
+                                        <span className="text-lg font-bold text-[var(--success)]">
+                                            {product.investment_price != null
+                                                ? formatCurrency(product.investment_price)
+                                                : "Sin establecer"}
+                                        </span>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setEditInvestmentPrice(
+                                                    product.investment_price != null
+                                                        ? String(product.investment_price)
+                                                        : ""
+                                                );
+                                                setEditingName(false);
+                                                setEditingCategory(false);
+                                                setEditingPrice(false);
+                                                setEditingInvestmentPrice(true);
+                                            }}
+                                            className="
+                                                text-xs
+                                                font-medium
+                                                text-[var(--primary)]
+                                                hover:opacity-80
+                                            "
+                                        >
+                                            Editar
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </header>
