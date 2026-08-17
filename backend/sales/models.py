@@ -33,11 +33,9 @@ class Product(models.Model):
         on_delete=models.CASCADE,
         related_name="products",
     )
-
     name = models.CharField(
         max_length=255,
     )
-    
     category = models.ForeignKey(
         ProductCategory,
         on_delete=models.SET_NULL,
@@ -45,11 +43,21 @@ class Product(models.Model):
         blank=True,
         related_name="products",
     )
-
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+    investment_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
     active = models.BooleanField(
         default=True,
     )
-
     created_at = models.DateTimeField(
         auto_now_add=True,
     )

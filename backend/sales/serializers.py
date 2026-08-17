@@ -29,6 +29,18 @@ class ProductSerializer(serializers.ModelSerializer):
         read_only=True,
         allow_null=True,
     )   
+    price = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        allow_null=True,
+        required=False,
+    )
+    investment_price = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        allow_null=True,
+        required=False,
+    )
 
     class Meta:
         model = Product
@@ -40,6 +52,8 @@ class ProductSerializer(serializers.ModelSerializer):
             "sales_count",
             "gross",
             "investment",
+            "price",
+            "investment_price",
             "earnings",
             "last_sale",
         ]
@@ -225,7 +239,21 @@ class SaleSerializer(serializers.ModelSerializer):
         validated_data["product"] = product
         validated_data["description"] = product.name
 
-        return Sale.objects.create(**validated_data)
+        sale = Sale.objects.create(**validated_data)
+
+        product.price = sale.gross_amount / sale.quantity
+        product.investment_price = (
+            sale.investment_amount / sale.quantity
+        )
+
+        product.save(
+            update_fields=[
+                "price",
+                "investment_price",
+            ]
+        )
+
+        return sale
 
 
 class ProductAnalyticsSerializer(serializers.Serializer):
