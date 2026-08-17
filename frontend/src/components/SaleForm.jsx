@@ -1,18 +1,7 @@
-import { formatCurrency } from "../utils/formatCurrency";
-import { useEffect, useState } from "react";
 import api from "../services/api";
-
-
-function formatProductName(name) {
-    return name
-        .split(" ")
-        .map(
-            (word) =>
-                word.charAt(0).toUpperCase() +
-                word.slice(1)
-        )
-        .join(" ");
-}
+import { useEffect, useState } from "react";
+import { formatCurrency } from "../utils/formatCurrency";
+import { capitalizeWords } from "../utils/capitalizeWords"
 
 
 function SaleForm({ onSubmit, initialSale }) {
@@ -38,7 +27,26 @@ function SaleForm({ onSubmit, initialSale }) {
     );
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const normalizedInput = productInput.trim().toLowerCase();
 
+    const filteredProducts = products.filter((product) =>
+        product.name.includes(normalizedInput)
+    );
+
+    const exactMatch = products.some(
+        (product) => product.name === normalizedInput
+    );
+
+    const unitPrice =
+        sale.quantity > 0 && Number(sale.gross_amount) > 0
+            ? Number(sale.gross_amount) / sale.quantity
+            : 0;
+
+    const unitInvestment =
+    sale.quantity > 0 && Number(sale.investment_amount) > 0
+        ? Number(sale.investment_amount) / sale.quantity
+        : 0;
+            
     useEffect(() => {
         async function fetchProducts() {
             try {
@@ -74,13 +82,26 @@ function SaleForm({ onSubmit, initialSale }) {
     }
 
     function selectProduct(product) {
+        const rememberedPrice = product.price;
+        const rememberedInvestment = product.investment_price;
+
         setSale({
             ...sale,
             product: product.id,
             description: product.name,
+
+            gross_amount:
+                rememberedPrice != null
+                    ? Number(rememberedPrice) * sale.quantity
+                    : sale.gross_amount,
+
+            investment_amount:
+                rememberedInvestment != null
+                    ? Number(rememberedInvestment) * sale.quantity
+                    : sale.investment_amount,
         });
 
-        setProductInput(formatProductName(product.name));
+        setProductInput(capitalizeWords(product.name));
         setShowSuggestions(false);
     }
 
@@ -96,21 +117,28 @@ function SaleForm({ onSubmit, initialSale }) {
         }
     }
 
-    const normalizedInput = productInput.trim().toLowerCase();
+    function updateQuantity(quantity) {
+        const newQuantity = Math.max(1, quantity);
 
-    const filteredProducts = products.filter((product) =>
-        product.name.includes(normalizedInput)
-    );
+        const selectedProduct = products.find(
+            (product) => product.id === sale.product
+        );
 
-    const exactMatch = products.some(
-        (product) => product.name === normalizedInput
-    );
+        setSale({
+            ...sale,
+            quantity: newQuantity,
 
-    const unitPrice =
-    sale.quantity > 0 && Number(sale.gross_amount) > 0
-        ? Number(sale.gross_amount) / sale.quantity
-        : 0;
+            gross_amount:
+                selectedProduct?.price != null
+                    ? Number(selectedProduct.price) * newQuantity
+                    : sale.gross_amount,
 
+            investment_amount:
+                selectedProduct?.investment_price != null
+                    ? Number(selectedProduct.investment_price) * newQuantity
+                    : sale.investment_amount,
+        });
+    }
     return (
         <form
             onSubmit={handleSubmit}
@@ -202,7 +230,7 @@ function SaleForm({ onSubmit, initialSale }) {
                                             hover:bg-[var(--surface-accent)]
                                         "
                                     >
-                                        {formatProductName(product.name)}
+                                        {capitalizeWords(product.name)}
                                     </button>
                                 ))}
 
@@ -219,7 +247,7 @@ function SaleForm({ onSubmit, initialSale }) {
                                     >
                                         Se creará un nuevo producto:
                                         <span className="ml-1 font-medium text-[var(--text-primary)]">
-                                            {formatProductName(productInput)}
+                                            {capitalizeWords(productInput)}
                                         </span>
                                     </div>
                                 )}
@@ -231,13 +259,7 @@ function SaleForm({ onSubmit, initialSale }) {
                         <button
                             type="button"
                             onClick={() =>
-                                setSale({
-                                    ...sale,
-                                    quantity: Math.max(
-                                        1,
-                                        sale.quantity - 1
-                                    ),
-                                })
+                                updateQuantity(sale.quantity - 1)
                             }
                             className="
                                 w-7
@@ -257,13 +279,7 @@ function SaleForm({ onSubmit, initialSale }) {
                             step="1"
                             value={sale.quantity}
                             onChange={(e) =>
-                                setSale({
-                                    ...sale,
-                                    quantity: Math.max(
-                                        1,
-                                        Number(e.target.value)
-                                    ),
-                                })
+                                updateQuantity(Number(e.target.value))
                             }
                             className="
                                 min-w-0
@@ -279,10 +295,7 @@ function SaleForm({ onSubmit, initialSale }) {
                         <button
                             type="button"
                             onClick={() =>
-                                setSale({
-                                    ...sale,
-                                    quantity: sale.quantity + 1,
-                                })
+                                updateQuantity(sale.quantity + 1)
                             }
                             className="
                                 w-7
@@ -344,14 +357,18 @@ function SaleForm({ onSubmit, initialSale }) {
                         "
                     />
                 </div>
-                {unitPrice > 0 && (
-                    <p className="mt-2 text-base font-medium text-[var(--text-primary)]">
-                        Precio por unidad:{" "}
-                        <span className="font-bold text-[var(--success)]">
-                            {formatCurrency(unitPrice)}
-                        </span>
-                    </p>
-                )}
+                <div className="space-y-2">
+                    <div className="relative">
+                        {unitPrice > 0 && (
+                            <p className="mt-2 text-base font-medium text-[var(--text-primary)]">
+                                Precio por unidad:{" "}
+                                <span className="font-bold text-[var(--success)]">
+                                    {formatCurrency(unitPrice)}
+                                </span>
+                            </p>
+                        )}
+                    </div>
+                </div>
             </div>
 
             <div className="space-y-2">
@@ -398,9 +415,19 @@ function SaleForm({ onSubmit, initialSale }) {
                             focus:ring-2
                             focus:ring-[var(--primary)]/20
                         "
-                    />
+                    />                    
                 </div>
+                {unitInvestment > 0 && (
+                    <p className="mt-2 text-base font-medium text-[var(--text-primary)]">
+                        Inversión por unidad:{" "}
+                        <span className="font-bold text-[var(--success)]">
+                            {formatCurrency(unitInvestment)}
+                        </span>
+                    </p>
+                )}
             </div>
+
+            
 
             <div className="space-y-2">
                 <label

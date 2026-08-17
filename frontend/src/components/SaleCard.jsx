@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "../utils/formatCurrency";
-import { formatProductName } from "../utils/formatProductName";
+import { capitalizeWords } from "../utils/capitalizeWords";
 
 
 function SaleCard({ sale, onDelete, showActions = true }) {
@@ -8,24 +8,31 @@ function SaleCard({ sale, onDelete, showActions = true }) {
     const profit = sale.gross_amount - sale.investment_amount;
 
     return (
-        <div className="rounded-xl bg-[var(--background)] p-5 text-white shadow-md border border-gray-200">
+        <div className="rounded-xl bg-[var(--background)] p-5 text-[var(--text-primary)] shadow-md border border-[var(--border)]">
             <div className="flex justify-between items-start mb-4">
                 <div>
-                    <h3 className="text-lg font-bold text-gray-900">
-                        {formatProductName(sale.product?.name || sale.description)}
+                    <h3 className="text-lg font-bold text-[var(text-primary)]">
+                        {capitalizeWords(sale.product?.name || sale.description)}
                     </h3>
 
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-[var(text-secondary)]">
                         {sale.date}
                     </p>
                 </div>
 
-                <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-[var(--success)]">
+                <span className="rounded-full bg-[var(--success-bg)] px-3 py-1 text-sm font-semibold text-[var(--success)]">
                     {formatCurrency(profit)}
                 </span>
             </div>
 
-            <div className="space-y-2 text-gray-700">
+            <div className="space-y-2 text-[var(text-secondary)]">
+                <div className="flex justify-between">
+                    <span>Cantidad</span>
+                    <span className="font-semibold">
+                        {sale.quantity}
+                    </span>
+                </div>
+
                 <div className="flex justify-between">
                     <span>Ingreso bruto</span>
                     <span className="font-semibold">

@@ -127,7 +127,7 @@ function AccountMenu({ user, onLogout }) {
                             border-[var(--border)]
                             px-1
                             py-3
-                            text-center
+                            text-center                            
                         "
                     >
                         <p className="mb-1.5 text-sm font-medium text-[var(--text-primary)]">

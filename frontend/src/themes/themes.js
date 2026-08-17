@@ -1,26 +1,27 @@
 export const themes = [
     {
-        id: "lavender",
-        name: "Lavender",
+        id: "blue",
+        name: "Sky",
     },
     {
         id: "cherry",
         name: "Cherry",
     },
     {
-        id: "blue",
-        name: "Blue",
-    },
-    {
         id: "forest",
-        name: "Forest",
+        name: "Meadow",
     },
+
     {
-        id: "sunset",
-        name: "Sunset",
-    },
-    {
-        id: "dark",
+        id: "midnight",
         name: "Midnight",
+    },
+    {
+        id: "cherry-dark",
+        name: "Ember",
+    },
+    {
+        id: "forest-dark",
+        name: "Evergreen",
     },
 ];

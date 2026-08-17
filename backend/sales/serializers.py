@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Product, Sale
+from .models import Product, ProductCategory, Sale
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -28,12 +28,93 @@ class ProductSerializer(serializers.ModelSerializer):
         allow_null=True,
         read_only=True,
     )
+    category_name = serializers.CharField(
+        source="category.name",
+        read_only=True,
+        allow_null=True,
+    )   
+    price = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        allow_null=True,
+        required=False,
+    )
+    investment_price = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        allow_null=True,
+        required=False,
+    )
 
     class Meta:
         model = Product
         fields = [
             "id",
             "name",
+            "category",
+            "category_name",
+            "sales_count",
+            "gross",
+            "investment",
+            "price",
+            "investment_price",
+            "earnings",
+            "last_sale",
+        ]
+        read_only_fields = [
+            "id",
+            "active",
+            "sales_count",
+            "gross",
+            "investment",
+            "earnings",
+            "last_sale",
+        ]
+
+    def validate(self, attrs):
+        category = attrs.get("category")
+
+        if category and category.user != self.context["request"].user:
+            raise serializers.ValidationError({
+                "category": "La categoría no pertenece a tu cuenta."
+            })
+
+        return attrs
+
+
+class ProductCategorySerializer(serializers.ModelSerializer):
+    products_count = serializers.IntegerField(
+        read_only=True,
+    )
+    sales_count = serializers.IntegerField(
+        read_only=True,
+    )
+    gross = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        read_only=True,
+    )
+    investment = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        read_only=True,
+    )
+    earnings = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        read_only=True,
+    )
+    last_sale = serializers.DateField(
+        allow_null=True,
+        read_only=True,
+    )
+
+    class Meta:
+        model = ProductCategory
+        fields = [
+            "id",
+            "name",
+            "products_count",
             "sales_count",
             "gross",
             "investment",
@@ -42,9 +123,23 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             "id",
-            "user",
-            "active",
+            "products_count",
+            "sales_count",
+            "gross",
+            "investment",
+            "earnings",
+            "last_sale",
         ]
+
+    def validate_name(self, value):
+        value = " ".join(value.strip().lower().split())
+
+        if not value:
+            raise serializers.ValidationError(
+                "El nombre no puede estar vacío."
+            )
+
+        return value
 
 
 class SaleSerializer(serializers.ModelSerializer):
@@ -148,12 +243,29 @@ class SaleSerializer(serializers.ModelSerializer):
         validated_data["product"] = product
         validated_data["description"] = product.name
 
-        return Sale.objects.create(**validated_data)
+        sale = Sale.objects.create(**validated_data)
+
+        product.price = sale.gross_amount / sale.quantity
+        product.investment_price = (
+            sale.investment_amount / sale.quantity
+        )
+
+        product.save(
+            update_fields=[
+                "price",
+                "investment_price",
+            ]
+        )
+
+        return sale
 
 
 class ProductAnalyticsSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
+    category = serializers.IntegerField(
+        allow_null=True,
+    )
     sales_count = serializers.IntegerField()
     gross = serializers.DecimalField(
         max_digits=12,
@@ -167,12 +279,47 @@ class ProductAnalyticsSerializer(serializers.Serializer):
         max_digits=12,
         decimal_places=2,
     )
+    price = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        allow_null=True,
+    )
+    investment_price = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        allow_null=True,
+    )
     average_sale = serializers.DecimalField(
         max_digits=12,
         decimal_places=2,
     )
     first_sale = serializers.DateField(
         allow_null=True,
+    )
+    last_sale = serializers.DateField(
+        allow_null=True,
+    )
+    category_name = serializers.CharField(
+        allow_null=True,
+    )
+
+
+class ProductCategoryAnalyticsSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    products_count = serializers.IntegerField()
+    sales_count = serializers.IntegerField()
+    gross = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+    )
+    investment = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+    )
+    earnings = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
     )
     last_sale = serializers.DateField(
         allow_null=True,

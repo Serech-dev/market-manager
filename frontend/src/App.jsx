@@ -1,13 +1,16 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import ProductDetail from "./pages/ProductDetail";
-import NewProduct from "./pages/NewProduct";
-import Dashboard from "./pages/Dashboard";
-import EditSale from "./pages/EditSale";
-import Products from "./pages/Products";
-import NewSale from "./pages/NewSale";
 import Login from "./pages/Login";
+import NewSale from "./pages/NewSale";
+import Register from "./pages/Register";
+import Products from "./pages/Products";
+import EditSale from "./pages/EditSale";
+import Dashboard from "./pages/Dashboard";
+import Categories from "./pages/categories";
+import NewProduct from "./pages/NewProduct";
+import NewCategory from "./pages/NewCategory";
+import ProductDetail from "./pages/ProductDetail";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 
@@ -26,6 +29,10 @@ function App() {
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<Login />} />
+                <Route
+                    path="/register"
+                    element={<Register />}
+                />
 
                 <Route element={<ProtectedRoute />}>
                     <Route path="/" element={<Dashboard />} />
@@ -39,6 +46,14 @@ function App() {
                     <Route
                         path="/products/new"
                         element={<NewProduct />}
+                    />
+                    <Route
+                    path="/products/categories/new"
+                    element={<NewCategory />}
+                    />
+                    <Route
+                        path="/categories"
+                        element={<Categories />}
                     />
                 </Route>
             </Routes>
