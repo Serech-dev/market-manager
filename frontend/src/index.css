@@ -37,32 +37,31 @@
 }
 
 [data-theme="blue"] {
-  --background: #e8eff4;
+  --background: #e9e9e5;
   --surface: #f7fafc;
-  --surface-accent: #dce8f0;
-  --surface-muted: #f0f6fa;
+  --surface-accent: #d5e2ec;
+  --surface-muted: #edf4f8;
 
-  --text-primary: #2f4353;
-  --text-secondary: #6d8292;
+  --text-primary: #2d3d4b;
+  --text-secondary: #687b8a;
 
-  --border: #cbdbe6;
+  --border: #c2d3df;
 
-  --primary: #4f82aa;
-  --primary-hover: #3f7096;
+  --primary: #477da6;
+  --primary-hover: #396b90;
 
-  --success: #709477;
-  --success-text: #4f7056;
-  --success-bg: #dce9dd;
-  --success-border: #c9ddcc;
+  --success: #638d73;
+  --success-text: #45664f;
+  --success-bg: #d8eadb;
+  --success-border: #bdd8c2;
 
-  --warning: #b88b50;
+  --warning: #b48648;
+  --danger: #b65d63;
+  --danger-bg: #f1dddd;
+  --danger-border: #dfc0c3;
 
-  --danger: #b96068;
-  --danger-bg: #f3dfe2;
-  --danger-border: #e3c3c7;
-
-  --control-icon: #6d8292;
-  --control-icon-hover: #4f82aa;
+  --control-icon: #687b8a;
+  --control-icon-hover: #477da6;
 }
 
 [data-theme="forest"] {
