@@ -179,7 +179,7 @@ function Products() {
                                     rounded-2xl
                                     border
                                     border-[var(--border)]
-                                    bg-[var(--surface)]
+                                    bg-[var(--background)]
                                     p-5
                                     shadow-sm
                                     transition

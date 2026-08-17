@@ -945,14 +945,14 @@ function ProductDetail() {
                                 rounded-xl
                                 border
                                 border-[var(--danger-border)]
+                                bg-[var(--danger)]
                                 px-4
                                 py-2
                                 text-sm
                                 font-medium
-                                text-[var(--danger-text)]
+                                text-white
                                 transition
-                                hover:bg-[var(--danger-hover-bg)]
-                                hover:border-[var(--danger-hover-border)]
+                                hover:brightness-90
                             "
                         >
                             Archivar producto
