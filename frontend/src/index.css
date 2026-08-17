@@ -37,31 +37,32 @@
 }
 
 [data-theme="blue"] {
-  --background: #dae2e9;
-  --surface: #d8dfe6;
-  --surface-accent: #d5e3ef;
-  --surface-muted: #edf4f9;
+  --background: #e8eff4;
+  --surface: #f7fafc;
+  --surface-accent: #dce8f0;
+  --surface-muted: #f0f6fa;
 
-  --text-primary: #293b4b;
-  --text-secondary: #687d8e;
+  --text-primary: #2f4353;
+  --text-secondary: #6d8292;
 
-  --border: #c2d4e2;
+  --border: #cbdbe6;
 
-  --primary: #467da8;
-  --primary-hover: #386b91;
+  --primary: #4f82aa;
+  --primary-hover: #3f7096;
 
-  --success: #638d73;
-  --success-text: #45664f;
-  --success-bg: #cae3cc;
-  --success-border: #c4ddc8;
+  --success: #709477;
+  --success-text: #4f7056;
+  --success-bg: #dce9dd;
+  --success-border: #c9ddcc;
 
-  --warning: #b48648;
-  --danger: #b65b63;
-  --danger-bg: #f1dcdf;
-  --danger-border: #dfbec3;
+  --warning: #b88b50;
 
-  --control-icon: #687d8e;
-  --control-icon-hover: #467da8;
+  --danger: #b96068;
+  --danger-bg: #f3dfe2;
+  --danger-border: #e3c3c7;
+
+  --control-icon: #6d8292;
+  --control-icon-hover: #4f82aa;
 }
 
 [data-theme="forest"] {
