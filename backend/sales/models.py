@@ -1,232 +1,74 @@
-from decimal import Decimal
-
-from django.db.models import Avg, Count, F, Max, Sum, Value
-from django.db.models.functions import Coalesce
-from rest_framework import generics, status
-
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
-from rest_framework.views import APIView
-
-from .models import Product, Sale
-from .serializers import (ProductAnalyticsSerializer, ProductSerializer,
-                          SaleSerializer)
-from .utils import apply_period_filter
+from django.db import models
+from django.contrib.auth.models import User
 
 
-class SaleListCreateView(generics.ListCreateAPIView):
-    serializer_class = SaleSerializer
-    permission_classes = [IsAuthenticated]
+class Product(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="products",
+    )
 
-    def get_queryset(self):
-        queryset = Sale.objects.filter(
-            product__user=self.request.user,
+    name = models.CharField(
+        max_length=255,
+    )
+
+    active = models.BooleanField(
+        default=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(
+            self.name.strip().lower().split()
         )
+        super().save(*args, **kwargs)
 
-        return apply_period_filter(
-            queryset,
-            self.request.query_params,
-        )
-
-    
-class SaleDetailView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = SaleSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Sale.objects.filter(
-            product__user=self.request.user,
-        )
+    def __str__(self):
+        return self.name
 
 
-class SaleSummaryView(APIView):
-    permission_classes = [IsAuthenticated]
-    
-    def get(self, request):
-        sales = apply_period_filter(
-            Sale.objects.filter(
-                product__user=request.user,
-            ),
-            request.query_params,
-        )
+class Sale(models.Model):
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="sales",
+    )
 
-        totals = sales.aggregate(
-            gross=Sum("gross_amount"),
-            investment=Sum("investment_amount"),
-        )
+    gross_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+    )
 
-        gross = totals["gross"] or 0
-        investment = totals["investment"] or 0
+    investment_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+    )
 
-        return Response({
-            "gross": gross,
-            "investment": investment,
-            "earnings": gross - investment,
-        })
+    description = models.CharField(
+        max_length=255,
+    )
 
+    date = models.DateField()
 
-class ProductListView(generics.ListCreateAPIView):
-    serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
 
-    def get_queryset(self):
-        queryset = Product.objects.filter(
-            user=self.request.user,
-        ).annotate(
-            sales_count=Count("sales"),
-            gross=Coalesce(
-                Sum("sales__gross_amount"),
-                Value(Decimal("0")),
-            ),
-            investment=Coalesce(
-                Sum("sales__investment_amount"),
-                Value(Decimal("0")),
-            ),
-            earnings=Coalesce(
-                Sum("sales__gross_amount"),
-                Value(Decimal("0")),
-            ) - Coalesce(
-                Sum("sales__investment_amount"),
-                Value(Decimal("0")),
-            ),
-            last_sale=Max("sales__date"),
-        ).filter(active=True)
+    quantity = models.PositiveIntegerField(default=1)
 
-        sort = self.request.query_params.get("sort", "name")
+    class Meta:
+        ordering = ["-date", "-created_at"]
 
-        sort_options = {
-            "name": "name",
-            "sales": "-sales_count",
-            "gross": "-gross",
-            "earnings": "-earnings",
-            "recent": F("last_sale").desc(nulls_last=True),
-            "oldest": "created_at",
-        }
+    @property
+    def earnings(self):
+        return self.gross_amount - self.investment_amount
 
-        return queryset.order_by(
-            sort_options.get(sort, "name")
-        )
-
-    def create(self, request, *args, **kwargs):
-        name = " ".join(
-            request.data.get("name", "").strip().lower().split()
-        )
-
-        if not name:
-            return Response(
-                {"name": "El nombre no puede estar vacío."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        existing_product = Product.objects.filter(
-            user=request.user,
-            name=name,
-        ).first()
-
-        if existing_product:
-            if existing_product.active:
-                return Response(
-                    {"name": "El producto ya existe."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            existing_product.active = True
-            existing_product.save(
-                update_fields=["active"]
-            )
-
-            return Response(
-                self.get_serializer(existing_product).data,
-                status=status.HTTP_200_OK,
-            )
-
-        serializer = self.get_serializer(
-            data={"name": name}
-        )
-        serializer.is_valid(raise_exception=True)
-        product = serializer.save(
-            user=request.user,
-        )
-
-        return Response(
-            self.get_serializer(product).data,
-            status=status.HTTP_201_CREATED,
-        )
-
-    
-class ProductAnalyticsView(generics.RetrieveAPIView):
-    serializer_class = ProductAnalyticsSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Product.objects.filter(
-            user=self.request.user,
-        )
-
-    def retrieve(self, request, *args, **kwargs):
-        product = self.get_object()
-
-        sales = Sale.objects.filter(product=product)
-        sales = apply_period_filter(sales, request.query_params)
-
-        analytics = {
-            "id": product.id,
-            "name": product.name,
-            "sales_count": sales.count(),
-            "gross": sales.aggregate(
-                total=Coalesce(
-                    Sum("gross_amount"),
-                    Value(Decimal("0")),
-                )
-            )["total"],
-            "investment": sales.aggregate(
-                total=Coalesce(
-                    Sum("investment_amount"),
-                    Value(Decimal("0")),
-                )
-            )["total"],
-            "average_sale": sales.aggregate(
-                average=Coalesce(
-                    Avg("gross_amount"),
-                    Value(Decimal("0")),
-                )
-            )["average"],
-            "first_sale": sales.order_by("date").values_list(
-                "date",
-                flat=True,
-            ).first(),
-            "last_sale": sales.order_by("-date").values_list(
-                "date",
-                flat=True,
-            ).first(),
-        }
-
-        analytics["earnings"] = (
-            analytics["gross"] - analytics["investment"]
-        )
-
-        serializer = self.get_serializer(analytics)
-
-        return Response(serializer.data)
-
-
-class ProductArchiveView(generics.UpdateAPIView):
-    serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Product.objects.filter(
-            user=self.request.user,
-        )
-
-    def perform_update(self, serializer):
-        product = self.get_object()
-
-        if product.sales.exists():
-            raise ValidationError(
-                "No se puede archivar un producto que tiene ventas registradas."
-            )
-
-        serializer.save(active=False)
-
+    def __str__(self):
+        return f"{self.description} - ${self.gross_amount}"
