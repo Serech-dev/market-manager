@@ -52,7 +52,7 @@ function Categories() {
 
             try {
                 const response = await api.get(
-                    `categories/?${query}`
+                    `categories/?${query}&sort=${sort}`
                 );
 
                 setCategories(response.data);
@@ -77,6 +77,7 @@ function Categories() {
         selectedDateFrom,
         selectedDateTo,
         filterMode,
+        sort,
     ]);
 
     const filteredCategories = categories.filter((category) =>
@@ -86,7 +87,7 @@ function Categories() {
     );
 
     return (
-        <div className="min-h-screen bg-[var(--surface)] px-4 py-8">
+        <div className="min-h-screen bg-[var(--background)] px-4 py-8">
             <div className="mx-auto max-w-5xl space-y-8">
 
                 <header className="flex min-h-[72px] flex-col items-start gap-3">

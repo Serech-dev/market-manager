@@ -51,7 +51,7 @@ function Products() {
         <div className="min-h-screen bg-[var(--surface)] px-4 py-8">
             <div className="mx-auto max-w-5xl space-y-8">
 
-                <header className="flex min-h-[72px] items-start justify-between gap-4">
+                <header className="flex h-[72px] items-start justify-between gap-4">
                     <div>
                         <h1 className="text-3xl font-bold text-[var(--text-primary)]">
                             Productos
@@ -62,7 +62,7 @@ function Products() {
                         </p>
                     </div>
 
-                    <div className="flex shrink-0 flex-col items-center gap-2">
+                    <div className="flex shrink-0 flex-col items-center gap-2 whitespace-nowrap">
                         <AccountMenu user={user} />
 
                         <CreateMenu />
@@ -79,7 +79,7 @@ function Products() {
                             rounded-xl
                             border
                             border-[var(--border)]
-                            bg-[var(--surface)]
+                            bg-[var(--background)]
                             px-4
                             py-3
                             text-center
@@ -103,7 +103,7 @@ function Products() {
                             rounded-xl
                             border
                             border-[var(--border)]
-                            bg-[var(--surface)]
+                            bg-[var(--background)]
                             px-4
                             py-3
                             text-[var(--text-primary)]
@@ -122,7 +122,7 @@ function Products() {
                             rounded-xl
                             border
                             border-[var(--border)]
-                            bg-[var(--surface)]
+                            bg-[var(--background)]
                             px-4
                             py-3
                             text-[var(--text-primary)]

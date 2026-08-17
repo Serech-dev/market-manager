@@ -12,11 +12,11 @@ function SaleCard({ sale, onDelete, showActions = true }) {
             <div className="flex justify-between items-start mb-4">
                 <div>
                     <h3 className="text-lg font-bold text-[var(text-primary)]">
-                        {sale.date}
+                        {capitalizeWords(sale.product?.name || sale.description)}
                     </h3>
 
                     <p className="text-sm text-[var(text-secondary)]">
-                        Cantidad: {sale.quantity}
+                        {sale.date}
                     </p>
                 </div>
 
@@ -26,6 +26,13 @@ function SaleCard({ sale, onDelete, showActions = true }) {
             </div>
 
             <div className="space-y-2 text-[var(text-secondary)]">
+                <div className="flex justify-between">
+                    <span>Cantidad</span>
+                    <span className="font-semibold">
+                        {sale.quantity}
+                    </span>
+                </div>
+
                 <div className="flex justify-between">
                     <span>Ingreso bruto</span>
                     <span className="font-semibold">

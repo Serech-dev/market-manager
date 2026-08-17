@@ -161,7 +161,7 @@ function Dashboard() {
         <div className="min-h-screen bg-[var(--background)] px-4 py-8">
             <div className="mx-auto max-w-5xl space-y-8">
 
-                <header className="flex min-h-[72px] items-start justify-between gap-4">
+                <header className="flex h-[72px] items-start justify-between gap-4">
                     <div>
                         <h1 className="text-3xl font-bold text-[var(--text-primary)]">
                             Market Manager
@@ -172,7 +172,7 @@ function Dashboard() {
                         </p>
                     </div>
 
-                    <div className="flex shrink-0 flex-col items-end gap-2">
+                    <div className="flex shrink-0 flex-col items-end gap-2 whitespace-nowrap">
                         <AccountMenu user={user} />
                     </div>
                 </header>

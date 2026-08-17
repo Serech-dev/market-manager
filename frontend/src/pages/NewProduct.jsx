@@ -72,13 +72,14 @@ function NewProduct() {
                 <form
                     onSubmit={handleSubmit}
                     className="
+                        mx-auto
                         max-w-xl
                         rounded-2xl
                         border
                         border-[var(--border)]
-                        bg-[var(--surface)]
+                        bg-[var(--background)]
                         p-6
-                        shadow-sm
+                        shadow-sm                       
                     "
                 >
                     <div className="space-y-2">
@@ -120,7 +121,7 @@ function NewProduct() {
                         </p>
                     )}
 
-                    <div>
+                    <div className="mt-6">
                         <label
                             htmlFor="category"
                             className="block text-sm font-medium text-[var(--text-primary)]"
