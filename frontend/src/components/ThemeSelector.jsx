@@ -22,7 +22,7 @@ function ThemeSelector() {
                     rounded-lg
                     border
                     border-[var(--border)]
-                    bg-[var(--surface)]
+                    bg-[var(--background)]
                     px-2
                     py-1.5
                     text-sm
