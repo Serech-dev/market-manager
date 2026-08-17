@@ -8,36 +8,37 @@
 }
 
 [data-theme="cherry"] {
-  --background: #f3dee5;
-  --surface: #e3d2d7;
-  --surface-accent: #e9cbd3;
-  --surface-muted: #fbeef2;
+  --background: #f7e8ed;
+  --surface: #fdf5f7;
+  --surface-accent: #f2dfe5;
+  --surface-muted: #faeef2;
 
-  --text-primary: #482832;
-  --text-secondary: #876b75;
+  --text-primary: #4a3038;
+  --text-secondary: #8b6f75;
 
-  --border: #e5bdca;
+  --border: #e8cbd3;
 
-  --primary: #b43f62;
-  --primary-hover: #982f50;
+  --primary: #ad5570;
+  --primary-hover: #96445f;
 
-  --success: #668b68;
-  --success-text: #46664b;
-  --success-bg: #d2e2d2;
-  --success-border: #c4ddc7;
+  --success: #709275;
+  --success-text: #4f6f55;
+  --success-bg: #dce9dc;
+  --success-border: #c9ddcc;
 
-  --warning: #bd8543;
-  --danger: #bd4e5b;
-  --danger-bg: #f4d7dc;
-  --danger-border: #e4b8c0;
+  --warning: #bd8b52;
 
-  --control-icon: #876b75;
-  --control-icon-hover: #b43f62;
+  --danger: #bd5d68;
+  --danger-bg: #f3dfe3;
+  --danger-border: #e3c1c7;
+
+  --control-icon: #8b6f75;
+  --control-icon-hover: #ad5570;
 }
 
 [data-theme="blue"] {
-  --background: #e2ebf3;
-  --surface: #d2dce6;
+  --background: #dae2e9;
+  --surface: #d8dfe6;
   --surface-accent: #d5e3ef;
   --surface-muted: #edf4f9;
 

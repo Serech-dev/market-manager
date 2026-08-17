@@ -14,7 +14,7 @@ function SummaryCard({ title, value, variant }) {
                 ${
                     isProfit
                         ? "border-[var(--success-border)] bg-[var(--success-bg)]"
-                        : "border-[var(--border)] bg-[var(--surface)]"
+                        : "border-[var(--border)] bg-[var(--surface-accent)]"
                 }
                 ${isProfit ? "max-w-sm text-center" : ""}
             `}
