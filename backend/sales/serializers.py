@@ -11,19 +11,16 @@ class ProductSerializer(serializers.ModelSerializer):
         decimal_places=2,
         read_only=True,
     )
-
     investment = serializers.DecimalField(
         max_digits=12,
         decimal_places=2,
         read_only=True,
     )
-
     earnings = serializers.DecimalField(
         max_digits=12,
         decimal_places=2,
         read_only=True,
     )
-
     last_sale = serializers.DateField(
         allow_null=True,
         read_only=True,

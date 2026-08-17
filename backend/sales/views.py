@@ -255,8 +255,9 @@ class ProductListView(generics.ListCreateAPIView):
                 )
 
             existing_product.active = True
+            existing_product.category_id = request.data.get("category") or None
             existing_product.save(
-                update_fields=["active"]
+                update_fields=["active", "category"]
             )
 
             return Response(
@@ -265,9 +266,14 @@ class ProductListView(generics.ListCreateAPIView):
             )
 
         serializer = self.get_serializer(
-            data={"name": name}
+            data={
+                "name": name,
+                "category": request.data.get("category") or None,
+            }
         )
+
         serializer.is_valid(raise_exception=True)
+
         product = serializer.save(
             user=request.user,
         )
