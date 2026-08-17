@@ -1,6 +1,21 @@
 CHANGELOG
 
 
+v0.8.0
+
+-implement product and category ownership by user accounts
+-add user authentication and account management
+-add product price and investment price tracking
+-auto-fill sale prices and investment based on saved product values
+-add editable price and investment values to product details
+-add product and category analytics
+-add category sorting and period-based filtering
+-improve product and category editing error handling
+-add account registration page
+-add dark and light color themes
+-polish UI alignment, spacing, colors, and responsive layouts
+-improve navigation and account menu consistency
+
 v0.6.0
 
 -implement color theme system
