@@ -60,7 +60,7 @@ function AccountMenu({ user, onLogout }) {
                     gap-2
                     rounded-xl
                     border
-                    border-[var(--border)]
+                    border-[var(--primary)]
                     bg-[var(--secondary)]
                     px-3
                     py-2
