@@ -1,5 +1,6 @@
 import api from "../services/api";
 import { useEffect, useState } from "react";
+import getLocalDate from "../utils/getLocalDate";
 import { formatCurrency } from "../utils/formatCurrency";
 import { capitalizeWords } from "../utils/capitalizeWords"
 
@@ -16,7 +17,7 @@ function SaleForm({ onSubmit, initialSale }) {
                 description: "",
                 gross_amount: "",
                 investment_amount: "",
-                date: new Date().toISOString().split("T")[0],
+                date: getLocalDate(),
                 quantity: 1,
             }
     );
