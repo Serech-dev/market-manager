@@ -2,6 +2,7 @@ import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import SaleCard from "../components/SaleCard";
 import FilterBar from "../components/FilterBar";
+import getLocalDate from "../utils/getLocalDate";
 import api, { getApiError } from "../services/api";
 import SummaryCard from "../components/SummaryCard";
 import AccountMenu from "../components/AccountMenu";
@@ -23,21 +24,19 @@ function Dashboard() {
     const [sales, setSales] = useState([]);
 
     const [selectedDate, setSelectedDate] = useState(
-        new Date().toISOString().split("T")[0]
+        getLocalDate()
     );
-
-    const [selectedMonth, setSelectedMonth] = useState(
-        new Date().toISOString().slice(0, 7)
-    );
-
-    const [filterMode, setFilterMode] = useState("day");
 
     const [selectedDateFrom, setSelectedDateFrom] = useState(
-        new Date().toISOString().split("T")[0]
+        getLocalDate()
     );
 
     const [selectedDateTo, setSelectedDateTo] = useState(
-        new Date().toISOString().split("T")[0]
+        getLocalDate()
+    );
+
+    const [selectedMonth, setSelectedMonth] = useState(
+        getLocalDate().slice(0, 7)
     );
 
     const [saleToDelete, setSaleToDelete] = useState(null);
