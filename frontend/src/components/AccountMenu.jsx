@@ -61,7 +61,7 @@ function AccountMenu({ user, onLogout }) {
                     rounded-xl
                     border
                     border-[var(--border)]
-                    bg-[var(--background)]
+                    bg-[var(--secondary)]
                     px-3
                     py-2
                     text-sm
