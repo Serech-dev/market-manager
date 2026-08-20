@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.utils import timezone
 
 from .models import Product, ProductCategory, Sale
 
@@ -179,6 +180,7 @@ class SaleSerializer(serializers.ModelSerializer):
                     "investment_amount",
                     "description",
                     "date",
+                    "time",
                     "created_at",
                     "quantity",
                     "unit_price",
@@ -239,6 +241,7 @@ class SaleSerializer(serializers.ModelSerializer):
 
         validated_data["product"] = product
         validated_data["description"] = product.name
+        validated_data["time"] = timezone.localtime().time()
 
         sale = Sale.objects.create(**validated_data)
 

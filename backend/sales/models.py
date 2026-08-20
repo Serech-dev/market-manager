@@ -104,6 +104,7 @@ class Sale(models.Model):
     )
 
     date = models.DateField()
+    time = models.TimeField(null=True, blank=True)
 
     created_at = models.DateTimeField(
         auto_now_add=True,

@@ -16,7 +16,7 @@ function SaleCard({ sale, onDelete, showActions = true }) {
                     </h3>
 
                     <p className="text-sm text-[var(text-secondary)]">
-                        {sale.date}
+                        {sale.date} · {sale.time}
                     </p>
                 </div>
 
