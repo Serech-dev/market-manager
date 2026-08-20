@@ -21,7 +21,7 @@
   --primary: #ad5570;
   --primary-hover: #96445f;
 
-  --secondary: #c77b92
+  --secondary: #d6b8c1;
 
   --success: #709275;
   --success-text: #4f6f55;
@@ -47,12 +47,12 @@
   --text-primary: #2d3d4b;
   --text-secondary: #687b8a;
 
-  --secondary: #6b98bb;
-
   --border: #c2d3df;
-
+  
   --primary: #477da6;
   --primary-hover: #396b90;
+
+  --secondary: #abc2d3;
 
   --success: #638d73;
   --success-text: #45664f;
@@ -82,7 +82,7 @@
   --primary: #47795b;
   --primary-hover: #396449;
   
-  --secondary: #67947a;
+  --secondary: #a1c2ae;
 
   --success: #5f8f69;
   --success-text: #3f6748;
