@@ -66,7 +66,7 @@ function AccountMenu({ user, onLogout }) {
                     py-2
                     text-sm
                     font-medium
-                    text-[var(--text-primary)]
+                    text-[var(--text-secondary)]
                     shadow-sm
                     transition
                     hover:bg-[var(--surface-accent)]
