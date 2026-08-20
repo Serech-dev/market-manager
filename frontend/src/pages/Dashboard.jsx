@@ -23,9 +23,15 @@ function Dashboard() {
 
     const [sales, setSales] = useState([]);
 
-    const [selectedDate, setSelectedDate] = useState(
+   const [selectedDate, setSelectedDate] = useState(
         getLocalDate()
     );
+
+    const [selectedMonth, setSelectedMonth] = useState(
+        getLocalDate().slice(0, 7)
+    );
+
+    const [filterMode, setFilterMode] = useState("day");
 
     const [selectedDateFrom, setSelectedDateFrom] = useState(
         getLocalDate()
@@ -33,10 +39,6 @@ function Dashboard() {
 
     const [selectedDateTo, setSelectedDateTo] = useState(
         getLocalDate()
-    );
-
-    const [selectedMonth, setSelectedMonth] = useState(
-        getLocalDate().slice(0, 7)
     );
 
     const [saleToDelete, setSaleToDelete] = useState(null);
