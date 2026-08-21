@@ -241,10 +241,9 @@ class SaleSerializer(serializers.ModelSerializer):
 
         validated_data["product"] = product
         validated_data["description"] = product.name
-        
+
         local_now = timezone.localtime()
 
-        validated_data["date"] = local_now.date()
         validated_data["time"] = local_now.time()
 
         sale = Sale.objects.create(**validated_data)

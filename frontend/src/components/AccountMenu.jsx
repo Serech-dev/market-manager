@@ -61,15 +61,15 @@ function AccountMenu({ user, onLogout }) {
                     rounded-xl
                     border
                     border-[var(--primary)]
-                    bg-[var(--secondary)]
+                    bg-[var(--primary)]
                     px-3
                     py-2
                     text-sm
                     font-medium
-                    text-[var(--text-secondary)]
+                    text-white
                     shadow-sm
                     transition
-                    hover:bg-[var(--surface-accent)]
+                    hover:bg-[var(--primary-hover)]
                 "
             >
                 <span>Opciones de Cuenta</span>
@@ -77,7 +77,7 @@ function AccountMenu({ user, onLogout }) {
                 <span
                     className={`
                         text-xs
-                        text-[var(--text-secondary)]
+                        text-white
                         transition-transform
                         ${isOpen ? "rotate-180" : ""}
                     `}
