@@ -15,10 +15,15 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 
 function App() {
-
     return (
-
         <>
+            {/* Ambient Breathing Glow Orbs */}
+            <div className="ambient-glow-wrapper" aria-hidden="true">
+                <div className="ambient-orb-1" />
+                <div className="ambient-orb-2" />
+                <div className="ambient-orb-3" />
+            </div>
+
             <Toaster
                 position="top-center"
                 toastOptions={{
@@ -26,40 +31,40 @@ function App() {
                 }}
             />
 
-        <BrowserRouter>
-            <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route
-                    path="/register"
-                    element={<Register />}
-                />
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route
+                        path="/register"
+                        element={<Register />}
+                    />
 
-                <Route element={<ProtectedRoute />}>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/new-sale" element={<NewSale />} />
-                    <Route path="/sales/:id/edit" element={<EditSale />} />
-                    <Route path="/products" element={<Products />} />
-                    <Route
-                        path="/products/:id"
-                        element={<ProductDetail />}
-                    />
-                    <Route
-                        path="/products/new"
-                        element={<NewProduct />}
-                    />
-                    <Route
-                    path="/products/categories/new"
-                    element={<NewCategory />}
-                    />
-                    <Route
-                        path="/categories"
-                        element={<Categories />}
-                    />
-                </Route>
-            </Routes>
-        </BrowserRouter>
+                    <Route element={<ProtectedRoute />}>
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/new-sale" element={<NewSale />} />
+                        <Route path="/sales/:id/edit" element={<EditSale />} />
+                        <Route path="/products" element={<Products />} />
+                        <Route
+                            path="/products/:id"
+                            element={<ProductDetail />}
+                        />
+                        <Route
+                            path="/products/new"
+                            element={<NewProduct />}
+                        />
+                        <Route
+                            path="/products/categories/new"
+                            element={<NewCategory />}
+                        />
+                        <Route
+                            path="/categories"
+                            element={<Categories />}
+                        />
+                    </Route>
+                </Routes>
+            </BrowserRouter>
         </>
     );
 }
 
-export default App;
+export default App;

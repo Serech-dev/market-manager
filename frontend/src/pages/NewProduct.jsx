@@ -3,11 +3,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api, { getApiError } from "../services/api";
 import { capitalizeWords } from "../utils/capitalizeWords";
-
+import { ArrowLeft, Package, Plus } from "lucide-react";
 
 function NewProduct() {
     const navigate = useNavigate();
-
     const [name, setName] = useState("");
     const [category, setCategory] = useState("");
     const [categories, setCategories] = useState([]);
@@ -26,10 +25,9 @@ function NewProduct() {
 
         fetchCategories();
     }, []);
-    
+
     async function handleSubmit(event) {
         event.preventDefault();
-
         setIsSubmitting(true);
         setError("");
 
@@ -43,7 +41,6 @@ function NewProduct() {
             navigate("/products");
         } catch (error) {
             console.error(error);
-
             setError(
                 getApiError(
                     error,
@@ -56,38 +53,64 @@ function NewProduct() {
     }
 
     return (
-        <div className="min-h-screen bg-[var(--surface)] px-4 py-8">
-            <div className="mx-auto max-w-5xl space-y-8">
+        <div className="min-h-screen px-4 pt-4 pb-12">
+            <div className="mx-auto max-w-lg space-y-4">
 
-                <header className="min-h-[72px]">
-                    <h1 className="text-3xl font-bold text-[var(--text-primary)]">
-                        Nuevo producto
-                    </h1>
 
-                    <p className="mt-1 text-[var(--text-secondary)]">
-                        Agrega un producto al registro
-                    </p>
-                </header>
+                {/* Header with Back button */}
+                <div className="flex items-center gap-3 pt-safe">
+                    <button
+                        type="button"
+                        onClick={() => navigate("/products")}
+                        className="
+                            flex
+                            h-10
+                            w-10
+                            items-center
+                            justify-center
+                            rounded-2xl
+                            border
+                            border-[var(--border)]
+                            bg-[var(--surface)]
+                            text-[var(--text-secondary)]
+                            transition
+                            active-press
+                            hover:bg-[var(--surface-accent)]
+                            hover:text-[var(--text-primary)]
+                        "
+                        aria-label="Volver a productos"
+                    >
+                        <ArrowLeft className="w-5 h-5" />
+                    </button>
+
+                    <div>
+                        <h1 className="text-xl font-extrabold tracking-tight text-[var(--text-primary)]">
+                            Nuevo Producto
+                        </h1>
+                        <p className="text-xs text-[var(--text-secondary)]">
+                            Agrega un artículo al catálogo
+                        </p>
+                    </div>
+                </div>
 
                 <form
                     onSubmit={handleSubmit}
                     className="
-                        mx-auto
-                        max-w-xl
-                        rounded-2xl
+                        rounded-3xl
                         border
                         border-[var(--border)]
-                        bg-[var(--background)]
-                        p-6
-                        shadow-sm                       
+                        bg-[var(--surface)]
+                        p-5
+                        shadow-sm
+                        space-y-4
                     "
                 >
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                         <label
                             htmlFor="name"
-                            className="block text-sm font-medium text-[var(--text-primary)]"
+                            className="block text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]"
                         >
-                            Nombre
+                            Nombre del producto
                         </label>
 
                         <input
@@ -95,16 +118,18 @@ function NewProduct() {
                             type="text"
                             value={name}
                             onChange={(event) => setName(event.target.value)}
-                            placeholder="Ej. Collar"
+                            placeholder="Ej. Pulsera de Plata"
                             autoFocus
                             className="
                                 w-full
-                                rounded-xl
+                                rounded-2xl
                                 border
                                 border-[var(--border)]
                                 bg-[var(--surface)]
                                 px-4
                                 py-3
+                                text-sm
+                                font-medium
                                 text-[var(--text-primary)]
                                 outline-none
                                 transition
@@ -116,17 +141,17 @@ function NewProduct() {
                     </div>
 
                     {error && (
-                        <p className="mt-3 text-sm text-[var(--danger)]">
+                        <p className="text-xs font-medium text-[var(--danger)]">
                             {error}
                         </p>
                     )}
 
-                    <div className="mt-6">
+                    <div className="space-y-1.5">
                         <label
                             htmlFor="category"
-                            className="block text-sm font-medium text-[var(--text-primary)]"
+                            className="block text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]"
                         >
-                            Categoría
+                            Categoría (Opcional)
                         </label>
 
                         <select
@@ -134,14 +159,15 @@ function NewProduct() {
                             value={category}
                             onChange={(event) => setCategory(event.target.value)}
                             className="
-                                mt-1
                                 w-full
-                                rounded-xl
+                                rounded-2xl
                                 border
                                 border-[var(--border)]
                                 bg-[var(--surface)]
                                 px-4
                                 py-3
+                                text-sm
+                                font-medium
                                 text-[var(--text-primary)]
                                 outline-none
                                 transition
@@ -162,21 +188,23 @@ function NewProduct() {
                         </select>
                     </div>
 
-                    <div className="mt-6 flex gap-3">
+                    <div className="pt-2 flex gap-2.5">
                         <button
                             type="button"
                             onClick={() => navigate("/products")}
                             className="
                                 flex-1
-                                rounded-xl
+                                rounded-2xl
                                 border
                                 border-[var(--border)]
-                                px-4
+                                bg-[var(--surface-accent)]
                                 py-3
-                                font-semibold
+                                text-xs
+                                font-bold
                                 text-[var(--text-primary)]
                                 transition
-                                hover:bg-[var(--background)]
+                                active-press
+                                hover:bg-[var(--surface)]
                             "
                         >
                             Cancelar
@@ -187,20 +215,22 @@ function NewProduct() {
                             disabled={isSubmitting || !name.trim()}
                             className="
                                 flex-1
-                                rounded-xl
+                                rounded-2xl
                                 bg-[var(--primary)]
-                                px-4
                                 py-3
-                                font-semibold
+                                text-xs
+                                font-extrabold
                                 text-white
-                                shadow-sm
+                                shadow-lg
+                                shadow-[var(--primary)]/25
                                 transition
+                                active-press
                                 hover:bg-[var(--primary-hover)]
                                 disabled:cursor-not-allowed
                                 disabled:opacity-50
                             "
                         >
-                            {isSubmitting ? "Guardando..." : "Crear producto"}
+                            {isSubmitting ? "Guardando..." : "Crear Producto"}
                         </button>
                     </div>
                 </form>
@@ -210,4 +240,4 @@ function NewProduct() {
     );
 }
 
-export default NewProduct;
+export default NewProduct;

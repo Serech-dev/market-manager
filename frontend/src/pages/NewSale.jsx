@@ -2,20 +2,18 @@ import api, { getApiError } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import SaleForm from "../components/SaleForm";
 import toast from "react-hot-toast";
+import { ArrowLeft, Receipt } from "lucide-react";
 
 function NewSale() {
     const navigate = useNavigate();
 
     async function handleCreateSale(sale) {
         try {
-            const response = await api.post("sales/", sale);
-
+            await api.post("sales/", sale);
             toast.success("Venta creada correctamente.");
-
             navigate("/");
         } catch (error) {
             console.error(error);
-
             toast.error(
                 getApiError(error, "No se pudo crear la venta.")
             );
@@ -23,37 +21,48 @@ function NewSale() {
     }
 
     return (
-        <div className="min-h-screen bg-[var(--background)] px-4 py-8">
-            <div className="mx-auto max-w-2xl space-y-6">
+        <div className="min-h-screen px-4 pt-4 pb-12">
+            <div className="mx-auto max-w-lg space-y-4">
 
-                <button
-                    onClick={() => navigate(-1)}
-                    className="
-                        w-fit
-                        rounded-lg
-                        px-3
-                        py-2
-                        text-sm
-                        font-medium
-                        text-[var(--text-secondary)]
-                        transition
-                        hover:bg-[var(--surface-accent)]
-                    "
-                >
-                    ← Volver
-                </button>
 
-                <header>
-                    <h1 className="text-3xl font-bold text-[var(--text-primary)]">
-                        Nueva Venta
-                    </h1>
+                {/* Back Button & Header */}
+                <div className="flex items-center gap-3 pt-safe">
+                    <button
+                        type="button"
+                        onClick={() => navigate(-1)}
+                        className="
+                            flex
+                            h-10
+                            w-10
+                            items-center
+                            justify-center
+                            rounded-2xl
+                            border
+                            border-[var(--border)]
+                            bg-[var(--surface)]
+                            text-[var(--text-secondary)]
+                            transition
+                            active-press
+                            hover:bg-[var(--surface-accent)]
+                            hover:text-[var(--text-primary)]
+                        "
+                        aria-label="Volver"
+                    >
+                        <ArrowLeft className="w-5 h-5" />
+                    </button>
 
-                    <p className="mt-1 text-[var(--text-secondary)]">
-                        Registra una nueva venta.
-                    </p>
-                </header>
+                    <div>
+                        <h1 className="text-xl font-extrabold tracking-tight text-[var(--text-primary)] flex items-center gap-2">
+                            <span>Nueva Venta</span>
+                        </h1>
+                        <p className="text-xs text-[var(--text-secondary)]">
+                            Registra una operación al instante
+                        </p>
+                    </div>
+                </div>
 
-                <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
+                {/* Main Form Card */}
+                <section className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm">
                     <SaleForm onSubmit={handleCreateSale} />
                 </section>
 
@@ -62,4 +71,4 @@ function NewSale() {
     );
 }
 
-export default NewSale;
+export default NewSale;

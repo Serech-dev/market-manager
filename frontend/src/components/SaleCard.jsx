@@ -1,72 +1,121 @@
 import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "../utils/formatCurrency";
 import { capitalizeWords } from "../utils/capitalizeWords";
-
+import { Clock, Edit2, Trash2 } from "lucide-react";
 
 function SaleCard({ sale, onDelete, showActions = true }) {
     const navigate = useNavigate();
-    const profit = sale.gross_amount - sale.investment_amount;
+    const profit = Number(sale.gross_amount) - Number(sale.investment_amount);
 
     return (
-        <div className="rounded-xl bg-[var(--background)] p-5 text-[var(--text-primary)] shadow-md border border-[var(--border)]">
-            <div className="flex justify-between items-start mb-4">
-                <div>
-                    <h3 className="text-lg font-bold text-[var(text-primary)]">
-                        {capitalizeWords(sale.product?.name || sale.description)}
-                    </h3>
+        <div
+            className="
+                group
+                rounded-2xl
+                border
+                border-[var(--border)]
+                bg-[var(--surface)]
+                p-4
+                shadow-sm
+                transition-all
+                hover:border-[var(--primary)]/40
+                hover:shadow-md
+            "
+        >
+            {/* Top row: Title, Quantity & Profit Pill */}
+            <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <span className="inline-flex items-center justify-center rounded-lg bg-[var(--surface-accent)] px-2 py-0.5 text-xs font-bold text-[var(--text-primary)]">
+                            {sale.quantity}x
+                        </span>
+                        <h3 className="truncate text-base font-bold text-[var(--text-primary)]">
+                            {capitalizeWords(sale.product?.name || sale.description)}
+                        </h3>
+                    </div>
 
-                    <p className="text-sm text-[var(text-secondary)]">
-                        {sale.date} · {sale.time?.slice(0, 5)}
-                    </p>
+                    <div className="mt-1 flex items-center gap-2 text-xs text-[var(--text-secondary)]">
+                        <Clock className="w-3 h-3 text-[var(--text-secondary)]" />
+                        <span>
+                            {sale.date}
+                            {sale.time ? ` · ${sale.time.slice(0, 5)} hs` : ""}
+                        </span>
+                    </div>
                 </div>
 
-                <span className="rounded-full bg-[var(--success-bg)] px-3 py-1 text-sm font-semibold text-[var(--success)]">
-                    {formatCurrency(profit)}
-                </span>
+                {/* Profit Pill */}
+                <div className="text-right shrink-0">
+                    <div className="inline-flex items-center rounded-full bg-[var(--success-bg)] px-2.5 py-1 text-xs font-bold text-[var(--success)] border border-[var(--success-border)]">
+                        +{formatCurrency(profit)}
+                    </div>
+                </div>
             </div>
 
-            <div className="space-y-2 text-[var(text-secondary)]">
-                <div className="flex justify-between">
-                    <span>Cantidad</span>
-                    <span className="font-semibold">
-                        {sale.quantity}
-                    </span>
-                </div>
-
-                <div className="flex justify-between">
-                    <span>Ingreso bruto</span>
-                    <span className="font-semibold">
+            {/* Middle row: Breakdown details */}
+            <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-2.5 text-xs text-[var(--text-secondary)]">
+                <div>
+                    <span>Total venta: </span>
+                    <span className="font-bold text-[var(--text-primary)]">
                         {formatCurrency(sale.gross_amount)}
                     </span>
                 </div>
 
-                <div className="flex justify-between">
-                    <span>Inversión</span>
-                    <span className="font-semibold">
+                <div>
+                    <span>Costo: </span>
+                    <span className="font-medium text-[var(--text-secondary)]">
                         {formatCurrency(sale.investment_amount)}
                     </span>
                 </div>
+
+                {/* Action buttons (Clean, compact icons with touch targets) */}
+                {showActions && (
+                    <div className="flex items-center gap-1">
+                        <button
+                            type="button"
+                            aria-label="Editar venta"
+                            onClick={() => navigate(`/sales/${sale.id}/edit`)}
+                            className="
+                                flex
+                                h-8
+                                w-8
+                                items-center
+                                justify-center
+                                rounded-lg
+                                text-[var(--text-secondary)]
+                                transition
+                                active-press
+                                hover:bg-[var(--surface-accent)]
+                                hover:text-[var(--primary)]
+                            "
+                        >
+                            <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+
+                        <button
+                            type="button"
+                            aria-label="Eliminar venta"
+                            onClick={() => onDelete(sale.id)}
+                            className="
+                                flex
+                                h-8
+                                w-8
+                                items-center
+                                justify-center
+                                rounded-lg
+                                text-[var(--text-secondary)]
+                                transition
+                                active-press
+                                hover:bg-[var(--danger-bg)]
+                                hover:text-[var(--danger)]
+                            "
+                        >
+                            <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                    </div>
+                )}
             </div>
-
-            {showActions && (
-                <div className="mt-5 flex gap-3">
-                    <button
-                        className="flex-1 rounded-lg bg-[var(--primary)] py-2 text-white hover:bg-[var(--primary-hover)]"
-                        onClick={() => navigate(`/sales/${sale.id}/edit`)}
-                    >
-                        Editar
-                    </button>
-
-                    <button
-                        className="flex-1 rounded-lg bg-[var(--danger)] py-2 text-white hover:brightness-90]"
-                        onClick={() => onDelete(sale.id)}
-                    >
-                        Eliminar
-                    </button>
-                </div>
-            )}
         </div>
     );
 }
 
-export default SaleCard;
+export default SaleCard;

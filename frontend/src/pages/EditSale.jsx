@@ -2,12 +2,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import SaleForm from "../components/SaleForm";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import api from "../services/api";
+import api, { getApiError } from "../services/api";
+import { ArrowLeft, Edit3 } from "lucide-react";
 
 function EditSale() {
     const { id } = useParams();
     const navigate = useNavigate();
-
     const [sale, setSale] = useState(null);
 
     useEffect(() => {
@@ -17,71 +17,78 @@ function EditSale() {
             })
             .catch((error) => {
                 console.error(error);
+                toast.error("No se pudo cargar la venta.");
             });
     }, [id]);
 
     async function handleUpdateSale(updatedSale) {
         try {
             await api.patch(`sales/${id}/`, updatedSale);
-
             toast.success("Venta actualizada.");
-
             navigate("/");
-        }
-        catch (error) {
+        } catch (error) {
             console.error(error);
-
             if (error.response?.status === 400) {
                 toast.error("Verifique el monto ingresado.");
                 return;
             }
-
-            toast.error("Ocurrió un error inesperado.");
+            toast.error(getApiError(error, "Ocurrió un error inesperado."));
         }
     }
 
     if (!sale) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
-                <p className="text-[var(--text-secondary)]">
-                    Cargando venta...
-                </p>
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="flex items-center gap-2 text-xs font-semibold text-[var(--text-secondary)]">
+                    <span className="h-2 w-2 rounded-full bg-[var(--primary)] animate-ping" />
+                    <span>Cargando venta...</span>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[var(--background)] px-4 py-8">
-            <div className="mx-auto max-w-2xl space-y-6">
+        <div className="min-h-screen px-4 pt-4 pb-12">
+            <div className="mx-auto max-w-lg space-y-4">
 
-                <button
-                    onClick={() => navigate(-1)}
-                    className="
-                        w-fit
-                        rounded-lg
-                        px-3
-                        py-2
-                        text-sm
-                        font-medium
-                        text-[var(--text-secondary)]
-                        transition
-                        hover:bg-[var(--surface-accent)]
-                    "
-                >
-                    ← Volver
-                </button>
 
-                <header>
-                    <h1 className="text-3xl font-bold text-[var(--text-primary)]">
-                        Editar Venta
-                    </h1>
+                {/* Header with Back Button */}
+                <div className="flex items-center gap-3 pt-safe">
+                    <button
+                        type="button"
+                        onClick={() => navigate(-1)}
+                        className="
+                            flex
+                            h-10
+                            w-10
+                            items-center
+                            justify-center
+                            rounded-2xl
+                            border
+                            border-[var(--border)]
+                            bg-[var(--surface)]
+                            text-[var(--text-secondary)]
+                            transition
+                            active-press
+                            hover:bg-[var(--surface-accent)]
+                            hover:text-[var(--text-primary)]
+                        "
+                        aria-label="Volver"
+                    >
+                        <ArrowLeft className="w-5 h-5" />
+                    </button>
 
-                    <p className="mt-1 text-[var(--text-secondary)]">
-                        Actualiza la información de la venta.
-                    </p>
-                </header>
+                    <div>
+                        <h1 className="text-xl font-extrabold tracking-tight text-[var(--text-primary)] flex items-center gap-2">
+                            <span>Editar Venta</span>
+                        </h1>
+                        <p className="text-xs text-[var(--text-secondary)]">
+                            Modifica los datos de la operación
+                        </p>
+                    </div>
+                </div>
 
-                <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
+                <section className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm">
                     <SaleForm
                         initialSale={sale}
                         onSubmit={handleUpdateSale}
@@ -93,4 +100,4 @@ function EditSale() {
     );
 }
 
-export default EditSale;
+export default EditSale;
