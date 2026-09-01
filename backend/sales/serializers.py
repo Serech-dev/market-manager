@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.utils import timezone
 
-from .models import Product, ProductCategory, Sale
+from .models import Product, ProductCategory, Sale, Location
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -140,6 +140,44 @@ class ProductCategorySerializer(serializers.ModelSerializer):
         return value
 
 
+class LocationSerializer(serializers.ModelSerializer):
+    sales_count = serializers.IntegerField(read_only=True, required=False)
+    gross = serializers.DecimalField(max_digits=12, decimal_places=2, read_only=True, required=False)
+    investment = serializers.DecimalField(max_digits=12, decimal_places=2, read_only=True, required=False)
+    earnings = serializers.DecimalField(max_digits=12, decimal_places=2, read_only=True, required=False)
+    last_sale = serializers.DateField(allow_null=True, read_only=True, required=False)
+
+    class Meta:
+        model = Location
+        fields = [
+            "id",
+            "name",
+            "is_active",
+            "sales_count",
+            "gross",
+            "investment",
+            "earnings",
+            "last_sale",
+            "created_at",
+        ]
+        read_only_fields = [
+            "id",
+            "sales_count",
+            "gross",
+            "investment",
+            "earnings",
+            "last_sale",
+            "created_at",
+        ]
+
+    def validate_name(self, value):
+        value = " ".join(value.strip().split())
+        if not value:
+            raise serializers.ValidationError("El nombre del lugar no puede estar vacío.")
+        return value
+
+
+
 class SaleSerializer(serializers.ModelSerializer):
     description = serializers.CharField(
         required=False,
@@ -151,6 +189,7 @@ class SaleSerializer(serializers.ModelSerializer):
     )
 
     unit_price = serializers.SerializerMethodField(read_only=True)
+    location_name = serializers.CharField(source="location.name", read_only=True, allow_null=True)
 
     gross_amount = serializers.DecimalField(
         max_digits=10,
@@ -174,27 +213,31 @@ class SaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
         fields = [
-                    "id",
-                    "product",
-                    "gross_amount",
-                    "investment_amount",
-                    "description",
-                    "date",
-                    "time",
-                    "created_at",
-                    "quantity",
-                    "unit_price",
-                ]
+            "id",
+            "product",
+            "location",
+            "location_name",
+            "gross_amount",
+            "investment_amount",
+            "description",
+            "date",
+            "time",
+            "created_at",
+            "quantity",
+            "unit_price",
+        ]
         ordering = ["-date", "-created_at"]
 
         read_only_fields = [
             "id",
             "created_at",
             "unit_price",
+            "location_name",
         ]
 
     def validate(self, attrs):
         product = attrs.get("product")
+        location = attrs.get("location")
         description = attrs.get("description", "").strip()
 
         if not product and not description:
@@ -220,6 +263,11 @@ class SaleSerializer(serializers.ModelSerializer):
                 "product": "El producto no pertenece a tu cuenta."
             })
 
+        if location and location.user != self.context["request"].user:
+            raise serializers.ValidationError({
+                "location": "El lugar no pertenece a tu cuenta."
+            })
+
         return attrs
 
     def get_unit_price(self, obj):
@@ -227,7 +275,17 @@ class SaleSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         product = validated_data.get("product")
+        location = validated_data.get("location")
         description = validated_data.pop("description", "").strip()
+
+        # If no location was explicitly passed, auto-attach the user's active location if any
+        if location is None:
+            active_location = Location.objects.filter(
+                user=self.context["request"].user,
+                is_active=True,
+            ).first()
+            if active_location:
+                validated_data["location"] = active_location
 
         if product is None:
             normalized_name = " ".join(
@@ -261,6 +319,7 @@ class SaleSerializer(serializers.ModelSerializer):
         )
 
         return sale
+
 
 
 class ProductAnalyticsSerializer(serializers.Serializer):

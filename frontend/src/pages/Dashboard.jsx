@@ -31,6 +31,8 @@ function Dashboard() {
     const [isLoading, setIsLoading] = useState(true);
 
     async function handleDelete(id) {
+
+
         try {
             await api.delete(`sales/${id}/`);
             toast.success("Venta eliminada.");
@@ -146,8 +148,31 @@ function Dashboard() {
                     </div>
 
                     <div className="flex shrink-0 items-center gap-2">
+                        <Link
+                            to="/new-sale"
+                            className="
+                                flex
+                                items-center
+                                gap-1.5
+                                rounded-xl
+                                bg-[var(--primary)]
+                                px-3
+                                py-2
+                                text-xs
+                                font-bold
+                                text-white
+                                shadow-sm
+                                transition
+                                active-press
+                                hover:bg-[var(--primary-hover)]
+                            "
+                        >
+                            <Plus className="w-3.5 h-3.5 stroke-[3]" />
+                            <span>Nueva</span>
+                        </Link>
                         <AccountMenu user={user} />
                     </div>
+
                 </header>
 
                 {/* Date / Period Filter Card */}

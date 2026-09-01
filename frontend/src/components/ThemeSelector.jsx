@@ -13,21 +13,25 @@ function ThemeSelector() {
     }
 
     return (
-        <div>
+        <div className="w-full">
             <select
                 id="theme"
                 value={theme}
                 onChange={handleChange}
                 className="
-                    rounded-lg
+                    w-full
+                    rounded-xl
                     border
                     border-[var(--border)]
-                    bg-[var(--background)]
-                    px-2
-                    py-1.5
-                    text-sm
+                    bg-[var(--surface-accent)]/50
+                    px-3
+                    py-2
+                    text-xs
+                    font-bold
                     text-[var(--text-primary)]
                     outline-none
+                    transition
+                    cursor-pointer
                     focus:border-[var(--primary)]
                     focus:ring-2
                     focus:ring-[var(--primary)]/20
@@ -41,6 +45,7 @@ function ThemeSelector() {
             </select>
         </div>
     );
+
 }
 
 export default ThemeSelector;

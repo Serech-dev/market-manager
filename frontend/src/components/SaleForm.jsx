@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import getLocalDate from "../utils/getLocalDate";
 import { formatCurrency } from "../utils/formatCurrency";
 import { capitalizeWords } from "../utils/capitalizeWords";
-import { Plus, Minus, Sparkles, TrendingUp, DollarSign, Calendar, Check, Search } from "lucide-react";
+import { Plus, Minus, Sparkles, TrendingUp, DollarSign, Calendar, Check, Search, MapPin } from "lucide-react";
 
 function SaleForm({ onSubmit, initialSale }) {
     const [sale, setSale] = useState(
@@ -11,18 +11,22 @@ function SaleForm({ onSubmit, initialSale }) {
             ? {
                 ...initialSale,
                 quantity: initialSale.quantity ?? 1,
+                time: initialSale.time || new Date().toTimeString().slice(0, 5),
             }
             : {
                 product: null,
+                location: null,
                 description: "",
                 gross_amount: "",
                 investment_amount: "",
                 date: getLocalDate(),
+                time: new Date().toTimeString().slice(0, 5),
                 quantity: 1,
             }
     );
 
     const [products, setProducts] = useState([]);
+    const [locations, setLocations] = useState([]);
     const [productInput, setProductInput] = useState(
         initialSale?.description || ""
     );
@@ -52,17 +56,32 @@ function SaleForm({ onSubmit, initialSale }) {
         Number(sale.gross_amount || 0) - Number(sale.investment_amount || 0);
 
     useEffect(() => {
-        async function fetchProducts() {
+        async function fetchData() {
             try {
-                const response = await api.get("products/");
-                setProducts(response.data);
+                const [productsRes, locationsRes] = await Promise.all([
+                    api.get("products/"),
+                    api.get("locations/"),
+                ]);
+                setProducts(productsRes.data);
+                setLocations(locationsRes.data);
+
+                if (!initialSale && locationsRes.data.length > 0) {
+                    const active = locationsRes.data.find((l) => l.is_active);
+                    if (active) {
+                        setSale((prev) => ({
+                            ...prev,
+                            location: active.id,
+                        }));
+                    }
+                }
             } catch (error) {
                 console.error(error);
             }
         }
 
-        fetchProducts();
-    }, []);
+        fetchData();
+    }, [initialSale]);
+
 
     function handleChange(event) {
         setSale({
@@ -498,8 +517,58 @@ function SaleForm({ onSubmit, initialSale }) {
                 />
             </div>
 
+            {/* Location Selector (Auto-selected to Active Location) */}
+            {locations.length > 0 && (
+                <div className="space-y-1.5">
+                    <label
+                        htmlFor="location"
+                        className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]"
+                    >
+                        <MapPin className="w-3.5 h-3.5 text-[var(--primary)]" />
+                        <span>Punto de Venta / Lugar</span>
+                    </label>
+
+                    <select
+                        id="location"
+                        name="location"
+                        value={sale.location || ""}
+                        onChange={(e) =>
+                            setSale({
+                                ...sale,
+                                location: e.target.value ? Number(e.target.value) : null,
+                            })
+                        }
+                        className="
+                            w-full
+                            rounded-2xl
+                            border
+                            border-[var(--border)]
+                            bg-[var(--surface)]
+                            px-4
+                            py-2.5
+                            text-xs
+                            font-medium
+                            text-[var(--text-primary)]
+                            outline-none
+                            transition
+                            focus:border-[var(--primary)]
+                            focus:ring-2
+                            focus:ring-[var(--primary)]/20
+                        "
+                    >
+                        <option value="">Sin lugar específico</option>
+                        {locations.map((loc) => (
+                            <option key={loc.id} value={loc.id}>
+                                {capitalizeWords(loc.name)} {loc.is_active ? "● (Activo)" : ""}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            )}
+
             {/* Save Button */}
             <button
+
                 disabled={isSubmitting || !sale.description.trim() || !sale.gross_amount}
                 type="submit"
                 className="

@@ -90,8 +90,9 @@ function AccountMenu({ user, onLogout }) {
                         border
                         border-[var(--border)]
                         bg-[var(--surface)]
-                        p-3
+                        p-3.5
                         shadow-xl
+                        animate-pop-in
                     "
                 >
                     {/* User Info */}
@@ -99,6 +100,7 @@ function AccountMenu({ user, onLogout }) {
                         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--surface-accent)] text-[var(--primary)] shrink-0">
                             <User className="w-5 h-5" />
                         </div>
+
                         <div className="min-w-0 flex-1">
                             <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
                                 Cuenta

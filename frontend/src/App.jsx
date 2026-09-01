@@ -8,6 +8,7 @@ import Products from "./pages/Products";
 import EditSale from "./pages/EditSale";
 import Dashboard from "./pages/Dashboard";
 import Categories from "./pages/categories";
+import Locations from "./pages/Locations";
 import NewProduct from "./pages/NewProduct";
 import NewCategory from "./pages/NewCategory";
 import ProductDetail from "./pages/ProductDetail";
@@ -60,11 +61,16 @@ function App() {
                             path="/categories"
                             element={<Categories />}
                         />
+                        <Route
+                            path="/locations"
+                            element={<Locations />}
+                        />
                     </Route>
                 </Routes>
             </BrowserRouter>
         </>
     );
 }
+
 
 export default App;

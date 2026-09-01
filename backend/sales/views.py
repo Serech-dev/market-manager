@@ -8,12 +8,138 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Product, ProductCategory, Sale
+from .models import Product, ProductCategory, Sale, Location
 from .serializers import (ProductAnalyticsSerializer,
                           ProductCategoryAnalyticsSerializer,
                           ProductCategorySerializer, ProductSerializer,
-                          SaleSerializer)
+                          SaleSerializer, LocationSerializer)
 from .utils import apply_period_filter
+
+
+class LocationListCreateView(generics.ListCreateAPIView):
+    serializer_class = LocationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Location.objects.filter(
+            user=self.request.user,
+        )
+
+        sales = Sale.objects.filter(
+            location__user=self.request.user,
+        )
+        sales = apply_period_filter(sales, self.request.query_params)
+
+        sales_filter = Q(sales__in=sales)
+
+        queryset = queryset.annotate(
+            sales_count=Count(
+                "sales",
+                filter=sales_filter,
+            ),
+            gross=Coalesce(
+                Sum(
+                    "sales__gross_amount",
+                    filter=sales_filter,
+                ),
+                Value(Decimal("0")),
+            ),
+            investment=Coalesce(
+                Sum(
+                    "sales__investment_amount",
+                    filter=sales_filter,
+                ),
+                Value(Decimal("0")),
+            ),
+            earnings=Coalesce(
+                Sum(
+                    "sales__gross_amount",
+                    filter=sales_filter,
+                ),
+                Value(Decimal("0")),
+            ) - Coalesce(
+                Sum(
+                    "sales__investment_amount",
+                    filter=sales_filter,
+                ),
+                Value(Decimal("0")),
+            ),
+            last_sale=Max(
+                "sales__date",
+                filter=sales_filter,
+            ),
+        )
+
+        return queryset.order_by("-is_active", "name")
+
+    def create(self, request, *args, **kwargs):
+        name = " ".join(request.data.get("name", "").strip().split())
+
+        if not name:
+            return Response(
+                {"name": "El nombre del lugar no puede estar vacío."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        existing_location = Location.objects.filter(
+            user=request.user,
+            name=name,
+        ).first()
+
+        if existing_location:
+            return Response(
+                {"name": "Ya tienes un lugar con este nombre."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # If it's the user's first location, make it active by default
+        user_has_locations = Location.objects.filter(user=request.user).exists()
+        make_active = not user_has_locations or request.data.get("is_active", False)
+
+        if make_active:
+            Location.objects.filter(user=request.user).update(is_active=False)
+
+        serializer = self.get_serializer(
+            data={"name": name, "is_active": make_active}
+        )
+        serializer.is_valid(raise_exception=True)
+        location = serializer.save(user=request.user)
+
+        return Response(
+            self.get_serializer(location).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class LocationDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = LocationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Location.objects.filter(user=self.request.user)
+
+
+class LocationActivateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            location = Location.objects.get(pk=pk, user=request.user)
+        except Location.DoesNotExist:
+            return Response(
+                {"detail": "Lugar no encontrado."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        Location.objects.filter(user=request.user).update(is_active=False)
+        location.is_active = True
+        location.save(update_fields=["is_active"])
+
+        return Response(
+            LocationSerializer(location).data,
+            status=status.HTTP_200_OK,
+        )
+
 
 
 class SaleListCreateView(generics.ListCreateAPIView):

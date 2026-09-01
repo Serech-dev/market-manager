@@ -2,7 +2,8 @@ from django.urls import path
 
 from .views import (ProductAnalyticsView, ProductArchiveView,
                     ProductCategoryListCreateView, ProductListView,
-                    SaleDetailView, SaleListCreateView, SaleSummaryView)
+                    SaleDetailView, SaleListCreateView, SaleSummaryView,
+                    LocationListCreateView, LocationDetailView, LocationActivateView)
 
 urlpatterns = [
     path(
@@ -31,17 +32,28 @@ urlpatterns = [
         name="product-analytics",
     ),
     path(
-    "products/<int:pk>/archive/",
-    ProductArchiveView.as_view(),
-    name="product-archive",
+        "products/<int:pk>/archive/",
+        ProductArchiveView.as_view(),
+        name="product-archive",
     ),
     path(
-    "categories/",
-    ProductCategoryListCreateView.as_view(),
+        "categories/",
+        ProductCategoryListCreateView.as_view(),
+        name="category-list-create",
     ),
     path(
-        "products/<int:pk>/",
-        ProductAnalyticsView.as_view(),
-        name="product-analytics",
+        "locations/",
+        LocationListCreateView.as_view(),
+        name="location-list-create",
+    ),
+    path(
+        "locations/<int:pk>/",
+        LocationDetailView.as_view(),
+        name="location-detail",
+    ),
+    path(
+        "locations/<int:pk>/activate/",
+        LocationActivateView.as_view(),
+        name="location-activate",
     ),
 ]

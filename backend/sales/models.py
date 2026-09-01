@@ -79,10 +79,53 @@ class Product(models.Model):
         return self.name
 
 
+class Location(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="locations",
+    )
+    name = models.CharField(
+        max_length=100,
+    )
+    is_active = models.BooleanField(
+        default=False,
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "name"],
+                name="unique_location_per_user",
+            )
+        ]
+        ordering = ["-is_active", "name"]
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(
+            self.name.strip().split()
+        )
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
 class Sale(models.Model):
     product = models.ForeignKey(
         Product,
         on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="sales",
+    )
+
+    location = models.ForeignKey(
+        Location,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="sales",
@@ -120,4 +163,4 @@ class Sale(models.Model):
         return self.gross_amount - self.investment_amount
 
     def __str__(self):
-        return f"{self.description} - ${self.gross_amount}"
+        return f"{self.description} - ${self.gross_amount}"
