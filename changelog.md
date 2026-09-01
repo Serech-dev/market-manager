@@ -1,6 +1,14 @@
 CHANGELOG
 
 
+v0.9.0
+
+-add icons, animations and change top layout to mobile friendly bottom layout
+-add summary count up animations for monetary values
+-add close day display with animations
+-refactor icons
+-add a background effect and slight animations
+
 v0.8.0
 
 -implement product and category ownership by user accounts
