@@ -1,6 +1,13 @@
 CHANGELOG
 
 
+v0.9.3
+
+-add locations tab, logic and UI
+-fix theme selector overflowed text
+-fix dashboard subtext
+-add "Nueva" button to Ventas to have it on all tabs 
+
 v0.9.0
 
 -add icons, animations and change top layout to mobile friendly bottom layout

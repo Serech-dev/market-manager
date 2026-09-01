@@ -142,7 +142,7 @@ function Dashboard() {
                                 Market Manager
                             </h1>
                             <p className="text-xs text-[var(--text-secondary)]">
-                                Registro rápido de feria
+                                Registro rápido de ventas
                             </p>
                         </div>
                     </div>
