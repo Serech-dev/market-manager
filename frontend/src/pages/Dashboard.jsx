@@ -228,7 +228,7 @@ function Dashboard() {
                             "
                         >
                             <ClipboardList className="w-3.5 h-3.5" />
-                            <span>Cierre del Día</span>
+                            <span>Cierre de jornada</span>
                         </button>
                     </div>
 
