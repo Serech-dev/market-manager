@@ -107,23 +107,24 @@ function DailySummaryModal({ isOpen, onClose, summary, sales, periodLabel }) {
                 {/* Main Metrics Card with Fanfare */}
                 <div className={`rounded-3xl border border-[var(--success-border)] bg-[var(--success-bg)] p-5 text-center shadow-inner relative overflow-hidden transition-all duration-300 ${isEarningsBumping ? "ring-2 ring-[var(--success)]/40 scale-[1.01]" : ""}`}>
                     <div className="flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--success-text)]">
-                        <TrendingUp className="w-4 h-4" />
+                        <TrendingUp className="w-4 h-4 text-[var(--success)]" />
                         <span>Ganancia Neta del Período</span>
                     </div>
                     <p className={`mt-2 text-4xl font-black text-[var(--success-text)] tracking-tight transition-transform duration-200 ${isEarningsBumping ? "scale-105" : ""}`}>
                         +{formatCurrency(animatedEarnings)}
                     </p>
-                    <div className="mt-4 grid grid-cols-2 gap-2 border-t border-[var(--success-border)]/60 pt-3 text-xs">
-                        <div className="rounded-xl bg-white/40 p-2">
-                            <span className="text-[var(--success-text)] block text-[10px] uppercase font-bold">Ingresos</span>
-                            <span className="font-extrabold text-[var(--success-text)] text-sm">{formatCurrency(animatedGross)}</span>
+                    <div className="mt-4 grid grid-cols-2 gap-2.5 border-t border-[var(--success-border)]/50 pt-3 text-xs">
+                        <div className="rounded-2xl border border-[var(--border)]/70 bg-[var(--surface)] p-2.5 shadow-xs">
+                            <span className="text-[var(--text-secondary)] block text-[10px] uppercase font-bold tracking-wider">Ingresos</span>
+                            <span className="font-extrabold text-[var(--text-primary)] text-sm mt-0.5 block">{formatCurrency(animatedGross)}</span>
                         </div>
-                        <div className="rounded-xl bg-white/40 p-2">
-                            <span className="text-[var(--success-text)] block text-[10px] uppercase font-bold">Inversión</span>
-                            <span className="font-extrabold text-[var(--success-text)] text-sm">{formatCurrency(animatedInvestment)}</span>
+                        <div className="rounded-2xl border border-[var(--border)]/70 bg-[var(--surface)] p-2.5 shadow-xs">
+                            <span className="text-[var(--text-secondary)] block text-[10px] uppercase font-bold tracking-wider">Inversión</span>
+                            <span className="font-extrabold text-[var(--text-primary)] text-sm mt-0.5 block">{formatCurrency(animatedInvestment)}</span>
                         </div>
                     </div>
                 </div>
+
 
 
 

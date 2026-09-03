@@ -10,6 +10,7 @@ import { Link, useNavigate } from "react-router-dom";
 import ConfirmDialog from "../components/ConfirmDialog";
 import AppNavigation from "../components/AppNavigation";
 import DailySummaryModal from "../components/DailySummaryModal";
+import OnboardingModal from "../components/OnboardingModal";
 import { ReceiptText, Plus, ClipboardList, ShoppingBag } from "lucide-react";
 
 function Dashboard() {
@@ -28,7 +29,9 @@ function Dashboard() {
     const [selectedDateTo, setSelectedDateTo] = useState(getLocalDate());
     const [saleToDelete, setSaleToDelete] = useState(null);
     const [showDailySummary, setShowDailySummary] = useState(false);
+    const [showGuide, setShowGuide] = useState(() => !localStorage.getItem("has_seen_guide_v1"));
     const [isLoading, setIsLoading] = useState(true);
+
 
     async function handleDelete(id) {
 
@@ -342,11 +345,18 @@ function Dashboard() {
                     setSaleToDelete(null);
                 }}
             />
+
+            {/* First-Open Guide Tour */}
+            <OnboardingModal
+                isOpen={showGuide}
+                onClose={() => setShowGuide(false)}
+            />
         </div>
     );
 }
 
 export default Dashboard;
+
 
 
 

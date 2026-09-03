@@ -1,11 +1,13 @@
 import { logout } from "../services/auth";
 import ThemeSelector from "./ThemeSelector";
+import OnboardingModal from "./OnboardingModal";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { User, Palette, LogOut, ChevronDown } from "lucide-react";
+import { User, Palette, LogOut, ChevronDown, HelpCircle } from "lucide-react";
 
 function AccountMenu({ user, onLogout }) {
     const [isOpen, setIsOpen] = useState(false);
+    const [showGuide, setShowGuide] = useState(false);
     const menuRef = useRef(null);
     const navigate = useNavigate();
 
@@ -123,6 +125,35 @@ function AccountMenu({ user, onLogout }) {
                         <ThemeSelector />
                     </div>
 
+                    {/* Usage Guide / Tutorial */}
+                    <div className="border-t border-[var(--border)] py-2">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setIsOpen(false);
+                                setShowGuide(true);
+                            }}
+                            className="
+                                flex
+                                w-full
+                                items-center
+                                gap-2
+                                rounded-xl
+                                px-2.5
+                                py-2
+                                text-xs
+                                font-bold
+                                text-[var(--text-primary)]
+                                transition
+                                active-press
+                                hover:bg-[var(--surface-accent)]
+                            "
+                        >
+                            <HelpCircle className="w-3.5 h-3.5 text-[var(--primary)]" />
+                            <span>Guía de uso</span>
+                        </button>
+                    </div>
+
                     {/* Logout */}
                     <div className="border-t border-[var(--border)] pt-2">
                         <button
@@ -150,8 +181,15 @@ function AccountMenu({ user, onLogout }) {
                     </div>
                 </div>
             )}
+
+            {/* Onboarding / Tutorial Modal */}
+            <OnboardingModal
+                isOpen={showGuide}
+                onClose={() => setShowGuide(false)}
+            />
         </div>
     );
 }
 
-export default AccountMenu;
+export default AccountMenu;
+

@@ -373,6 +373,9 @@ class ProductListView(generics.ListCreateAPIView):
             name=name,
         ).first()
 
+        price = request.data.get("price")
+        investment_price = request.data.get("investment_price")
+
         if existing_product:
             if existing_product.active:
                 return Response(
@@ -382,8 +385,12 @@ class ProductListView(generics.ListCreateAPIView):
 
             existing_product.active = True
             existing_product.category_id = request.data.get("category") or None
+            if price is not None:
+                existing_product.price = price
+            if investment_price is not None:
+                existing_product.investment_price = investment_price
             existing_product.save(
-                update_fields=["active", "category"]
+                update_fields=["active", "category", "price", "investment_price"]
             )
 
             return Response(
@@ -391,12 +398,16 @@ class ProductListView(generics.ListCreateAPIView):
                 status=status.HTTP_200_OK,
             )
 
-        serializer = self.get_serializer(
-            data={
-                "name": name,
-                "category": request.data.get("category") or None,
-            }
-        )
+        data = {
+            "name": name,
+            "category": request.data.get("category") or None,
+        }
+        if price is not None:
+            data["price"] = price
+        if investment_price is not None:
+            data["investment_price"] = investment_price
+
+        serializer = self.get_serializer(data=data)
 
         serializer.is_valid(raise_exception=True)
 
@@ -408,6 +419,7 @@ class ProductListView(generics.ListCreateAPIView):
             self.get_serializer(product).data,
             status=status.HTTP_201_CREATED,
         )
+
 
     
 class ProductAnalyticsView(generics.RetrieveUpdateAPIView):

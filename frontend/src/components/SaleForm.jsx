@@ -4,6 +4,7 @@ import getLocalDate from "../utils/getLocalDate";
 import { formatCurrency } from "../utils/formatCurrency";
 import { capitalizeWords } from "../utils/capitalizeWords";
 import { Plus, Minus, Sparkles, TrendingUp, DollarSign, Calendar, Check, Search, MapPin } from "lucide-react";
+import QuickProductModal from "./QuickProductModal";
 
 function SaleForm({ onSubmit, initialSale }) {
     const [sale, setSale] = useState(
@@ -32,6 +33,7 @@ function SaleForm({ onSubmit, initialSale }) {
     );
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isQuickProductModalOpen, setIsQuickProductModalOpen] = useState(false);
     const normalizedInput = productInput.trim().toLowerCase();
 
     const filteredProducts = products.filter((product) =>
@@ -123,6 +125,12 @@ function SaleForm({ onSubmit, initialSale }) {
         setShowSuggestions(false);
     }
 
+    function handleProductCreated(newProduct) {
+        setProducts((prev) => [newProduct, ...prev]);
+        selectProduct(newProduct);
+    }
+
+
     async function handleSubmit(e) {
         e.preventDefault();
         setIsSubmitting(true);
@@ -154,7 +162,9 @@ function SaleForm({ onSubmit, initialSale }) {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <>
+            <form onSubmit={handleSubmit} className="space-y-5">
+
             {/* Quick Pick Product Chips (For Fast Fair Operations) */}
             {products.length > 0 && !initialSale && (
                 <div className="space-y-1.5">
@@ -163,6 +173,33 @@ function SaleForm({ onSubmit, initialSale }) {
                         <span>Selección Rápida</span>
                     </label>
                     <div className="flex gap-2 overflow-x-auto pb-1.5 no-scrollbar">
+                        <button
+                            type="button"
+                            onClick={() => setIsQuickProductModalOpen(true)}
+                            className="
+                                shrink-0
+                                flex
+                                items-center
+                                gap-1
+                                rounded-xl
+                                px-2.5
+                                py-2
+                                text-xs
+                                font-bold
+                                border
+                                border-dashed
+                                border-[var(--primary)]/50
+                                text-[var(--primary)]
+                                bg-[var(--surface-accent)]/50
+                                hover:bg-[var(--primary)]
+                                hover:text-white
+                                transition
+                                active-press
+                            "
+                        >
+                            <Plus className="w-3 h-3 stroke-[3]" />
+                            <span>Nuevo</span>
+                        </button>
                         {products.slice(0, 10).map((prod) => {
                             const isSelected = sale.product === prod.id;
                             return (
@@ -300,24 +337,44 @@ function SaleForm({ onSubmit, initialSale }) {
                                 ))}
 
                                 {!exactMatch && (
-                                    <div
-                                        className="
-                                            border-t
-                                            border-[var(--border)]
-                                            p-2.5
-                                            text-xs
-                                            text-[var(--text-secondary)]
-                                        "
-                                    >
-                                        ✨ Se registrará como nuevo producto:
-                                        <span className="ml-1 font-bold text-[var(--text-primary)]">
-                                            {capitalizeWords(productInput)}
-                                        </span>
+                                    <div className="border-t border-[var(--border)] p-1.5">
+                                        <button
+                                            type="button"
+                                            onMouseDown={(e) => e.preventDefault()}
+                                            onClick={() => setIsQuickProductModalOpen(true)}
+                                            className="
+                                                flex
+                                                w-full
+                                                items-center
+                                                justify-between
+                                                gap-2
+                                                rounded-xl
+                                                bg-[var(--surface-accent)]
+                                                p-2.5
+                                                text-left
+                                                text-xs
+                                                font-bold
+                                                text-[var(--primary)]
+                                                transition
+                                                active-press
+                                                hover:bg-[var(--primary)]
+                                                hover:text-white
+                                            "
+                                        >
+                                            <span className="flex items-center gap-1.5 truncate">
+                                                <Plus className="w-3.5 h-3.5 stroke-[3]" />
+                                                <span>Crear "{capitalizeWords(productInput)}"</span>
+                                            </span>
+                                            <span className="shrink-0 text-[10px] uppercase font-bold tracking-wider opacity-80">
+                                                Fijar Precio
+                                            </span>
+                                        </button>
                                     </div>
                                 )}
                             </div>
                         )}
                     </div>
+
 
                     {/* Quantity Stepper (Thumb Ergonomic) */}
                     <div className="flex h-[46px] w-28 items-center justify-between overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-0.5">
@@ -591,7 +648,18 @@ function SaleForm({ onSubmit, initialSale }) {
                 {isSubmitting ? "Guardando venta..." : "✓ Registrar Venta"}
             </button>
         </form>
-    );
+
+        {/* Quick Product Creation Modal (Rendered outside form to avoid nested form collision) */}
+        <QuickProductModal
+            isOpen={isQuickProductModalOpen}
+            onClose={() => setIsQuickProductModalOpen(false)}
+            initialName={productInput.trim()}
+            onProductCreated={handleProductCreated}
+        />
+    </>
+);
 }
 
-export default SaleForm;
+export default SaleForm;
+
+
