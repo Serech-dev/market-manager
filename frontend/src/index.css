@@ -296,13 +296,14 @@ body {
   position: relative;
 }
 
-/* Ambient Pulsing Background Orbs - Ultra Smooth & Cloud-like */
+/* Ambient Background Orbs - Ultra Lightweight (Zero-filter GPU Optimized) */
 .ambient-glow-wrapper {
   position: fixed;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
+  contain: strict;
 }
 
 .ambient-orb-1 {
@@ -314,11 +315,18 @@ body {
   max-width: 700px;
   max-height: 700px;
   border-radius: 9999px;
-  background: radial-gradient(circle at center, var(--orb-1-color, var(--primary)) 0%, color-mix(in srgb, var(--orb-1-color, var(--primary)) 50%, transparent) 30%, color-mix(in srgb, var(--orb-1-color, var(--primary)) 18%, transparent) 60%, transparent 80%);
+  background: radial-gradient(
+    circle at center,
+    var(--orb-1-color, var(--primary)) 0%,
+    color-mix(in srgb, var(--orb-1-color, var(--primary)) 45%, transparent) 25%,
+    color-mix(in srgb, var(--orb-1-color, var(--primary)) 15%, transparent) 50%,
+    transparent 70%
+  );
   opacity: var(--orb-opacity-1, 0.34);
-  filter: blur(90px);
-  animation: pulse-orb-1 9s ease-in-out infinite alternate;
-  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  animation: pulse-orb-1 12s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
 .ambient-orb-2 {
@@ -330,12 +338,19 @@ body {
   max-width: 650px;
   max-height: 650px;
   border-radius: 9999px;
-  background: radial-gradient(circle at center, var(--orb-2-color, var(--secondary)) 0%, color-mix(in srgb, var(--orb-2-color, var(--secondary)) 50%, transparent) 30%, color-mix(in srgb, var(--orb-2-color, var(--secondary)) 18%, transparent) 60%, transparent 80%);
+  background: radial-gradient(
+    circle at center,
+    var(--orb-2-color, var(--secondary)) 0%,
+    color-mix(in srgb, var(--orb-2-color, var(--secondary)) 45%, transparent) 25%,
+    color-mix(in srgb, var(--orb-2-color, var(--secondary)) 15%, transparent) 50%,
+    transparent 70%
+  );
   opacity: var(--orb-opacity-2, 0.38);
-  filter: blur(100px);
-  animation: pulse-orb-2 12s ease-in-out infinite alternate;
-  animation-delay: -4s;
-  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  animation: pulse-orb-2 15s ease-in-out infinite alternate;
+  animation-delay: -5s;
+  will-change: transform;
 }
 
 .ambient-orb-3 {
@@ -347,51 +362,64 @@ body {
   max-width: 800px;
   max-height: 800px;
   border-radius: 9999px;
-  background: radial-gradient(circle at center, var(--orb-3-color, var(--primary)) 0%, color-mix(in srgb, var(--orb-3-color, var(--primary)) 45%, transparent) 30%, color-mix(in srgb, var(--orb-3-color, var(--primary)) 15%, transparent) 60%, transparent 80%);
+  background: radial-gradient(
+    circle at center,
+    var(--orb-3-color, var(--primary)) 0%,
+    color-mix(in srgb, var(--orb-3-color, var(--primary)) 40%, transparent) 25%,
+    color-mix(in srgb, var(--orb-3-color, var(--primary)) 12%, transparent) 50%,
+    transparent 70%
+  );
   opacity: var(--orb-opacity-3, 0.26);
-  filter: blur(115px);
-  animation: pulse-orb-3 14s ease-in-out infinite alternate;
-  animation-delay: -7s;
-  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  animation: pulse-orb-3 18s ease-in-out infinite alternate;
+  animation-delay: -8s;
+  will-change: transform;
 }
 
 @keyframes pulse-orb-1 {
   0% {
-    transform: scale(0.96) translate(0px, 0px);
+    transform: scale(0.96) translate3d(0px, 0px, 0);
   }
   50% {
-    transform: scale(1.22) translate(25px, 35px);
+    transform: scale(1.18) translate3d(20px, 25px, 0);
   }
   100% {
-    transform: scale(1.08) translate(-15px, 15px);
+    transform: scale(1.06) translate3d(-12px, 12px, 0);
   }
 }
 
 @keyframes pulse-orb-2 {
   0% {
-    transform: scale(1.15) translate(0px, 0px);
+    transform: scale(1.12) translate3d(0px, 0px, 0);
   }
   50% {
-    transform: scale(0.92) translate(-30px, 20px);
+    transform: scale(0.94) translate3d(-24px, 16px, 0);
   }
   100% {
-    transform: scale(1.2) translate(15px, -15px);
+    transform: scale(1.15) translate3d(12px, -12px, 0);
   }
 }
 
 @keyframes pulse-orb-3 {
   0% {
-    transform: scale(0.92) translate(0px, 0px);
+    transform: scale(0.94) translate3d(0px, 0px, 0);
   }
   50% {
-    transform: scale(1.28) translate(35px, -25px);
+    transform: scale(1.22) translate3d(28px, -20px, 0);
   }
   100% {
-    transform: scale(1.04) translate(-20px, 10px);
+    transform: scale(1.02) translate3d(-16px, 8px, 0);
   }
 }
 
-
+@media (prefers-reduced-motion: reduce) {
+  .ambient-orb-1,
+  .ambient-orb-2,
+  .ambient-orb-3 {
+    animation: none !important;
+  }
+}
 
 /* Safe area support for notched phones */
 .pb-safe {
@@ -448,11 +476,18 @@ body {
   animation: float-gentle 3s ease-in-out infinite;
 }
 
-/* Glassmorphism Navigation */
+/* Glassmorphism Navigation - Lightweight & Optimized */
 .glass-nav {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background-color: color-mix(in srgb, var(--surface) 94%, transparent);
 }
+
+@supports (backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px)) {
+  .glass-nav {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
 
 /* Hide scrollbars for clean horizontal filter chips */
 .no-scrollbar::-webkit-scrollbar {

@@ -351,12 +351,20 @@ class ProductListView(generics.ListCreateAPIView):
             "earnings": ["-earnings", "name"],
             "recent": [F("last_sale").desc(nulls_last=True), "name"],
             "oldest": ["created_at"],
+        }
+
+        order = sort_options.get(sort, ["name"])
+        return queryset.order_by(*order)
+
     def create(self, request, *args, **kwargs):
         name = " ".join(
             request.data.get("name", "").strip().lower().split()
         )
 
+        if not name:
+            return Response(
                 {"name": "El nombre no puede estar vacío."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         existing_product = Product.objects.filter(
