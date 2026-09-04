@@ -6,7 +6,22 @@ import { capitalizeWords } from "../utils/capitalizeWords";
 import { Plus, Minus, Sparkles, TrendingUp, DollarSign, Calendar, Check, Search, MapPin } from "lucide-react";
 import QuickProductModal from "./QuickProductModal";
 
-function SaleForm({ onSubmit, initialSale }) {
+function SaleForm({
+    onSubmit,
+    initialSale,
+    isQuickModalOpen: externalIsQuickModalOpen,
+    setIsQuickModalOpen: externalSetIsQuickModalOpen,
+}) {
+    const [internalIsQuickModalOpen, setInternalIsQuickModalOpen] = useState(false);
+    const isQuickProductModalOpen =
+        externalIsQuickModalOpen !== undefined
+            ? externalIsQuickModalOpen
+            : internalIsQuickModalOpen;
+    const setIsQuickProductModalOpen =
+        externalSetIsQuickModalOpen !== undefined
+            ? externalSetIsQuickModalOpen
+            : setInternalIsQuickModalOpen;
+
     const [sale, setSale] = useState(
         initialSale
             ? {
@@ -33,7 +48,7 @@ function SaleForm({ onSubmit, initialSale }) {
     );
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isQuickProductModalOpen, setIsQuickProductModalOpen] = useState(false);
+
     const normalizedInput = productInput.trim().toLowerCase();
 
     const filteredProducts = products.filter((product) =>
@@ -61,7 +76,7 @@ function SaleForm({ onSubmit, initialSale }) {
         async function fetchData() {
             try {
                 const [productsRes, locationsRes] = await Promise.all([
-                    api.get("products/"),
+                    api.get("products/?sort=sales"),
                     api.get("locations/"),
                 ]);
                 setProducts(productsRes.data);
@@ -101,6 +116,21 @@ function SaleForm({ onSubmit, initialSale }) {
             description: value,
         });
         setShowSuggestions(true);
+    }
+
+    function handleChipClick(product) {
+        if (sale.product === product.id) {
+            setSale((prev) => ({
+                ...prev,
+                product: null,
+                description: "",
+                gross_amount: "",
+                investment_amount: "",
+            }));
+            setProductInput("");
+            return;
+        }
+        selectProduct(product);
     }
 
     function selectProduct(product) {
@@ -165,48 +195,22 @@ function SaleForm({ onSubmit, initialSale }) {
         <>
             <form onSubmit={handleSubmit} className="space-y-5">
 
-            {/* Quick Pick Product Chips (For Fast Fair Operations) */}
+            {/* Quick Pick Product Chips (Most Sold) */}
             {products.length > 0 && !initialSale && (
                 <div className="space-y-1.5">
                     <label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">
                         <Sparkles className="w-3.5 h-3.5 text-[var(--warning)]" />
-                        <span>Selección Rápida</span>
+                        <span>Más Vendidos</span>
                     </label>
                     <div className="flex gap-2 overflow-x-auto pb-1.5 no-scrollbar">
-                        <button
-                            type="button"
-                            onClick={() => setIsQuickProductModalOpen(true)}
-                            className="
-                                shrink-0
-                                flex
-                                items-center
-                                gap-1
-                                rounded-xl
-                                px-2.5
-                                py-2
-                                text-xs
-                                font-bold
-                                border
-                                border-dashed
-                                border-[var(--primary)]/50
-                                text-[var(--primary)]
-                                bg-[var(--surface-accent)]/50
-                                hover:bg-[var(--primary)]
-                                hover:text-white
-                                transition
-                                active-press
-                            "
-                        >
-                            <Plus className="w-3 h-3 stroke-[3]" />
-                            <span>Nuevo</span>
-                        </button>
                         {products.slice(0, 10).map((prod) => {
+
                             const isSelected = sale.product === prod.id;
                             return (
                                 <button
                                     key={prod.id}
                                     type="button"
-                                    onClick={() => selectProduct(prod)}
+                                    onClick={() => handleChipClick(prod)}
                                     className={`
                                         shrink-0
                                         rounded-xl
@@ -236,6 +240,7 @@ function SaleForm({ onSubmit, initialSale }) {
                     </div>
                 </div>
             )}
+
 
             {/* Product Name & Quantity Selector */}
             <div className="space-y-1.5">

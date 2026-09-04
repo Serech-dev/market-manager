@@ -345,27 +345,18 @@ class ProductListView(generics.ListCreateAPIView):
         sort = self.request.query_params.get("sort", "name")
 
         sort_options = {
-            "name": "name",
-            "sales": "-sales_count",
-            "gross": "-gross",
-            "earnings": "-earnings",
-            "recent": F("last_sale").desc(nulls_last=True),
-            "oldest": "created_at",
-        }
-
-        return queryset.order_by(
-            sort_options.get(sort, "name")
-        )
-
+            "name": ["name"],
+            "sales": ["-sales_count", F("last_sale").desc(nulls_last=True), "name"],
+            "gross": ["-gross", "name"],
+            "earnings": ["-earnings", "name"],
+            "recent": [F("last_sale").desc(nulls_last=True), "name"],
+            "oldest": ["created_at"],
     def create(self, request, *args, **kwargs):
         name = " ".join(
             request.data.get("name", "").strip().lower().split()
         )
 
-        if not name:
-            return Response(
                 {"name": "El nombre no puede estar vacío."},
-                status=status.HTTP_400_BAD_REQUEST,
             )
 
         existing_product = Product.objects.filter(
