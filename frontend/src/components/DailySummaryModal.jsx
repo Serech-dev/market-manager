@@ -1,18 +1,44 @@
+import { useEffect } from "react";
 import { formatCurrency } from "../utils/formatCurrency";
 import { capitalizeWords } from "../utils/capitalizeWords";
 import { X, Share2, Copy, Trophy, Sparkles, CheckCircle2, TrendingUp } from "lucide-react";
 import toast from "react-hot-toast";
 import { useCountUp } from "../hooks/useCountUp";
+import { triggerConfetti, playFanfareSound } from "../utils/soundEffects";
+
+function DailySummaryModal({ isOpen, onClose, summary = { earnings: 0, gross: 0, investment: 0 }, sales = [], periodLabel = "" }) {
+    useEffect(() => {
+        if (isOpen) {
+            triggerConfetti();
+            playFanfareSound();
+        }
+    }, [isOpen]);
+
+    const { displayValue: animatedEarnings, isBumping: isEarningsBumping } = useCountUp(summary?.earnings || 0, {
+        startFromZero: true,
+        duration: 1400,
+        trigger: isOpen,
+    });
+    const { displayValue: animatedGross } = useCountUp(summary?.gross || 0, {
+        startFromZero: true,
+        duration: 1200,
+        trigger: isOpen,
+    });
+    const { displayValue: animatedInvestment } = useCountUp(summary?.investment || 0, {
+        startFromZero: true,
+        duration: 1000,
+        trigger: isOpen,
+    });
 
 
-function DailySummaryModal({ isOpen, onClose, summary, sales, periodLabel }) {
     if (!isOpen) return null;
 
-    const totalUnits = sales.reduce((sum, sale) => sum + (sale.quantity || 1), 0);
+    const safeSales = sales || [];
+    const totalUnits = safeSales.reduce((sum, sale) => sum + (sale.quantity || 1), 0);
 
     // Calculate product breakdown for this period
     const productStats = {};
-    sales.forEach((sale) => {
+    safeSales.forEach((sale) => {
         const name = capitalizeWords(sale.product?.name || sale.description);
         if (!productStats[name]) {
             productStats[name] = { qty: 0, gross: 0, profit: 0 };
@@ -32,7 +58,7 @@ function DailySummaryModal({ isOpen, onClose, summary, sales, periodLabel }) {
         text += `💰 *Ganancia Neta:* ${formatCurrency(summary.earnings)}\n`;
         text += `💵 *Total Recaudado:* ${formatCurrency(summary.gross)}\n`;
         text += `📦 *Costo/Inversión:* ${formatCurrency(summary.investment)}\n`;
-        text += `🏷️ *Total Operaciones:* ${sales.length} (${totalUnits} unidades)\n`;
+        text += `🏷️ *Total Operaciones:* ${safeSales.length} (${totalUnits} unidades)\n`;
         
         if (sortedProducts.length > 0) {
             text += `\n🏆 *Top Productos:*\n`;
@@ -58,18 +84,6 @@ function DailySummaryModal({ isOpen, onClose, summary, sales, periodLabel }) {
         window.open(`https://wa.me/?text=${text}`, "_blank");
     };
 
-    const { displayValue: animatedEarnings, isBumping: isEarningsBumping } = useCountUp(summary.earnings, {
-        startFromZero: true,
-        duration: 1400,
-    });
-    const { displayValue: animatedGross } = useCountUp(summary.gross, {
-        startFromZero: true,
-        duration: 1200,
-    });
-    const { displayValue: animatedInvestment } = useCountUp(summary.investment, {
-        startFromZero: true,
-        duration: 1000,
-    });
 
     return (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4">
@@ -81,18 +95,14 @@ function DailySummaryModal({ isOpen, onClose, summary, sales, periodLabel }) {
                             <Sparkles className="w-5 h-5" />
                         </div>
                         <div>
-                            <div className="flex items-center gap-1.5">
-                                <h2 className="text-lg font-extrabold text-[var(--text-primary)]">
-                                    Cierre de Jornada
-                                </h2>
-                                <span className="inline-flex items-center rounded-full bg-[var(--primary)]/10 px-2 py-0.5 text-[10px] font-bold text-[var(--primary)]">
-                                    ✨ Tally
-                                </span>
-                            </div>
+                            <h2 className="text-lg font-extrabold text-[var(--text-primary)]">
+                                Cierre de Jornada
+                            </h2>
                             <p className="text-xs text-[var(--text-secondary)] capitalize">
                                 {periodLabel}
                             </p>
                         </div>
+
                     </div>
 
                     <button

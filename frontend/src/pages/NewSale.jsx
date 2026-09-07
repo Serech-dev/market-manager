@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import SaleForm from "../components/SaleForm";
 import toast from "react-hot-toast";
 import { ArrowLeft, Plus } from "lucide-react";
+import { playSaleSuccessSound } from "../utils/soundEffects";
 
 function NewSale() {
     const navigate = useNavigate();
@@ -12,6 +13,7 @@ function NewSale() {
     async function handleCreateSale(sale) {
         try {
             await api.post("sales/", sale);
+            playSaleSuccessSound();
             toast.success("Venta creada correctamente.");
             navigate("/");
         } catch (error) {
@@ -21,6 +23,7 @@ function NewSale() {
             );
         }
     }
+
 
     return (
         <div className="min-h-screen px-4 pt-4 pb-12">

@@ -6,6 +6,8 @@ import { capitalizeWords } from "../utils/capitalizeWords";
 import { Plus, Minus, Sparkles, TrendingUp, DollarSign, Calendar, Check, Search, MapPin } from "lucide-react";
 import QuickProductModal from "./QuickProductModal";
 
+
+
 function SaleForm({
     onSubmit,
     initialSale,
@@ -177,6 +179,8 @@ function SaleForm({
             (product) => product.id === sale.product
         );
 
+
+
         setSale({
             ...sale,
             quantity: newQuantity,
@@ -251,13 +255,13 @@ function SaleForm({
                     >
                         Producto
                     </label>
-                    <label
-                        htmlFor="quantity"
+                    <span
                         className="w-28 text-center text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]"
                     >
                         Cantidad
-                    </label>
+                    </span>
                 </div>
+
 
                 <div className="flex gap-2.5">
                     <div className="relative flex-1">
@@ -667,4 +671,4 @@ function SaleForm({
 
 export default SaleForm;
 
-
+

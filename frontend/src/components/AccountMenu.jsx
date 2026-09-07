@@ -3,13 +3,25 @@ import ThemeSelector from "./ThemeSelector";
 import OnboardingModal from "./OnboardingModal";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { User, Palette, LogOut, ChevronDown, HelpCircle } from "lucide-react";
+import { User, Palette, LogOut, ChevronDown, HelpCircle, Volume2, VolumeX } from "lucide-react";
+import { isSoundEnabled, setSoundEnabled, playPopSound } from "../utils/soundEffects";
 
 function AccountMenu({ user, onLogout }) {
     const [isOpen, setIsOpen] = useState(false);
     const [showGuide, setShowGuide] = useState(false);
+    const [soundOn, setSoundOn] = useState(() => isSoundEnabled());
     const menuRef = useRef(null);
     const navigate = useNavigate();
+
+    function toggleSound() {
+        const nextState = !soundOn;
+        setSoundOn(nextState);
+        setSoundEnabled(nextState);
+        if (nextState) {
+            playPopSound();
+        }
+    }
+
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -125,8 +137,50 @@ function AccountMenu({ user, onLogout }) {
                         <ThemeSelector />
                     </div>
 
+                    {/* Sound Effects Toggle */}
+                    <div className="border-t border-[var(--border)] py-2">
+                        <button
+                            type="button"
+                            onClick={toggleSound}
+                            className="
+                                flex
+                                w-full
+                                items-center
+                                justify-between
+                                rounded-xl
+                                px-2.5
+                                py-2
+                                text-xs
+                                font-bold
+                                text-[var(--text-primary)]
+                                transition
+                                active-press
+                                hover:bg-[var(--surface-accent)]
+                            "
+                        >
+                            <span className="flex items-center gap-2">
+                                {soundOn ? (
+                                    <Volume2 className="w-3.5 h-3.5 text-[var(--primary)]" />
+                                ) : (
+                                    <VolumeX className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
+                                )}
+                                <span>Sonidos</span>
+                            </span>
+                            <span
+                                className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-md ${
+                                    soundOn
+                                        ? "bg-[var(--success-bg)] text-[var(--success-text)]"
+                                        : "bg-[var(--surface-accent)] text-[var(--text-secondary)]"
+                                }`}
+                            >
+                                {soundOn ? "ON" : "OFF"}
+                            </span>
+                        </button>
+                    </div>
+
                     {/* Usage Guide / Tutorial */}
                     <div className="border-t border-[var(--border)] py-2">
+
                         <button
                             type="button"
                             onClick={() => {
@@ -192,4 +246,4 @@ function AccountMenu({ user, onLogout }) {
 }
 
 export default AccountMenu;
-
+

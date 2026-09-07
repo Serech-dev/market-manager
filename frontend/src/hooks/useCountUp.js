@@ -17,6 +17,7 @@ export function useCountUp(targetValue, options = {}) {
         startFromZero = false,
         cacheKey = null,
         isLoading = false,
+        trigger = true,
     } = opts;
 
     const numericTarget = Number(targetValue) || 0;
@@ -41,14 +42,15 @@ export function useCountUp(targetValue, options = {}) {
     const [isBumping, setIsBumping] = useState(false);
 
     useEffect(() => {
-        if (isLoading) return;
+        if (isLoading || !trigger) return;
 
         let startValue = prevValueRef.current;
         const endValue = numericTarget;
 
-        // Modal fanfare mode (count up from 0 on open)
+        // Modal fanfare mode (count up from 0 whenever triggered/opened)
         if (startFromZero) {
             startValue = 0;
+            setDisplayValue(0);
         } else if (!hasInitializedRef.current) {
             hasInitializedRef.current = true;
             if (cacheKey) {
@@ -115,7 +117,8 @@ export function useCountUp(targetValue, options = {}) {
             cancelAnimationFrame(animationFrameId);
             clearTimeout(bumpTimeout);
         };
-    }, [numericTarget, isLoading, startFromZero, duration, cacheKey]);
+    }, [numericTarget, isLoading, startFromZero, duration, cacheKey, trigger]);
 
     return { displayValue, isBumping };
 }
+

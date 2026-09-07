@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { initGlobalSoundListeners } from "./utils/soundEffects";
 
 import Login from "./pages/Login";
 import NewSale from "./pages/NewSale";
@@ -14,9 +16,13 @@ import NewCategory from "./pages/NewCategory";
 import ProductDetail from "./pages/ProductDetail";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-
 function App() {
+    useEffect(() => {
+        initGlobalSoundListeners();
+    }, []);
+
     return (
+
         <>
             {/* Ambient Breathing Glow Orbs */}
             <div className="ambient-glow-wrapper" aria-hidden="true">
@@ -73,4 +79,4 @@ function App() {
 }
 
 
-export default App;
+export default App;
