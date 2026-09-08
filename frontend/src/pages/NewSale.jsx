@@ -64,19 +64,9 @@ function NewSale() {
                         </button>
 
                         <div className="min-w-0">
-                            <div className="flex items-center gap-2">
-                                <h1 className="text-xl font-extrabold tracking-tight text-[var(--text-primary)] truncate">
-                                    Nueva Venta
-                                </h1>
-                                {isBambiEnabled() && (
-                                    <img
-                                        src="/bambi/bambianotando.webp"
-                                        alt="Bambi anotando ventas"
-                                        title="Bambi lista para anotar"
-                                        className="h-8 w-8 object-contain filter drop-shadow-sm select-none"
-                                    />
-                                )}
-                            </div>
+                            <h1 className="text-xl font-extrabold tracking-tight text-[var(--text-primary)] truncate">
+                                Nueva Venta
+                            </h1>
                             <p className="text-xs text-[var(--text-secondary)] truncate">
                                 Registra una operación al instante
                             </p>
@@ -108,6 +98,27 @@ function NewSale() {
                         <span>Nuevo Producto</span>
                     </button>
                 </div>
+
+                {/* Bambi Note-Taking Assistant Banner (Exclusive to authorized accounts) */}
+                {isBambiEnabled() && (
+                    <div className="flex items-center gap-3.5 rounded-2xl border border-[var(--border)] bg-gradient-to-r from-[var(--surface-accent)]/50 via-[var(--surface)] to-[var(--surface-accent)]/40 px-4 py-2.5 shadow-xs">
+                        <div className="relative h-14 w-14 sm:h-16 sm:w-16 shrink-0 flex items-center justify-center">
+                            <img
+                                src="/bambi/bambianotando.webp"
+                                alt="Bambi anotando ventas"
+                                className="h-full w-full object-contain filter drop-shadow-xs pointer-events-none select-none"
+                            />
+                        </div>
+                        <div className="min-w-0">
+                            <p className="text-[10px] font-black uppercase tracking-wider text-[var(--primary)]">
+                                Asistente de Ventas
+                            </p>
+                            <p className="text-xs sm:text-sm font-black text-[var(--text-primary)] leading-tight">
+                                "Anotando ventas..."
+                            </p>
+                        </div>
+                    </div>
+                )}
 
                 {/* Main Form Card */}
                 <section className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm">

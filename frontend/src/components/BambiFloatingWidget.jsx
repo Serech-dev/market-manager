@@ -276,7 +276,7 @@ function BambiFloatingWidget() {
                 className={`
                     relative flex h-32 w-32 sm:h-40 sm:w-40 items-center justify-center
                     cursor-grab active:cursor-grabbing transition-transform duration-75 ease-out
-                    drop-shadow-[0_14px_28px_rgba(0,0,0,0.4)]
+                    drop-shadow-[0_4px_10px_rgba(0,0,0,0.12)]
                 `}
             >
                 <img
@@ -284,7 +284,7 @@ function BambiFloatingWidget() {
                     src={moment.image}
                     alt="Bambi"
                     draggable={false}
-                    className="h-full w-full object-contain pointer-events-none filter drop-shadow-md select-none"
+                    className="h-full w-full object-contain pointer-events-none select-none"
                 />
             </div>
         </div>
