@@ -69,6 +69,36 @@ function BambiFloatingWidget() {
         };
     }, []);
 
+    // Auto-switch face cutout on a 10-15 minute timer
+    useEffect(() => {
+        if (!enabled) return;
+
+        let timerId;
+
+        function scheduleNextSwitch() {
+            // Random interval between 10 and 15 minutes
+            const durationMs = (10 + Math.random() * 5) * 60 * 1000;
+            timerId = setTimeout(() => {
+                setMoment((currentMoment) => {
+                    const candidates = BAMBI_MOMENTS.filter((m) => m.id !== currentMoment?.id);
+                    return candidates[Math.floor(Math.random() * candidates.length)] || currentMoment;
+                });
+
+                // Subtle momentary pulse on costume change
+                setIsPoking(true);
+                setTimeout(() => setIsPoking(false), 300);
+
+                scheduleNextSwitch();
+            }, durationMs);
+        }
+
+        scheduleNextSwitch();
+
+        return () => {
+            if (timerId) clearTimeout(timerId);
+        };
+    }, [enabled]);
+
     // Continuous Bouncing Physics Engine (DVD Screensaver + Inertial Ricochet)
     useEffect(() => {
         if (!enabled) return;
