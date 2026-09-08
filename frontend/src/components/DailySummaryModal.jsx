@@ -257,7 +257,7 @@ function DailySummaryModal({
                             </div>
                             <div className="min-w-0 text-left sm:text-center">
                                 <p className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-[var(--primary)]">
-                                    {bambiData.isPositive ? "Veredicto de Bambi 🎉" : "Auditoría de Bambi 👀"}
+                                    Veredicto de Bambi
                                 </p>
                                 <p className="text-sm sm:text-base md:text-lg font-black text-[var(--text-primary)] leading-snug">
                                     "{bambiData.moment.phrase}"
