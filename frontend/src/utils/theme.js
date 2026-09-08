@@ -23,10 +23,12 @@ const THEME_ALIASES = {
 };
 
 
+const DEFAULT_THEME = "cosmic";
+
 export function getSavedTheme() {
     try {
         const rawTheme = localStorage.getItem(THEME_KEY);
-        if (!rawTheme) return "blue";
+        if (!rawTheme) return DEFAULT_THEME;
 
         const normalized = rawTheme.toLowerCase().trim();
         if (VALID_THEMES.includes(normalized)) {
@@ -35,14 +37,14 @@ export function getSavedTheme() {
         if (THEME_ALIASES[normalized]) {
             return THEME_ALIASES[normalized];
         }
-        return "blue";
+        return DEFAULT_THEME;
     } catch {
-        return "blue";
+        return DEFAULT_THEME;
     }
 }
 
 export function setTheme(theme) {
-    let targetTheme = "blue";
+    let targetTheme = DEFAULT_THEME;
     const normalized = (theme || "").toLowerCase().trim();
 
     if (VALID_THEMES.includes(normalized)) {

@@ -5,7 +5,7 @@
 
 export const BAMBI_AUTHORIZED_USERS = [
     "serech@test.com",
-    // Add friend's email here
+    "alejandragiselacruz91@gmail.com",
 ];
 
 export function isBambiAuthorized(user) {
