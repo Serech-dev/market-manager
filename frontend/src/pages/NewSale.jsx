@@ -125,13 +125,15 @@ function NewSale() {
                         title="Tocá para otro consejo de Bambi"
                         className="
                             flex
+                            flex-col
                             items-center
-                            gap-3.5
+                            justify-center
+                            text-center
                             rounded-3xl
                             border
                             border-[var(--border)]
                             bg-[var(--surface)]
-                            p-3.5
+                            p-5
                             shadow-sm
                             transition-all
                             cursor-pointer
@@ -141,27 +143,28 @@ function NewSale() {
                             group
                         "
                     >
-                        <div className="relative h-16 w-16 sm:h-20 sm:w-20 shrink-0 transition-transform group-hover:scale-105">
+                        <div className="relative h-28 w-28 sm:h-36 sm:w-36 transition-transform group-hover:scale-105 mb-2">
                             <img
                                 src="/bambi/bambianotando.webp"
                                 alt="Bambi asistente"
                                 className="h-full w-full object-contain filter drop-shadow-sm select-none pointer-events-none"
                             />
                         </div>
-                        <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-1.5 mb-0.5">
-                                <span className="inline-block h-2 w-2 rounded-full bg-[var(--primary)] animate-pulse" />
-                                <p className="text-[10px] font-black uppercase tracking-wider text-[var(--primary)]">
-                                    Bambi asistente recomienda
-                                </p>
-                            </div>
-                            <p className="text-xs sm:text-sm font-black text-[var(--text-primary)] leading-snug">
-                                "{BAMBI_ADVICES[adviceIndex]}"
-                            </p>
-                            <p className="text-[10px] text-[var(--text-secondary)] font-medium mt-0.5 opacity-70">
-                                Tocá para otro consejo
+
+                        <div className="flex items-center justify-center gap-1.5 mb-1">
+                            <span className="inline-block h-2 w-2 rounded-full bg-[var(--primary)] animate-pulse" />
+                            <p className="text-[11px] font-black uppercase tracking-wider text-[var(--primary)]">
+                                Bambi asistente recomienda
                             </p>
                         </div>
+
+                        <p className="text-sm sm:text-base font-black text-[var(--text-primary)] leading-snug max-w-sm">
+                            "{BAMBI_ADVICES[adviceIndex]}"
+                        </p>
+
+                        <p className="text-[11px] text-[var(--text-secondary)] font-medium mt-1.5 opacity-70">
+                            Tocá para otro consejo
+                        </p>
                     </div>
                 )}
 
