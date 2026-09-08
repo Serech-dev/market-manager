@@ -18,9 +18,9 @@ function BambiFloatingWidget() {
 
     // Widget dimensions helper
     function getWidgetDimensions() {
-        if (typeof window === "undefined") return { width: 100, height: 100 };
+        if (typeof window === "undefined") return { width: 130, height: 130 };
         const isDesktop = window.innerWidth >= 640;
-        const size = isDesktop ? 128 : 100;
+        const size = isDesktop ? 160 : 130;
         return { width: size, height: size };
     }
 
@@ -271,12 +271,12 @@ function BambiFloatingWidget() {
                 onPointerUp={handlePointerUp}
                 onPointerCancel={handlePointerUp}
                 style={{
-                    transform: `rotate(${rotation}deg) scale(${isPoking ? 1.25 : isDragging ? 1.1 : 1})`,
+                    transform: `rotate(${rotation}deg) scale(${isPoking ? 1.2 : isDragging ? 1.08 : 1})`,
                 }}
                 className={`
-                    relative flex h-24 w-24 sm:h-32 sm:w-32 items-center justify-center
+                    relative flex h-32 w-32 sm:h-40 sm:w-40 items-center justify-center
                     cursor-grab active:cursor-grabbing transition-transform duration-75 ease-out
-                    drop-shadow-[0_12px_24px_rgba(0,0,0,0.38)]
+                    drop-shadow-[0_14px_28px_rgba(0,0,0,0.4)]
                 `}
             >
                 <img
