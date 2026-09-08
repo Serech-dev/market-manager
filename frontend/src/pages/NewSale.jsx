@@ -13,7 +13,7 @@ const BAMBI_ADVICES = [
     "Claro que si mamá!",
     "Buenoestábien.",
     "Anotando cada detalle...",
-    "¡Metanle pata con las ventas!",
+    "¡Metele pata con las ventas!",
     "Todo registrado, todo controlado.",
     "El cliente siempre tiene la razón (a veces).",
 ];
