@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import SaleForm from "../components/SaleForm";
 import toast from "react-hot-toast";
 import { ArrowLeft, Plus } from "lucide-react";
-import { playSaleSuccessSound } from "../utils/soundEffects";
+import { playSaleSuccessSound, playPopSound } from "../utils/soundEffects";
 import { isBambiEnabled, getRandomBambiPhrase } from "../utils/bambiConfig";
 
 const BAMBI_ADVICES = [
@@ -13,6 +13,9 @@ const BAMBI_ADVICES = [
     "Claro que si mamá!",
     "Buenoestábien.",
     "Anotando cada detalle...",
+    "¡Metanle pata con las ventas!",
+    "Todo registrado, todo controlado.",
+    "El cliente siempre tiene la razón (a veces).",
 ];
 
 function NewSale() {
@@ -113,32 +116,57 @@ function NewSale() {
                     </button>
                 </div>
 
-                {/* Main Form Card with Overlapping Peeking Bambi */}
-                <section className={`relative rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm ${isBambiEnabled() ? "mt-9 pt-7" : ""}`}>
-                    {isBambiEnabled() && (
-                        <div
-                            onClick={cycleAdvice}
-                            title="Tocá para otro consejo de Bambi"
-                            className="absolute -top-7 sm:-top-8 left-3 sm:left-6 flex items-end gap-2.5 z-10 cursor-pointer active-press group"
-                        >
-                            <div className="relative h-18 w-18 sm:h-22 sm:w-22 shrink-0 transition-transform group-hover:scale-105">
-                                <img
-                                    src="/bambi/bambianotando.webp"
-                                    alt="Bambi asistente"
-                                    className="h-full w-full object-contain filter drop-shadow-sm select-none pointer-events-none"
-                                />
-                            </div>
-                            <div className="mb-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)]/95 backdrop-blur-md px-3 py-1.5 shadow-md transition-all group-hover:border-[var(--primary)]/50">
-                                <p className="text-[9px] font-black uppercase tracking-wider text-[var(--primary)]">
-                                    Bambi asistente recomienda:
-                                </p>
-                                <p className="text-xs sm:text-sm font-black text-[var(--text-primary)] leading-tight">
-                                    "{BAMBI_ADVICES[adviceIndex]}"
-                                </p>
-                            </div>
+                {/* Bambi Asistente Recomienda Banner */}
+                {isBambiEnabled() && (
+                    <div
+                        onClick={cycleAdvice}
+                        role="button"
+                        tabIndex={0}
+                        title="Tocá para otro consejo de Bambi"
+                        className="
+                            flex
+                            items-center
+                            gap-3.5
+                            rounded-3xl
+                            border
+                            border-[var(--border)]
+                            bg-[var(--surface)]
+                            p-3.5
+                            shadow-sm
+                            transition-all
+                            cursor-pointer
+                            active-press
+                            hover:border-[var(--primary)]/40
+                            hover:shadow-md
+                            group
+                        "
+                    >
+                        <div className="relative h-16 w-16 sm:h-20 sm:w-20 shrink-0 transition-transform group-hover:scale-105">
+                            <img
+                                src="/bambi/bambianotando.webp"
+                                alt="Bambi asistente"
+                                className="h-full w-full object-contain filter drop-shadow-sm select-none pointer-events-none"
+                            />
                         </div>
-                    )}
+                        <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                                <span className="inline-block h-2 w-2 rounded-full bg-[var(--primary)] animate-pulse" />
+                                <p className="text-[10px] font-black uppercase tracking-wider text-[var(--primary)]">
+                                    Bambi asistente recomienda
+                                </p>
+                            </div>
+                            <p className="text-xs sm:text-sm font-black text-[var(--text-primary)] leading-snug">
+                                "{BAMBI_ADVICES[adviceIndex]}"
+                            </p>
+                            <p className="text-[10px] text-[var(--text-secondary)] font-medium mt-0.5 opacity-70">
+                                Tocá para otro consejo
+                            </p>
+                        </div>
+                    </div>
+                )}
 
+                {/* Main Form Card */}
+                <section className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm">
                     <SaleForm
                         onSubmit={handleCreateSale}
                         isQuickModalOpen={isQuickModalOpen}
