@@ -9,11 +9,11 @@ import {
     Sparkles,
     TrendingUp,
     Clock,
-    MapPin,
+    Flame,
+    Crown,
+    Package,
     BarChart3,
-    Percent,
     ShoppingBag,
-    Layers,
     ChevronRight,
 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -62,14 +62,6 @@ function DailySummaryModal({
     const totalSalesCount = safeSales.length;
     const totalUnits = safeSales.reduce((sum, sale) => sum + (sale.quantity || 1), 0);
 
-    // Advanced Metrics
-    const avgTicket = totalSalesCount > 0 ? Number(summary.gross || 0) / totalSalesCount : 0;
-    const profitMargin =
-        Number(summary.gross || 0) > 0
-            ? (Number(summary.earnings || 0) / Number(summary.gross || 0)) * 100
-            : 0;
-    const avgUnitsPerSale = totalSalesCount > 0 ? totalUnits / totalSalesCount : 0;
-
     // Calculate product breakdown for this period
     const productStats = {};
     safeSales.forEach((sale) => {
@@ -89,6 +81,18 @@ function DailySummaryModal({
     const topProducts = Object.entries(productStats)
         .sort((a, b) => b[1].qty - a[1].qty)
         .slice(0, 5);
+
+    // Practical Vendor Metrics
+    const highestSale = safeSales.reduce(
+        (max, s) => (Number(s.gross_amount || 0) > max ? Number(s.gross_amount || 0) : max),
+        0
+    );
+    const topProductItem = allProductsSorted.length > 0 ? allProductsSorted[0] : null;
+    const topProductShare =
+        topProductItem && Number(summary.gross || 0) > 0
+            ? Math.round((topProductItem[1].gross / Number(summary.gross || 0)) * 100)
+            : 0;
+    const uniqueProductsCount = allProductsSorted.length;
 
     // Hourly Distribution (Peak Hours)
     const hourlyStats = {};
@@ -117,41 +121,21 @@ function DailySummaryModal({
         null
     );
 
-    // Location Distribution
-    const locationStats = {};
-    safeSales.forEach((sale) => {
-        const locName = sale.location_name || sale.location?.name || "Sin lugar asignado";
-        if (!locationStats[locName]) {
-            locationStats[locName] = { gross: 0, count: 0, profit: 0 };
-        }
-        locationStats[locName].gross += Number(sale.gross_amount || 0);
-        locationStats[locName].count += 1;
-        locationStats[locName].profit +=
-            Number(sale.gross_amount || 0) - Number(sale.investment_amount || 0);
-    });
-    const sortedLocations = Object.entries(locationStats).sort(
-        (a, b) => b[1].gross - a[1].gross
-    );
-
     // Share Text Formatter (Short vs Full Detailed)
     const generateShareText = (isFull = false) => {
         let text = `🎉 *Resumen de Ventas - ${periodLabel}*\n`;
         text += `━━━━━━━━━━━━━━━━━━━━━\n`;
-        text += `💰 *Ganancia Neta:* ${formatCurrency(summary.earnings)} (${Math.round(profitMargin)}% margen)\n`;
+        text += `💰 *Ganancia Neta:* ${formatCurrency(summary.earnings)}\n`;
         text += `💵 *Total Recaudado:* ${formatCurrency(summary.gross)}\n`;
         text += `📦 *Costo/Inversión:* ${formatCurrency(summary.investment)}\n`;
         text += `🏷️ *Total Operaciones:* ${totalSalesCount} (${totalUnits} unidades)\n`;
-        text += `🎯 *Ticket Promedio:* ${formatCurrency(avgTicket)} / venta\n`;
 
-        if (peakHour) {
-            text += `⏰ *Hora Pico:* ${peakHour[0]} hs (${formatCurrency(peakHour[1].gross)} en ${peakHour[1].count} vtas)\n`;
+        if (highestSale > 0) {
+            text += `🔥 *Mayor Venta:* ${formatCurrency(highestSale)}\n`;
         }
 
-        if (sortedLocations.length > 1) {
-            text += `\n📍 *Puntos de Venta:*\n`;
-            sortedLocations.forEach(([loc, data]) => {
-                text += `• ${loc}: ${formatCurrency(data.gross)} (${data.count} vtas)\n`;
-            });
+        if (peakHour) {
+            text += `⏰ *Hora Pico:* ${peakHour[0]} hs (${formatCurrency(peakHour[1].gross)})\n`;
         }
 
         const list = isFull ? allProductsSorted : topProducts;
@@ -360,35 +344,53 @@ function DailySummaryModal({
                             )}
                         </>
                     ) : (
-                        /* Deep-Dive Analytics View */
-                        <div className="space-y-4 animate-fade-in">
-                            {/* Key Performance Indicators (3 KPIs) */}
+                        /* Deep-Dive Analytics View (Clean & Focused on Practical Highlights) */
+                        <div className="space-y-4 animate-slide-up">
+                            {/* Practical Vendor Highlights */}
                             <div className="grid grid-cols-3 gap-2">
-                                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-accent)]/50 p-2.5 text-center">
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block truncate">
-                                        Ticket Promedio
-                                    </span>
-                                    <p className="text-xs sm:text-sm font-extrabold text-[var(--text-primary)] mt-1 truncate">
-                                        {formatCurrency(avgTicket)}
+                                {/* Mayor Venta */}
+                                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-accent)]/40 p-2.5 flex flex-col items-center justify-between text-center min-h-[82px]">
+                                    <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+                                        <Flame className="w-3 h-3 text-[var(--warning)] shrink-0" />
+                                        <span className="truncate">Mayor Vta</span>
+                                    </div>
+                                    <p className="text-xs sm:text-sm font-extrabold text-[var(--text-primary)] my-0.5 truncate w-full">
+                                        {highestSale > 0 ? formatCurrency(highestSale) : "-"}
                                     </p>
+                                    <span className="text-[9px] font-semibold text-[var(--text-secondary)]">
+                                        1 ticket
+                                    </span>
                                 </div>
 
-                                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-accent)]/50 p-2.5 text-center">
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block truncate">
-                                        Margen Neto
-                                    </span>
-                                    <p className="text-xs sm:text-sm font-extrabold text-[var(--success)] mt-1">
-                                        {Math.round(profitMargin)}%
+                                {/* Producto Estrella */}
+                                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-accent)]/40 p-2.5 flex flex-col items-center justify-between text-center min-h-[82px]">
+                                    <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+                                        <Crown className="w-3 h-3 text-[var(--warning)] shrink-0" />
+                                        <span className="truncate">Estrella</span>
+                                    </div>
+                                    <p
+                                        className="text-xs sm:text-sm font-extrabold text-[var(--primary)] my-0.5 truncate w-full"
+                                        title={topProductItem ? topProductItem[0] : ""}
+                                    >
+                                        {topProductItem ? topProductItem[0] : "-"}
                                     </p>
+                                    <span className="text-[9px] font-semibold text-[var(--text-secondary)]">
+                                        {topProductShare > 0 ? `${topProductShare}% total` : "top ventas"}
+                                    </span>
                                 </div>
 
-                                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-accent)]/50 p-2.5 text-center">
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block truncate">
-                                        Unidades / Vta
-                                    </span>
-                                    <p className="text-xs sm:text-sm font-extrabold text-[var(--text-primary)] mt-1">
-                                        {avgUnitsPerSale.toFixed(1)} u
+                                {/* Productos Vendidos */}
+                                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-accent)]/40 p-2.5 flex flex-col items-center justify-between text-center min-h-[82px]">
+                                    <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+                                        <Package className="w-3 h-3 text-[var(--primary)] shrink-0" />
+                                        <span className="truncate">Variedad</span>
+                                    </div>
+                                    <p className="text-xs sm:text-sm font-extrabold text-[var(--text-primary)] my-0.5 truncate w-full">
+                                        {uniqueProductsCount}
                                     </p>
+                                    <span className="text-[9px] font-semibold text-[var(--text-secondary)]">
+                                        productos
+                                    </span>
                                 </div>
                             </div>
 
@@ -407,7 +409,7 @@ function DailySummaryModal({
                                         )}
                                     </div>
 
-                                    {/* Pure CSS Bar Visualizer */}
+                                    {/* Pure CSS Bar Visualizer with Animated Grow */}
                                     <div className="flex items-end gap-2 h-28 pt-4 pb-1 px-1 overflow-x-auto no-scrollbar border-b border-[var(--border)]/60">
                                         {sortedHours.map(([hour, data]) => {
                                             const heightPercent = Math.max(
@@ -426,7 +428,7 @@ function DailySummaryModal({
                                                     </span>
                                                     <div
                                                         style={{ height: `${heightPercent}%` }}
-                                                        className={`w-full rounded-t-lg transition-all duration-300 ${
+                                                        className={`w-full rounded-t-lg animate-grow-bar transition-all duration-300 ${
                                                             isPeak
                                                                 ? "bg-[var(--primary)] shadow-sm"
                                                                 : "bg-[var(--secondary)]/60 hover:bg-[var(--primary)]/80"
@@ -442,51 +444,6 @@ function DailySummaryModal({
                                 </div>
                             )}
 
-                            {/* Location Breakdown (If multiple spots) */}
-                            {sortedLocations.length > 0 && (
-                                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3.5 space-y-2.5">
-                                    <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] flex items-center gap-1.5">
-                                        <MapPin className="w-3.5 h-3.5 text-[var(--primary)]" />
-                                        <span>Rendimiento por Punto de Venta</span>
-                                    </h4>
-
-                                    <div className="space-y-2">
-                                        {sortedLocations.map(([loc, data]) => {
-                                            const pct =
-                                                Number(summary.gross || 0) > 0
-                                                    ? Math.round(
-                                                          (data.gross /
-                                                              Number(summary.gross || 0)) *
-                                                              100
-                                                      )
-                                                    : 0;
-                                            return (
-                                                <div key={loc} className="space-y-1">
-                                                    <div className="flex items-center justify-between text-xs">
-                                                        <span className="font-bold text-[var(--text-primary)]">
-                                                            {loc}
-                                                        </span>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="text-[var(--text-secondary)] font-medium">
-                                                                {data.count} vtas
-                                                            </span>
-                                                            <span className="font-extrabold text-[var(--text-primary)]">
-                                                                {formatCurrency(data.gross)}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <div className="h-1.5 w-full bg-[var(--surface-accent)] rounded-full overflow-hidden">
-                                                        <div
-                                                            style={{ width: `${pct}%` }}
-                                                            className="h-full bg-[var(--primary)] rounded-full"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            )}
 
                             {/* All Products List */}
                             <div className="space-y-2">
@@ -495,7 +452,7 @@ function DailySummaryModal({
                                     <span>Todos los Productos ({allProductsSorted.length})</span>
                                 </h4>
 
-                                <div className="max-h-52 overflow-y-auto space-y-1.5 pr-1 no-scrollbar">
+                                <div className="max-h-56 overflow-y-auto space-y-1.5 pr-1 no-scrollbar">
                                     {allProductsSorted.map(([name, data], idx) => (
                                         <div
                                             key={name}
