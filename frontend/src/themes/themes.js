@@ -1,6 +1,4 @@
-import { isVipUser } from "../utils/userPerks";
-
-export const standardThemes = [
+export const themes = [
     {
         id: "blue",
         name: "Sky",
@@ -25,33 +23,10 @@ export const standardThemes = [
         id: "forest-dark",
         name: "Evergreen",
     },
-];
-
-export const vipThemes = [
-    {
-        id: "aurora",
-        name: "✨ Aurora",
-        vipOnly: true,
-    },
-    {
-        id: "rosegold",
-        name: "✨ Rose Gold",
-        vipOnly: true,
-    },
     {
         id: "cosmic",
-        name: "✨ Cosmic Noir",
-        vipOnly: true,
+        name: "Cosmic Noir",
     },
 ];
-
-export const themes = [...standardThemes, ...vipThemes];
-
-export function getThemesForUser(user) {
-    if (isVipUser(user)) {
-        return [...standardThemes, ...vipThemes];
-    }
-    return standardThemes;
-}
 
 

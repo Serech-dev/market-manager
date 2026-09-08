@@ -15,6 +15,7 @@ import NewProduct from "./pages/NewProduct";
 import NewCategory from "./pages/NewCategory";
 import ProductDetail from "./pages/ProductDetail";
 import ProtectedRoute from "./components/ProtectedRoute";
+import BambiFloatingWidget from "./components/BambiFloatingWidget";
 
 function App() {
     useEffect(() => {
@@ -39,6 +40,9 @@ function App() {
             />
 
             <BrowserRouter>
+                {/* Floating Throwable Bambi Companion */}
+                <BambiFloatingWidget />
+
                 <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route

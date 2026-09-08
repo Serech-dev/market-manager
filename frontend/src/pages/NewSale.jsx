@@ -5,6 +5,7 @@ import SaleForm from "../components/SaleForm";
 import toast from "react-hot-toast";
 import { ArrowLeft, Plus } from "lucide-react";
 import { playSaleSuccessSound } from "../utils/soundEffects";
+import { isBambiEnabled, getRandomBambiPhrase } from "../utils/bambiConfig";
 
 function NewSale() {
     const navigate = useNavigate();
@@ -14,7 +15,12 @@ function NewSale() {
         try {
             await api.post("sales/", sale);
             playSaleSuccessSound();
-            toast.success("Venta creada correctamente.");
+            if (isBambiEnabled()) {
+                const quote = getRandomBambiPhrase("sale");
+                toast.success(quote);
+            } else {
+                toast.success("Venta creada correctamente.");
+            }
             navigate("/");
         } catch (error) {
             console.error(error);
@@ -58,9 +64,19 @@ function NewSale() {
                         </button>
 
                         <div className="min-w-0">
-                            <h1 className="text-xl font-extrabold tracking-tight text-[var(--text-primary)] truncate">
-                                Nueva Venta
-                            </h1>
+                            <div className="flex items-center gap-2">
+                                <h1 className="text-xl font-extrabold tracking-tight text-[var(--text-primary)] truncate">
+                                    Nueva Venta
+                                </h1>
+                                {isBambiEnabled() && (
+                                    <img
+                                        src="/bambi/bambianotando.webp"
+                                        alt="Bambi anotando ventas"
+                                        title="Bambi lista para anotar"
+                                        className="h-8 w-8 object-contain filter drop-shadow-sm select-none"
+                                    />
+                                )}
+                            </div>
                             <p className="text-xs text-[var(--text-secondary)] truncate">
                                 Registra una operación al instante
                             </p>

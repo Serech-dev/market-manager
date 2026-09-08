@@ -19,6 +19,7 @@ import {
 import toast from "react-hot-toast";
 import { useCountUp } from "../hooks/useCountUp";
 import { triggerConfetti, playFanfareSound } from "../utils/soundEffects";
+import { isBambiEnabled, getCloseoutBambiMoment } from "../utils/bambiConfig";
 
 function DailySummaryModal({
     isOpen,
@@ -28,14 +29,18 @@ function DailySummaryModal({
     periodLabel = "",
 }) {
     const [viewMode, setViewMode] = useState("summary"); // "summary" | "analytics"
+    const [bambiData, setBambiData] = useState(() => getCloseoutBambiMoment(summary, sales));
 
     useEffect(() => {
         if (isOpen) {
             triggerConfetti();
             playFanfareSound();
             setViewMode("summary");
+            if (isBambiEnabled()) {
+                setBambiData(getCloseoutBambiMoment(summary, sales));
+            }
         }
-    }, [isOpen]);
+    }, [isOpen, summary, sales]);
 
     const { displayValue: animatedEarnings, isBumping: isEarningsBumping } = useCountUp(
         summary?.earnings || 0,
@@ -154,11 +159,15 @@ function DailySummaryModal({
         const isFull = viewMode === "analytics";
         try {
             await navigator.clipboard.writeText(generateShareText(isFull));
-            toast.success(
-                isFull
-                    ? "¡Reporte detallado copiado al portapapeles! 📊"
-                    : "¡Resumen copiado al portapapeles! 🎉"
-            );
+            if (isBambiEnabled()) {
+                toast.success(bambiData?.moment?.phrase || "Claro que si mamá!");
+            } else {
+                toast.success(
+                    isFull
+                        ? "¡Reporte detallado copiado al portapapeles! 📊"
+                        : "¡Resumen copiado al portapapeles! 🎉"
+                );
+            }
         } catch (err) {
             toast.error("No se pudo copiar.");
         }
@@ -235,7 +244,28 @@ function DailySummaryModal({
                 </div>
 
                 {/* Scrollable Content Area */}
-                <div className="overflow-y-auto space-y-4 pr-0.5 no-scrollbar flex-1">
+                <div className="overflow-y-auto space-y-3.5 pr-0.5 no-scrollbar flex-1">
+                    {/* Bambi Daily Performance Reaction (Exclusive to authorized accounts) */}
+                    {isBambiEnabled() && bambiData?.moment && (
+                        <div className="flex items-center justify-center gap-4 rounded-2xl border border-[var(--border)] bg-gradient-to-r from-[var(--surface-accent)]/50 via-[var(--surface)] to-[var(--surface-accent)]/50 px-4 py-3 shadow-xs text-center">
+                            <div className="relative h-20 w-20 sm:h-24 sm:w-24 shrink-0 flex items-center justify-center">
+                                <img
+                                    src={bambiData.moment.image}
+                                    alt="Bambi"
+                                    className="h-full w-full object-contain filter drop-shadow-sm pointer-events-none select-none"
+                                />
+                            </div>
+                            <div className="min-w-0 text-left sm:text-center">
+                                <p className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-[var(--primary)]">
+                                    {bambiData.isPositive ? "Veredicto de Bambi 🎉" : "Auditoría de Bambi 👀"}
+                                </p>
+                                <p className="text-sm sm:text-base md:text-lg font-black text-[var(--text-primary)] leading-snug">
+                                    "{bambiData.moment.phrase}"
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
                     {viewMode === "summary" ? (
                         <>
                             {/* Main Metrics Card with Fanfare */}

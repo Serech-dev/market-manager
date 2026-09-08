@@ -5,14 +5,18 @@ let lastPopTime = 0;
 
 function getAudioContext() {
     if (typeof window === "undefined") return null;
-    if (!audioCtx) {
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        if (AudioContextClass) {
-            audioCtx = new AudioContextClass();
+    try {
+        if (!audioCtx) {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioContextClass) {
+                audioCtx = new AudioContextClass();
+            }
         }
-    }
-    if (audioCtx && audioCtx.state === "suspended") {
-        audioCtx.resume();
+        if (audioCtx && audioCtx.state === "suspended") {
+            audioCtx.resume().catch(() => {});
+        }
+    } catch {
+        return null;
     }
     return audioCtx;
 }
@@ -34,7 +38,7 @@ export function playSaleSuccessSound() {
     if (!isSoundEnabled()) return;
     try {
         const ctx = getAudioContext();
-        if (!ctx) return;
+        if (!ctx || ctx.state === "suspended") return;
 
         const now = ctx.currentTime;
 
@@ -77,7 +81,7 @@ export function playFanfareSound() {
     if (!isSoundEnabled()) return;
     try {
         const ctx = getAudioContext();
-        if (!ctx) return;
+        if (!ctx || ctx.state === "suspended") return;
 
         const now = ctx.currentTime;
         // Triumphant arpeggio: C5 -> E5 -> G5 -> C6
@@ -115,7 +119,7 @@ export function playPopSound() {
         lastPopTime = nowMs;
 
         const ctx = getAudioContext();
-        if (!ctx) return;
+        if (!ctx || ctx.state === "suspended") return;
 
         const now = ctx.currentTime;
         const osc = ctx.createOscillator();
@@ -174,6 +178,10 @@ export function initGlobalSoundListeners() {
     if (typeof window === "undefined") return;
 
     function handlePointerDown(e) {
+        if (audioCtx && audioCtx.state === "suspended") {
+            audioCtx.resume().catch(() => {});
+        }
+
         if (!isSoundEnabled()) return;
 
         const interactiveEl = e.target.closest(

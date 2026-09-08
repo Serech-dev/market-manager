@@ -1,3 +1,19 @@
 {
-    "postman.settings.dotenv-detection-notification-visibility": false
+  "files.watcherExclude": {
+    "**/.git/**": true,
+    "**/node_modules/**": true,
+    "**/.venv/**": true,
+    "**/dist/**": true
+  },
+  "search.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.venv": true
+  },
+  "git.autofetch": false,
+  "git.autorefresh": false,
+  "git.refreshOnWindowFocus": false,
+  "git.openRepositoryInParentFolders": "never",
+  "postman.settings.dotenv-detection-notification-visibility": false
 }

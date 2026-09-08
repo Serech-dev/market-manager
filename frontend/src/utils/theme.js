@@ -7,8 +7,6 @@ const VALID_THEMES = [
     "midnight",
     "cherry-dark",
     "forest-dark",
-    "aurora",
-    "rosegold",
     "cosmic",
 ];
 
@@ -20,9 +18,8 @@ const THEME_ALIASES = {
     meadow: "forest",
     ember: "cherry-dark",
     evergreen: "forest-dark",
-    rose: "rosegold",
-    "rose-gold": "rosegold",
     cosmic_noir: "cosmic",
+    space: "cosmic",
 };
 
 

@@ -12,6 +12,8 @@ import AppNavigation from "../components/AppNavigation";
 import DailySummaryModal from "../components/DailySummaryModal";
 import OnboardingModal from "../components/OnboardingModal";
 import { ReceiptText, Plus, ClipboardList, ShoppingBag } from "lucide-react";
+import { isBambiEnabled } from "../utils/bambiConfig";
+import { playPopSound } from "../utils/soundEffects";
 
 function Dashboard() {
     const [summary, setSummary] = useState({
@@ -276,15 +278,32 @@ function Dashboard() {
                     <div className="space-y-2.5">
                         {sales.length === 0 ? (
                             <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 text-center space-y-3">
-                                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[var(--surface-accent)] text-[var(--text-secondary)]">
-                                    <ShoppingBag className="w-6 h-6" />
-                                </div>
+                                {isBambiEnabled() ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => playPopSound()}
+                                        title="Bambi te observa atentamente"
+                                        className="mx-auto flex h-20 w-20 items-center justify-center transition-transform hover:scale-110 active-press"
+                                    >
+                                        <img
+                                            src="/bambi/bambicarita.webp"
+                                            alt="Bambi te observa"
+                                            className="h-full w-full object-contain filter drop-shadow-sm pointer-events-none select-none"
+                                        />
+                                    </button>
+                                ) : (
+                                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[var(--surface-accent)] text-[var(--text-secondary)]">
+                                        <ShoppingBag className="w-6 h-6" />
+                                    </div>
+                                )}
                                 <div>
                                     <p className="text-base font-bold text-[var(--text-primary)]">
                                         No hay ventas registradas
                                     </p>
                                     <p className="mt-1 text-xs text-[var(--text-secondary)]">
-                                        No se encontraron operaciones para este período.
+                                        {isBambiEnabled()
+                                            ? "Bambi te observa atentamente para anotar la primera."
+                                            : "No se encontraron operaciones para este período."}
                                     </p>
                                 </div>
                                 <Link
