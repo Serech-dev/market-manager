@@ -7,9 +7,23 @@ import { ArrowLeft, Plus } from "lucide-react";
 import { playSaleSuccessSound } from "../utils/soundEffects";
 import { isBambiEnabled, getRandomBambiPhrase } from "../utils/bambiConfig";
 
+const BAMBI_ADVICES = [
+    "Vendé más mamá!",
+    "Anotá todo bien prolijo",
+    "Claro que si mamá!",
+    "Buenoestábien.",
+    "Anotando cada detalle...",
+];
+
 function NewSale() {
     const navigate = useNavigate();
     const [isQuickModalOpen, setIsQuickModalOpen] = useState(false);
+    const [adviceIndex, setAdviceIndex] = useState(0);
+
+    function cycleAdvice() {
+        playPopSound();
+        setAdviceIndex((prev) => (prev + 1) % BAMBI_ADVICES.length);
+    }
 
     async function handleCreateSale(sale) {
         try {
@@ -99,29 +113,32 @@ function NewSale() {
                     </button>
                 </div>
 
-                {/* Bambi Note-Taking Assistant Banner (Exclusive to authorized accounts) */}
-                {isBambiEnabled() && (
-                    <div className="flex items-center gap-3.5 rounded-2xl border border-[var(--border)] bg-gradient-to-r from-[var(--surface-accent)]/50 via-[var(--surface)] to-[var(--surface-accent)]/40 px-4 py-2.5 shadow-xs">
-                        <div className="relative h-14 w-14 sm:h-16 sm:w-16 shrink-0 flex items-center justify-center">
-                            <img
-                                src="/bambi/bambianotando.webp"
-                                alt="Bambi anotando ventas"
-                                className="h-full w-full object-contain filter drop-shadow-xs pointer-events-none select-none"
-                            />
+                {/* Main Form Card with Overlapping Peeking Bambi */}
+                <section className={`relative rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm ${isBambiEnabled() ? "mt-9 pt-7" : ""}`}>
+                    {isBambiEnabled() && (
+                        <div
+                            onClick={cycleAdvice}
+                            title="Tocá para otro consejo de Bambi"
+                            className="absolute -top-7 sm:-top-8 left-3 sm:left-6 flex items-end gap-2.5 z-10 cursor-pointer active-press group"
+                        >
+                            <div className="relative h-18 w-18 sm:h-22 sm:w-22 shrink-0 transition-transform group-hover:scale-105">
+                                <img
+                                    src="/bambi/bambianotando.webp"
+                                    alt="Bambi asistente"
+                                    className="h-full w-full object-contain filter drop-shadow-sm select-none pointer-events-none"
+                                />
+                            </div>
+                            <div className="mb-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)]/95 backdrop-blur-md px-3 py-1.5 shadow-md transition-all group-hover:border-[var(--primary)]/50">
+                                <p className="text-[9px] font-black uppercase tracking-wider text-[var(--primary)]">
+                                    Bambi asistente recomienda:
+                                </p>
+                                <p className="text-xs sm:text-sm font-black text-[var(--text-primary)] leading-tight">
+                                    "{BAMBI_ADVICES[adviceIndex]}"
+                                </p>
+                            </div>
                         </div>
-                        <div className="min-w-0">
-                            <p className="text-[10px] font-black uppercase tracking-wider text-[var(--primary)]">
-                                Asistente de Ventas
-                            </p>
-                            <p className="text-xs sm:text-sm font-black text-[var(--text-primary)] leading-tight">
-                                "Anotando ventas..."
-                            </p>
-                        </div>
-                    </div>
-                )}
+                    )}
 
-                {/* Main Form Card */}
-                <section className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm">
                     <SaleForm
                         onSubmit={handleCreateSale}
                         isQuickModalOpen={isQuickModalOpen}
