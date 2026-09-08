@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { themes } from "../themes/themes";
+import { getThemesForUser } from "../themes/themes";
 import { getSavedTheme, setTheme } from "../utils/theme";
+import { isVipUser } from "../utils/userPerks";
 
-function ThemeSelector() {
+function ThemeSelector({ user }) {
     const [theme, setCurrentTheme] = useState(getSavedTheme());
+    const availableThemes = getThemesForUser(user);
+    const isVip = isVipUser(user);
 
     function handleChange(event) {
         const newTheme = event.target.value;
@@ -13,7 +16,7 @@ function ThemeSelector() {
     }
 
     return (
-        <div className="w-full">
+        <div className="w-full space-y-1.5">
             <select
                 id="theme"
                 value={theme}
@@ -37,15 +40,19 @@ function ThemeSelector() {
                     focus:ring-[var(--primary)]/20
                 "
             >
-                {themes.map((item) => (
+                {availableThemes.map((item) => (
                     <option key={item.id} value={item.id}>
                         {item.name}
                     </option>
                 ))}
             </select>
+            {isVip && (
+                <div className="flex items-center gap-1 text-[10px] font-bold text-[var(--primary)] px-0.5">
+                    <span>👑 Temas exclusivos activos</span>
+                </div>
+            )}
         </div>
     );
-
 }
 
 export default ThemeSelector;

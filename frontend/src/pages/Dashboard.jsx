@@ -29,7 +29,9 @@ function Dashboard() {
     const [selectedDateTo, setSelectedDateTo] = useState(getLocalDate());
     const [saleToDelete, setSaleToDelete] = useState(null);
     const [showDailySummary, setShowDailySummary] = useState(false);
-    const [showGuide, setShowGuide] = useState(() => !localStorage.getItem("has_seen_guide_v1"));
+    const [showGuide, setShowGuide] = useState(
+        () => localStorage.getItem("dont_show_guide_v1") !== "true"
+    );
     const [isLoading, setIsLoading] = useState(true);
 
 

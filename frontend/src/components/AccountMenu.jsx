@@ -3,13 +3,15 @@ import ThemeSelector from "./ThemeSelector";
 import OnboardingModal from "./OnboardingModal";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { User, Palette, LogOut, ChevronDown, HelpCircle, Volume2, VolumeX } from "lucide-react";
+import { User, Palette, LogOut, ChevronDown, HelpCircle, Volume2, VolumeX, Sparkles } from "lucide-react";
 import { isSoundEnabled, setSoundEnabled, playPopSound } from "../utils/soundEffects";
+import { isVipUser } from "../utils/userPerks";
 
 function AccountMenu({ user, onLogout }) {
     const [isOpen, setIsOpen] = useState(false);
     const [showGuide, setShowGuide] = useState(false);
     const [soundOn, setSoundOn] = useState(() => isSoundEnabled());
+    const isVip = isVipUser(user);
     const menuRef = useRef(null);
     const navigate = useNavigate();
 
@@ -76,7 +78,13 @@ function AccountMenu({ user, onLogout }) {
                     hover:border-[var(--primary)]/50
                 "
             >
-                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-[var(--primary)] text-xs font-extrabold text-white">
+                <div
+                    className={`flex h-7 w-7 items-center justify-center rounded-xl text-xs font-extrabold text-white ${
+                        isVip
+                            ? "bg-gradient-to-tr from-purple-600 via-pink-500 to-amber-400 shadow-xs shadow-purple-500/20"
+                            : "bg-[var(--primary)]"
+                    }`}
+                >
                     {initial}
                 </div>
 
@@ -111,14 +119,27 @@ function AccountMenu({ user, onLogout }) {
                 >
                     {/* User Info */}
                     <div className="flex items-center gap-2.5 pb-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--surface-accent)] text-[var(--primary)] shrink-0">
-                            <User className="w-5 h-5" />
+                        <div
+                            className={`flex h-9 w-9 items-center justify-center rounded-xl shrink-0 ${
+                                isVip
+                                    ? "bg-gradient-to-tr from-purple-500/15 via-pink-500/15 to-amber-500/15 text-purple-600 dark:text-purple-300 border border-purple-400/30"
+                                    : "bg-[var(--surface-accent)] text-[var(--primary)]"
+                            }`}
+                        >
+                            {isVip ? <Sparkles className="w-5 h-5 text-amber-500" /> : <User className="w-5 h-5" />}
                         </div>
 
                         <div className="min-w-0 flex-1">
-                            <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-                                Cuenta
-                            </p>
+                            <div className="flex items-center gap-1.5">
+                                <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+                                    Cuenta
+                                </p>
+                                {isVip && (
+                                    <span className="rounded-full bg-gradient-to-r from-purple-500/15 to-pink-500/15 border border-purple-400/30 px-1.5 py-0.5 text-[9px] font-black text-purple-600 dark:text-purple-300">
+                                        ✨ VIP
+                                    </span>
+                                )}
+                            </div>
                             <p
                                 className="truncate text-xs font-semibold text-[var(--text-primary)]"
                                 title={user?.email}
@@ -134,7 +155,7 @@ function AccountMenu({ user, onLogout }) {
                             <Palette className="w-3.5 h-3.5 text-[var(--primary)]" />
                             <span>Tema de color</span>
                         </div>
-                        <ThemeSelector />
+                        <ThemeSelector user={user} />
                     </div>
 
                     {/* Sound Effects Toggle */}
