@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import SaleForm from "../components/SaleForm";
 import toast from "react-hot-toast";
 import { ArrowLeft, Plus } from "lucide-react";
-import { playSaleSuccessSound, playPopSound } from "../utils/soundEffects";
+import { playSaleSuccessSound } from "../utils/soundEffects";
 import { isBambiEnabled, getRandomBambiPhrase } from "../utils/bambiConfig";
 
 const BAMBI_ADVICES = [
@@ -24,7 +24,6 @@ function NewSale() {
     const [adviceIndex, setAdviceIndex] = useState(0);
 
     function cycleAdvice() {
-        playPopSound();
         setAdviceIndex((prev) => (prev + 1) % BAMBI_ADVICES.length);
     }
 
@@ -116,7 +115,16 @@ function NewSale() {
                     </button>
                 </div>
 
-                {/* Bambi Asistente Recomienda Banner */}
+                {/* Main Form Card (Front and center for optimal ergonomics & speed) */}
+                <section className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm">
+                    <SaleForm
+                        onSubmit={handleCreateSale}
+                        isQuickModalOpen={isQuickModalOpen}
+                        setIsQuickModalOpen={setIsQuickModalOpen}
+                    />
+                </section>
+
+                {/* Bambi Asistente Recomienda Banner (Placed under form so form inputs are immediately accessible) */}
                 {isBambiEnabled() && (
                     <div
                         onClick={cycleAdvice}
@@ -167,15 +175,6 @@ function NewSale() {
                         </p>
                     </div>
                 )}
-
-                {/* Main Form Card */}
-                <section className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm">
-                    <SaleForm
-                        onSubmit={handleCreateSale}
-                        isQuickModalOpen={isQuickModalOpen}
-                        setIsQuickModalOpen={setIsQuickModalOpen}
-                    />
-                </section>
 
             </div>
         </div>
