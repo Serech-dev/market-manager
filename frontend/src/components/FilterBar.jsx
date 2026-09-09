@@ -1,10 +1,10 @@
 import { Calendar, CalendarDays, CalendarRange, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
-import getLocalDate from "../utils/getLocalDate";
+import getLocalDate, { getStartOfWeek } from "../utils/getLocalDate";
 
 /**
  * Local timezone date arithmetic helper
  */
-function shiftDate(dateStr, days) {
+export function shiftDate(dateStr, days) {
     if (!dateStr) return getLocalDate();
     const [y, m, d] = dateStr.split("-").map(Number);
     const date = new Date(y, m - 1, d);
@@ -18,7 +18,7 @@ function shiftDate(dateStr, days) {
 /**
  * Local timezone month arithmetic helper
  */
-function shiftMonth(monthStr, months) {
+export function shiftMonth(monthStr, months) {
     if (!monthStr) return getLocalDate().slice(0, 7);
     const [y, m] = monthStr.split("-").map(Number);
     const date = new Date(y, m - 1 + months, 1);
@@ -254,7 +254,7 @@ function FilterBar({
 
             {/* Rango Mode */}
             {filterMode === "period" && (
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                     <div className="grid grid-cols-2 gap-2">
                         <div>
                             <label className="block text-[11px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
@@ -309,6 +309,63 @@ function FilterBar({
                                 onChange={(e) => setSelectedDateTo(e.target.value)}
                             />
                         </div>
+                    </div>
+
+                    {/* Quick Range Presets Chips */}
+                    <div className="flex gap-1.5 overflow-x-auto pb-0.5 no-scrollbar">
+                        {[
+                            {
+                                label: "Esta semana",
+                                from: getStartOfWeek(today),
+                                to: today,
+                            },
+                            {
+                                label: "Últimos 7 días",
+                                from: shiftDate(today, -6),
+                                to: today,
+                            },
+                            {
+                                label: "Este mes",
+                                from: `${currentMonth}-01`,
+                                to: today,
+                            },
+                            {
+                                label: "Últimos 30 días",
+                                from: shiftDate(today, -29),
+                                to: today,
+                            },
+                        ].map((preset) => {
+                            const isSelected =
+                                selectedDateFrom === preset.from && selectedDateTo === preset.to;
+                            return (
+                                <button
+                                    key={preset.label}
+                                    type="button"
+                                    onClick={() => {
+                                        setSelectedDateFrom(preset.from);
+                                        setSelectedDateTo(preset.to);
+                                    }}
+                                    className={`
+                                        shrink-0
+                                        rounded-lg
+                                        px-2.5
+                                        py-1
+                                        text-[11px]
+                                        font-bold
+                                        transition
+                                        active-press
+                                        border
+                                        ${
+                                            isSelected
+                                                ? "bg-[var(--primary)] text-white border-[var(--primary)] shadow-xs"
+                                                : "bg-[var(--surface-accent)]/40 text-[var(--text-secondary)] border-[var(--border)] hover:text-[var(--text-primary)] hover:border-[var(--primary)]/50"
+                                        }
+                                    `}
+                                >
+                                    {preset.label}
+                                </button>
+                            );
+                        })}
                     </div>
 
                     {invalidPeriod && (

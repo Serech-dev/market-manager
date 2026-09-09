@@ -2,7 +2,7 @@ import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import SaleCard from "../components/SaleCard";
 import FilterBar from "../components/FilterBar";
-import getLocalDate from "../utils/getLocalDate";
+import getLocalDate, { getStartOfWeek } from "../utils/getLocalDate";
 import api, { getApiError } from "../services/api";
 import SummaryCard from "../components/SummaryCard";
 import AccountMenu from "../components/AccountMenu";
@@ -27,7 +27,7 @@ function Dashboard() {
     const [selectedDate, setSelectedDate] = useState(getLocalDate());
     const [selectedMonth, setSelectedMonth] = useState(getLocalDate().slice(0, 7));
     const [filterMode, setFilterMode] = useState("day");
-    const [selectedDateFrom, setSelectedDateFrom] = useState(getLocalDate());
+    const [selectedDateFrom, setSelectedDateFrom] = useState(() => getStartOfWeek());
     const [selectedDateTo, setSelectedDateTo] = useState(getLocalDate());
     const [saleToDelete, setSaleToDelete] = useState(null);
     const [showDailySummary, setShowDailySummary] = useState(false);
@@ -120,8 +120,23 @@ function Dashboard() {
             );
         }
 
-        const from = new Date(`${selectedDateFrom}T00:00:00`).toLocaleDateString("es-AR");
-        const to = new Date(`${selectedDateTo}T00:00:00`).toLocaleDateString("es-AR");
+        const today = getLocalDate();
+        const startOfWeek = getStartOfWeek(today);
+        const isThisWeek = selectedDateFrom === startOfWeek && selectedDateTo === today;
+
+        const from = new Date(`${selectedDateFrom}T00:00:00`).toLocaleDateString("es-AR", {
+            day: "numeric",
+            month: "short",
+        });
+        const to = new Date(`${selectedDateTo}T00:00:00`).toLocaleDateString("es-AR", {
+            day: "numeric",
+            month: "short",
+            year: new Date(`${selectedDateTo}T00:00:00`).getFullYear() !== new Date().getFullYear() ? "numeric" : undefined,
+        });
+
+        if (isThisWeek) {
+            return `Esta Semana (${from} — ${to})`;
+        }
 
         return `${from} — ${to}`;
     }
