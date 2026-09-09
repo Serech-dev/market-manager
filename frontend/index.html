@@ -1,12 +1,46 @@
 <!doctype html>
 <html lang="es" data-theme="cosmic">
+  <head>
     <meta charset="UTF-8" />
-    <link
-            rel="icon"
-            type="image/png"
-            href="/pwa-192x192.png"
-        />
+    <link rel="icon" type="image/png" href="/pwa-192x192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0d0c1d" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Market Manager</title>
+    <script>
+      (function () {
+        try {
+          var bgColors = {
+            cosmic: "#0d0c1d",
+            blue: "#e9e9e5",
+            cherry: "#f7e8ed",
+            forest: "#eeede5",
+            midnight: "#171b22",
+            "forest-dark": "#151c19",
+            "cherry-dark": "#1d171b",
+          };
+          var aliases = {
+            dark: "midnight",
+            sunset: "cherry",
+            lavender: "cherry",
+            sky: "blue",
+            meadow: "forest",
+            ember: "cherry-dark",
+            evergreen: "forest-dark",
+            cosmic_noir: "cosmic",
+            space: "cosmic",
+          };
+          var theme = localStorage.getItem("theme") || "cosmic";
+          theme = aliases[theme] || theme;
+          if (!bgColors[theme]) theme = "cosmic";
+          document.documentElement.setAttribute("data-theme", theme);
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute("content", bgColors[theme]);
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

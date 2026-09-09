@@ -23,6 +23,16 @@ const THEME_ALIASES = {
 };
 
 
+export const THEME_BACKGROUND_COLORS = {
+    cosmic: "#0d0c1d",
+    blue: "#e9e9e5",
+    cherry: "#f7e8ed",
+    forest: "#eeede5",
+    midnight: "#171b22",
+    "forest-dark": "#151c19",
+    "cherry-dark": "#1d171b",
+};
+
 const DEFAULT_THEME = "cosmic";
 
 export function getSavedTheme() {
@@ -62,17 +72,19 @@ export function setTheme(theme) {
         console.warn("Could not save theme to localStorage", e);
     }
 
-    const primary = getComputedStyle(document.documentElement)
-        .getPropertyValue("--primary")
-        .trim();
+    // Sync theme-color meta tag with the active theme background for seamless status bar / PWA header
+    const bgColor =
+        THEME_BACKGROUND_COLORS[targetTheme] ||
+        getComputedStyle(document.documentElement)
+            .getPropertyValue("--background")
+            .trim() ||
+        "#0d0c1d";
 
-    if (primary) {
-        let themeColor = document.querySelector('meta[name="theme-color"]');
-        if (!themeColor) {
-            themeColor = document.createElement("meta");
-            themeColor.name = "theme-color";
-            document.head.appendChild(themeColor);
-        }
-        themeColor.content = primary;
+    let themeColor = document.querySelector('meta[name="theme-color"]');
+    if (!themeColor) {
+        themeColor = document.createElement("meta");
+        themeColor.name = "theme-color";
+        document.head.appendChild(themeColor);
     }
+    themeColor.setAttribute("content", bgColor);
 }

@@ -13,8 +13,8 @@ export default defineConfig({
                 name: "Market Manager",
                 short_name: "Market Manager",
                 description: "Gestión de ventas para tu negocio.",
-                theme_color: "#a34f63",
-                background_color: "#fdf6f0",
+                theme_color: "#0d0c1d",
+                background_color: "#0d0c1d",
                 display: "standalone",
                 start_url: "/",
                 icons: [
