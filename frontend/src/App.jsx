@@ -11,6 +11,7 @@ import Products from "./pages/Products";
 import EditSale from "./pages/EditSale";
 import Dashboard from "./pages/Dashboard";
 import Categories from "./pages/categories";
+import CategoryDetail from "./pages/CategoryDetail";
 import Locations from "./pages/Locations";
 import NewProduct from "./pages/NewProduct";
 import NewCategory from "./pages/NewCategory";
@@ -92,6 +93,10 @@ function App() {
                         <Route
                             path="/categories"
                             element={<Categories />}
+                        />
+                        <Route
+                            path="/categories/:id"
+                            element={<CategoryDetail />}
                         />
                         <Route
                             path="/locations"

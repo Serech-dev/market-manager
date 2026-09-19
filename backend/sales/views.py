@@ -555,8 +555,7 @@ class ProductArchiveView(generics.UpdateAPIView):
         serializer.save(active=False)
 
 
-class ProductCategoryAnalyticsView(generics.RetrieveAPIView):
-    serializer_class = ProductCategoryAnalyticsSerializer
+class ProductCategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -572,46 +571,97 @@ class ProductCategoryAnalyticsView(generics.RetrieveAPIView):
         )
         sales = apply_period_filter(sales, request.query_params)
 
+        gross = sales.aggregate(
+            total=Coalesce(
+                Sum("gross_amount"),
+                Value(Decimal("0")),
+            )
+        )["total"]
+
+        investment = sales.aggregate(
+            total=Coalesce(
+                Sum("investment_amount"),
+                Value(Decimal("0")),
+            )
+        )["total"]
+
+        earnings = gross - investment
+        sales_count = sales.count()
+        average_ticket = (gross / sales_count) if sales_count > 0 else Decimal("0")
+        margin_percentage = round(float((earnings / gross) * 100), 1) if gross > 0 else 0.0
+
+        # Products currently in this category
+        products = category.products.filter(active=True).annotate(
+            sales_count=Count("sales"),
+            gross=Coalesce(
+                Sum("sales__gross_amount"),
+                Value(Decimal("0")),
+            ),
+            earnings=Coalesce(
+                Sum("sales__gross_amount"),
+                Value(Decimal("0")),
+            ) - Coalesce(
+                Sum("sales__investment_amount"),
+                Value(Decimal("0")),
+            ),
+        ).order_by("-sales_count", "name")
+
+        product_list = [
+            {
+                "id": p.id,
+                "name": p.name,
+                "price": str(p.price) if p.price is not None else None,
+                "investment_price": str(p.investment_price) if p.investment_price is not None else None,
+                "sales_count": p.sales_count,
+                "gross": str(p.gross),
+                "earnings": str(p.earnings),
+            }
+            for p in products
+        ]
+
         analytics = {
             "id": category.id,
             "name": category.name,
-            "products_count": category.products.count(),
-            "sales_count": sales.count(),
-            "gross": sales.aggregate(
-                total=Coalesce(
-                    Sum("gross_amount"),
-                    Value(Decimal("0")),
-                )
-            )["total"],
-            "investment": sales.aggregate(
-                total=Coalesce(
-                    Sum("investment_amount"),
-                    Value(Decimal("0")),
-                )
-            )["total"],
-            "average_sale": sales.aggregate(
-                average=Coalesce(
-                    Avg("gross_amount"),
-                    Value(Decimal("0")),
-                )
-            )["average"],
-            "first_sale": sales.order_by("date").values_list(
-                "date",
-                flat=True,
-            ).first(),
-            "last_sale": sales.order_by("-date").values_list(
-                "date",
-                flat=True,
-            ).first(),
+            "products_count": len(product_list),
+            "sales_count": sales_count,
+            "gross": str(gross),
+            "investment": str(investment),
+            "earnings": str(earnings),
+            "average_ticket": str(round(average_ticket, 2)),
+            "margin_percentage": margin_percentage,
+            "first_sale": sales.order_by("date").values_list("date", flat=True).first(),
+            "last_sale": sales.order_by("-date").values_list("date", flat=True).first(),
+            "products": product_list,
         }
 
-        analytics["earnings"] = (
-            analytics["gross"] - analytics["investment"]
-        )
+        return Response(analytics)
 
-        serializer = self.get_serializer(analytics)
+    def update(self, request, *args, **kwargs):
+        category = self.get_object()
+        name = request.data.get("name", "").strip().lower()
+        name = " ".join(name.split())
+        if not name:
+            return Response(
+                {"name": "El nombre no puede estar vacío."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        return Response(serializer.data)
+        if ProductCategory.objects.filter(user=request.user, name=name).exclude(id=category.id).exists():
+            return Response(
+                {"name": "Ya existe una categoría con ese nombre."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        category.name = name
+        category.save(update_fields=["name"])
+        return Response({"id": category.id, "name": category.name})
+
+    def destroy(self, request, *args, **kwargs):
+        category = self.get_object()
+        # Unassign products to null rather than deleting products
+        category.products.update(category=None)
+        category.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProductBulkCategorizeView(APIView):

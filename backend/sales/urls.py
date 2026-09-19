@@ -1,8 +1,8 @@
 from django.urls import path
 
 from .views import (ProductAnalyticsView, ProductArchiveView,
-                    ProductCategoryListCreateView, ProductListView,
-                    ProductBulkCategorizeView,
+                    ProductCategoryListCreateView, ProductCategoryDetailView,
+                    ProductListView, ProductBulkCategorizeView,
                     SaleDetailView, SaleListCreateView, SaleSummaryView,
                     LocationListCreateView, LocationDetailView, LocationActivateView)
 
@@ -46,6 +46,11 @@ urlpatterns = [
         "categories/",
         ProductCategoryListCreateView.as_view(),
         name="category-list-create",
+    ),
+    path(
+        "categories/<int:pk>/",
+        ProductCategoryDetailView.as_view(),
+        name="category-detail",
     ),
     path(
         "locations/",

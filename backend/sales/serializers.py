@@ -106,6 +106,22 @@ class ProductCategorySerializer(serializers.ModelSerializer):
         allow_null=True,
         read_only=True,
     )
+    margin_percentage = serializers.SerializerMethodField(read_only=True)
+    average_ticket = serializers.SerializerMethodField(read_only=True)
+
+    def get_margin_percentage(self, obj):
+        gross = getattr(obj, "gross", 0) or 0
+        earnings = getattr(obj, "earnings", 0) or 0
+        if gross > 0:
+            return round(float((earnings / gross) * 100), 1)
+        return 0.0
+
+    def get_average_ticket(self, obj):
+        gross = getattr(obj, "gross", 0) or 0
+        sales_count = getattr(obj, "sales_count", 0) or 0
+        if sales_count > 0:
+            return round(float(gross / sales_count), 2)
+        return 0.0
 
     class Meta:
         model = ProductCategory
@@ -118,6 +134,8 @@ class ProductCategorySerializer(serializers.ModelSerializer):
             "investment",
             "earnings",
             "last_sale",
+            "margin_percentage",
+            "average_ticket",
         ]
         read_only_fields = [
             "id",
@@ -127,6 +145,8 @@ class ProductCategorySerializer(serializers.ModelSerializer):
             "investment",
             "earnings",
             "last_sale",
+            "margin_percentage",
+            "average_ticket",
         ]
 
     def validate_name(self, value):

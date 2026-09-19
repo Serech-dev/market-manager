@@ -171,3 +171,4 @@ function BulkCategorizeModal({
 }
 
 export default BulkCategorizeModal;
+
