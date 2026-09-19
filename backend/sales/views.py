@@ -612,3 +612,44 @@ class ProductCategoryAnalyticsView(generics.RetrieveAPIView):
         serializer = self.get_serializer(analytics)
 
         return Response(serializer.data)
+
+
+class ProductBulkCategorizeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        product_ids = request.data.get("product_ids", [])
+        category_id = request.data.get("category_id")
+
+        if not isinstance(product_ids, list) or not product_ids:
+            return Response(
+                {"detail": "Debes seleccionar al menos un producto."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        category = None
+        if category_id is not None and category_id != "":
+            try:
+                category = ProductCategory.objects.get(
+                    id=category_id,
+                    user=request.user,
+                )
+            except ProductCategory.DoesNotExist:
+                return Response(
+                    {"detail": "La categoría seleccionada no existe."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+        updated_count = Product.objects.filter(
+            id__in=product_ids,
+            user=request.user,
+        ).update(category=category)
+
+        return Response(
+            {
+                "updated_count": updated_count,
+                "category_id": category.id if category else None,
+                "category_name": category.name if category else None,
+            },
+            status=status.HTTP_200_OK,
+        )

@@ -216,4 +216,4 @@ function NewProduct() {
     );
 }
 
-export default NewProduct;
+export default NewProduct;
