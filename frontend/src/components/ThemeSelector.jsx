@@ -152,7 +152,7 @@ function ThemeSelector() {
                                 <Sparkles className="w-3 h-3" />
                                 <span>Premium</span>
                             </span>
-                            <span className="text-[9px] font-extrabold rounded-sm bg-amber-500/10 px-1 py-0.2">
+                            <span className="text-[9px] font-extrabold rounded-sm bg-amber-500/10 px-1 py-0.5">
                                 EXCLUSIVO
                             </span>
                         </div>
