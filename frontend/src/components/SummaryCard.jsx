@@ -34,55 +34,62 @@ function SummaryCard({ title, value, variant, cacheKey, isLoading }) {
                 ${isBumping ? "ring-2 ring-[var(--primary)]/30 scale-[1.02]" : ""}
             `}
         >
-            <div className={`flex items-center gap-2 ${isProfit ? "justify-center" : "justify-between"}`}>
-                <div className="flex items-center gap-1.5">
-                    <span
-                        className={`
-                            text-xs
-                            font-semibold
-                            uppercase
-                            tracking-wider
-                            ${
-                                isProfit
-                                    ? "text-[var(--success-text)] font-bold"
-                                    : "text-[var(--text-secondary)]"
-                            }
-                        `}
-                    >
-                        {title}
-                    </span>
-
-                    {isProfit && (
-                        <button
-                            type="button"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                togglePrivacy();
-                            }}
-                            title={isPrivate ? "Mostrar montos" : "Ocultar montos"}
-                            aria-label={isPrivate ? "Mostrar montos" : "Ocultar montos"}
-                            className="
-                                flex
-                                h-5
-                                w-5
-                                items-center
-                                justify-center
-                                rounded-md
-                                text-[var(--success-text)]/70
-                                transition
-                                active-press
-                                hover:text-[var(--success-text)]
-                                hover:bg-[var(--success)]/15
-                            "
-                        >
-                            {isPrivate ? (
-                                <EyeOff className="w-3.5 h-3.5 text-[var(--success-text)]" />
-                            ) : (
-                                <Eye className="w-3.5 h-3.5" />
-                            )}
-                        </button>
+            {/* Corner Privacy Toggle Action on Profit Card */}
+            {isProfit && (
+                <button
+                    type="button"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        togglePrivacy();
+                    }}
+                    title={isPrivate ? "Mostrar montos" : "Ocultar montos"}
+                    aria-label={isPrivate ? "Mostrar montos" : "Ocultar montos"}
+                    className="
+                        absolute
+                        top-3.5
+                        right-3.5
+                        flex
+                        h-7
+                        w-7
+                        items-center
+                        justify-center
+                        rounded-xl
+                        border
+                        border-[var(--success-border)]/70
+                        bg-[var(--surface)]/70
+                        backdrop-blur-xs
+                        text-[var(--success-text)]
+                        transition
+                        active-press
+                        hover:bg-[var(--surface)]
+                        hover:text-[var(--success)]
+                        shadow-2xs
+                    "
+                >
+                    {isPrivate ? (
+                        <EyeOff className="w-3.5 h-3.5" />
+                    ) : (
+                        <Eye className="w-3.5 h-3.5" />
                     )}
-                </div>
+                </button>
+            )}
+
+            <div className={`flex items-center gap-2 ${isProfit ? "justify-center" : "justify-between"}`}>
+                <span
+                    className={`
+                        text-xs
+                        font-semibold
+                        uppercase
+                        tracking-wider
+                        ${
+                            isProfit
+                                ? "text-[var(--success-text)] font-bold"
+                                : "text-[var(--text-secondary)]"
+                        }
+                    `}
+                >
+                    {title}
+                </span>
 
                 {!isProfit && (
                     <div

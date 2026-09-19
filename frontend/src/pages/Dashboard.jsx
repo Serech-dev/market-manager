@@ -220,36 +220,9 @@ function Dashboard() {
                 <section className="space-y-3">
                     <div className="flex items-center justify-between">
                         <div>
-                            <div className="flex items-center gap-1.5">
-                                <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-                                    Resumen
-                                </h2>
-                                <button
-                                    type="button"
-                                    onClick={togglePrivacy}
-                                    title={isPrivate ? "Mostrar montos" : "Ocultar montos"}
-                                    aria-label={isPrivate ? "Mostrar montos" : "Ocultar montos"}
-                                    className="
-                                        flex
-                                        h-6
-                                        w-6
-                                        items-center
-                                        justify-center
-                                        rounded-lg
-                                        text-[var(--text-secondary)]
-                                        transition
-                                        active-press
-                                        hover:bg-[var(--surface-accent)]
-                                        hover:text-[var(--primary)]
-                                    "
-                                >
-                                    {isPrivate ? (
-                                        <EyeOff className="w-3.5 h-3.5 text-[var(--primary)]" />
-                                    ) : (
-                                        <Eye className="w-3.5 h-3.5" />
-                                    )}
-                                </button>
-                            </div>
+                            <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+                                Resumen
+                            </h2>
                             <p className="text-xs text-[var(--text-secondary)] capitalize mt-0.5">
                                 {getPeriodLabel()}
                             </p>
