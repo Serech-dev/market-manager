@@ -6,21 +6,19 @@ Market Manager allows users to register sales, track gross income, investment, a
 
 ## Features
 
-* Sales CRUD operations.
+* Sales CRUD operations with quick quantity controls.
+* Product and Category catalog management with profit margins and average ticket metrics.
+* Bulk product categorization and organization tool.
+* Category performance ranking with celebratory Olympic podium and WhatsApp sharing.
+* Active selling location tracking (Lugares / Ferias / Showrooms).
 * Daily, monthly, and custom-period filtering.
-* Financial summaries for:
-
-  * Gross income.
-  * Investment.
-  * Earnings.
+* Day closeout summary with fanfare and peak hours hourly breakdown.
+* Dynamic multi-theme system (light, dark, and premium themes) with theme-synced toasts.
+* Privacy mode for hiding monetary values in public spaces.
 * Argentine Peso currency formatting.
 * Backend validation with user-friendly Spanish error messages.
-* Toast notifications for successful and failed operations.
-* Custom confirmation dialog before deleting sales.
-* Context-aware empty states.
-* Responsive mobile-first interface.
-* PWA installation and mobile home-screen support.
-* Production deployment with a PostgreSQL database.
+* Responsive mobile-first interface with PWA support.
+* Production deployment with PostgreSQL and Django REST API.
 
 ## Tech Stack
 
@@ -121,11 +119,9 @@ The production application uses:
 
 ## Current Version
 
-**v0.3.0**
+**v1.0.0**
 
-This release represents the first deployed and mobile-ready version of Market Manager.
-
-The application has progressed from an initial Django prototype into a functional full-stack application that can be used directly from a mobile device.
+This release represents the complete Category Management & Metrics release for Market Manager, featuring visual category rankings, bulk organization, full catalog metrics, and dynamic theme synchronization.
 
 ## Future Development
 

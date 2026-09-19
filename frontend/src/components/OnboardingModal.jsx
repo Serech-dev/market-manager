@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Sparkles, ShoppingBag, MapPin, TrendingUp, ChevronRight, Check, Share2, Flame } from "lucide-react";
+import { Sparkles, ShoppingBag, MapPin, TrendingUp, ChevronRight, Check, Share2, Flame, Tags, Trophy, Crown } from "lucide-react";
 
 const SLIDES = [
     {
         icon: ShoppingBag,
-        badge: "Paso 1 de 3",
+        badge: "Paso 1 de 4",
         title: "Venta Rápida sin Enredos",
         subtitle: "Pensado para la velocidad del mostrador y la feria",
         description:
@@ -29,7 +29,7 @@ const SLIDES = [
     },
     {
         icon: MapPin,
-        badge: "Paso 2 de 3",
+        badge: "Paso 2 de 4",
         title: "Puntos de Venta (Lugares)",
         subtitle: "Configuralo una vez al llegar y olvidate",
         description:
@@ -56,8 +56,48 @@ const SLIDES = [
         ),
     },
     {
+        icon: Tags,
+        badge: "Paso 3 de 4",
+        title: "Categorías y Ranking 🏆",
+        subtitle: "Organizá tu catálogo y descubrí qué te rinde más",
+        description:
+            "Agrupá productos para medir tu margen % y ticket promedio. Usá 'Organizar' para ordenar productos sin categoría en lote y mirá el Ranking para festejar a tus categorías líderes.",
+        preview: (
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-accent)]/60 p-3.5 space-y-2.5">
+                <div className="flex items-center justify-between rounded-xl border border-amber-500/40 bg-[var(--surface)] p-2.5 shadow-2xs">
+                    <div className="flex items-center gap-2">
+                        <span className="text-base">🥇</span>
+                        <div>
+                            <span className="text-[9px] font-extrabold uppercase tracking-wider text-amber-500 block">
+                                Categoría Líder
+                            </span>
+                            <p className="text-xs font-black text-[var(--text-primary)]">
+                                Ropa & Accesorios
+                            </p>
+                        </div>
+                    </div>
+                    <div className="text-right">
+                        <span className="text-xs font-black text-[var(--success)]">+$64.000</span>
+                        <span className="text-[10px] font-bold text-[var(--primary)] block">45% margen</span>
+                    </div>
+                </div>
+
+                <div className="flex items-center justify-between text-[11px] font-bold text-[var(--text-secondary)] px-1">
+                    <span className="flex items-center gap-1 text-[var(--primary)]">
+                        <Tags className="w-3.5 h-3.5" />
+                        Organización en lote
+                    </span>
+                    <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
+                        <Trophy className="w-3.5 h-3.5" />
+                        Podio de rendimiento
+                    </span>
+                </div>
+            </div>
+        ),
+    },
+    {
         icon: Sparkles,
-        badge: "Paso 3 de 3",
+        badge: "Paso 4 de 4",
         title: "Cierre de Jornada y Análisis Completo",
         subtitle: "Balance instantáneo y estadísticas detalladas",
         description:
