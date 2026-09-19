@@ -46,6 +46,7 @@ function CategoryDetail() {
     const [assignSearch, setAssignSearch] = useState("");
     const [selectedAssignIds, setSelectedAssignIds] = useState(new Set());
     const [isAssigning, setIsAssigning] = useState(false);
+    const [onlyUnassigned, setOnlyUnassigned] = useState(false);
 
     // Period Filter State
     const [filterMode, setFilterMode] = useState("month");
@@ -181,10 +182,13 @@ function CategoryDetail() {
         });
     }
 
+    const unassignedCount = allProducts.filter((p) => !p.category).length;
+
     const availableProductsToAssign = allProducts.filter((p) => {
         const isAlreadyInCat = String(p.category) === String(id);
         const matchesSearch = p.name.toLowerCase().includes(assignSearch.trim().toLowerCase());
-        return !isAlreadyInCat && matchesSearch;
+        const matchesUnassigned = onlyUnassigned ? !p.category : true;
+        return !isAlreadyInCat && matchesSearch && matchesUnassigned;
     });
 
     if (isLoading && !category) {
@@ -477,8 +481,8 @@ function CategoryDetail() {
                             </button>
                         </div>
 
-                        {/* Search Input */}
-                        <div className="p-3 border-b border-[var(--border)]">
+                        {/* Search & Filters */}
+                        <div className="p-3 border-b border-[var(--border)] space-y-2">
                             <input
                                 type="text"
                                 placeholder="Buscar productos para asignar..."
@@ -490,13 +494,72 @@ function CategoryDetail() {
                                     focus:border-[var(--primary)]
                                 "
                             />
+
+                            <div className="flex items-center justify-between gap-2 pt-0.5">
+                                <button
+                                    type="button"
+                                    onClick={() => setOnlyUnassigned((prev) => !prev)}
+                                    className={`
+                                        flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-bold transition active-press border
+                                        ${
+                                            onlyUnassigned
+                                                ? "border-amber-500/50 bg-amber-500/15 text-amber-600 dark:text-amber-400 shadow-2xs"
+                                                : "border-[var(--border)] bg-[var(--surface-accent)]/50 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                                        }
+                                    `}
+                                >
+                                    <span>⚠️ Solo sin categoría</span>
+                                    <span
+                                        className={`
+                                            rounded-md px-1.5 py-0.2 text-[10px] font-extrabold border
+                                            ${
+                                                onlyUnassigned
+                                                    ? "bg-amber-500 text-white border-amber-600"
+                                                    : "bg-[var(--surface)] text-[var(--text-secondary)] border-[var(--border)]"
+                                            }
+                                        `}
+                                    >
+                                        {unassignedCount}
+                                    </span>
+                                </button>
+
+                                {availableProductsToAssign.length > 0 && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const visibleIds = availableProductsToAssign.map((p) => p.id);
+                                            const allVisibleSelected = visibleIds.every((prodId) => selectedAssignIds.has(prodId));
+                                            if (allVisibleSelected) {
+                                                setSelectedAssignIds((prev) => {
+                                                    const next = new Set(prev);
+                                                    visibleIds.forEach((prodId) => next.delete(prodId));
+                                                    return next;
+                                                });
+                                            } else {
+                                                setSelectedAssignIds((prev) => {
+                                                    const next = new Set(prev);
+                                                    visibleIds.forEach((prodId) => next.add(prodId));
+                                                    return next;
+                                                });
+                                            }
+                                        }}
+                                        className="text-[11px] font-bold text-[var(--primary)] hover:underline shrink-0"
+                                    >
+                                        {availableProductsToAssign.every((p) => selectedAssignIds.has(p.id))
+                                            ? "Deseleccionar todos"
+                                            : "Seleccionar visibles"}
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
                         {/* Products Selectable List */}
                         <div className="flex-1 overflow-y-auto p-3 space-y-1.5 custom-scrollbar">
                             {availableProductsToAssign.length === 0 ? (
                                 <p className="p-6 text-center text-xs text-[var(--text-secondary)]">
-                                    {assignSearch ? "No se encontraron productos coincidentes." : "Todos los productos ya están en esta categoría."}
+                                    {assignSearch || onlyUnassigned
+                                        ? "No se encontraron productos coincidentes."
+                                        : "Todos los productos ya están en esta categoría."}
                                 </p>
                             ) : (
                                 availableProductsToAssign.map((p) => {
@@ -533,9 +596,13 @@ function CategoryDetail() {
                                                 </span>
                                             </div>
 
-                                            {p.category_name && (
-                                                <span className="text-[10px] text-[var(--text-secondary)] bg-[var(--surface-accent)] px-2 py-0.5 rounded-full shrink-0">
+                                            {p.category_name ? (
+                                                <span className="text-[10px] text-[var(--text-secondary)] bg-[var(--surface-accent)] px-2 py-0.5 rounded-full shrink-0 border border-[var(--border)]">
                                                     {capitalizeWords(p.category_name)}
+                                                </span>
+                                            ) : (
+                                                <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full shrink-0 border border-amber-500/20">
+                                                    Sin categoría
                                                 </span>
                                             )}
                                         </div>
