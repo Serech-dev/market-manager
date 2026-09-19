@@ -1,6 +1,18 @@
 CHANGELOG
 
 
+v1.0.0
+
+-implement category detail view with metrics (margin %, average ticket, revenue, sales)
+-add quick product assignment panel with search and "unassigned products" filter toggle
+-add bulk product categorization and organization tool in catalog
+-add on-input category creation and search in product/sales forms
+-add celebratory Category Ranking modal with Olympic podium and performance leaderboard
+-add toast notifications theming matching active color palettes
+-improve theme selector dropdown layout and add new themes
+-optimize PWA splash background and sync mobile status bar meta tags
+-add WhatsApp and clipboard sharing for category rankings
+
 v0.9.3
 
 -add locations tab, logic and UI
