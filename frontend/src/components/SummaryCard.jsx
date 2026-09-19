@@ -46,19 +46,21 @@ function SummaryCard({ title, value, variant, cacheKey, isLoading }) {
                     aria-label={isPrivate ? "Mostrar montos" : "Ocultar montos"}
                     className="
                         absolute
-                        top-3.5
-                        right-3.5
+                        top-3
+                        right-3
                         flex
-                        h-7
-                        w-7
                         items-center
-                        justify-center
-                        rounded-xl
+                        gap-1.5
+                        px-2.5
+                        py-1
+                        rounded-lg
                         border
                         border-[var(--success-border)]/70
-                        bg-[var(--surface)]/70
+                        bg-[var(--surface)]/80
                         backdrop-blur-xs
                         text-[var(--success-text)]
+                        text-[11px]
+                        font-medium
                         transition
                         active-press
                         hover:bg-[var(--surface)]
@@ -67,9 +69,15 @@ function SummaryCard({ title, value, variant, cacheKey, isLoading }) {
                     "
                 >
                     {isPrivate ? (
-                        <EyeOff className="w-3.5 h-3.5" />
+                        <>
+                            <EyeOff className="w-3.5 h-3.5" />
+                            <span>Mostrar</span>
+                        </>
                     ) : (
-                        <Eye className="w-3.5 h-3.5" />
+                        <>
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>Ocultar</span>
+                        </>
                     )}
                 </button>
             )}
