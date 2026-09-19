@@ -24,6 +24,7 @@ import {
     Package,
     ChevronRight,
     Loader2,
+    Filter,
 } from "lucide-react";
 
 function CategoryDetail() {
@@ -503,18 +504,19 @@ function CategoryDetail() {
                                         flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-bold transition active-press border
                                         ${
                                             onlyUnassigned
-                                                ? "border-amber-500/50 bg-amber-500/15 text-amber-600 dark:text-amber-400 shadow-2xs"
+                                                ? "border-[var(--primary)] bg-[var(--primary)]/10 text-[var(--primary)] shadow-2xs"
                                                 : "border-[var(--border)] bg-[var(--surface-accent)]/50 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                                         }
                                     `}
                                 >
-                                    <span>⚠️ Solo sin categoría</span>
+                                    <Filter className="w-3.5 h-3.5" />
+                                    <span>Sin categoría</span>
                                     <span
                                         className={`
                                             rounded-md px-1.5 py-0.2 text-[10px] font-extrabold border
                                             ${
                                                 onlyUnassigned
-                                                    ? "bg-amber-500 text-white border-amber-600"
+                                                    ? "bg-[var(--primary)] text-white border-[var(--primary)]"
                                                     : "bg-[var(--surface)] text-[var(--text-secondary)] border-[var(--border)]"
                                             }
                                         `}
