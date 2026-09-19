@@ -20,6 +20,8 @@
             midnight: "#171b22",
             "forest-dark": "#151c19",
             "cherry-dark": "#1d171b",
+            solar: "#121214",
+            cyber: "#091319",
           };
           var aliases = {
             dark: "midnight",
@@ -31,6 +33,11 @@
             evergreen: "forest-dark",
             cosmic_noir: "cosmic",
             space: "cosmic",
+            gold: "solar",
+            solar_gold: "solar",
+            teal: "cyber",
+            cyber_teal: "cyber",
+            neon: "cyber",
           };
           var theme = localStorage.getItem("theme") || "cosmic";
           theme = aliases[theme] || theme;
