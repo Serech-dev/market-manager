@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import api, { getApiError } from "../services/api";
 import { Package, DollarSign, Tags, X, Sparkles, Plus } from "lucide-react";
+import CategoryCombobox from "./CategoryCombobox";
 
 function QuickProductModal({ isOpen, onClose, initialName = "", onProductCreated }) {
     const [name, setName] = useState(initialName);
@@ -10,8 +11,6 @@ function QuickProductModal({ isOpen, onClose, initialName = "", onProductCreated
     const [category, setCategory] = useState("");
     const [categories, setCategories] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isCreatingCategory, setIsCreatingCategory] = useState(false);
-    const [newCategoryName, setNewCategoryName] = useState("");
 
     useEffect(() => {
         if (isOpen) {
@@ -19,7 +18,6 @@ function QuickProductModal({ isOpen, onClose, initialName = "", onProductCreated
             setPrice("");
             setInvestmentPrice("");
             setCategory("");
-            setIsCreatingCategory(false);
             fetchCategories();
         }
     }, [isOpen, initialName]);
@@ -33,22 +31,9 @@ function QuickProductModal({ isOpen, onClose, initialName = "", onProductCreated
         }
     }
 
-    async function handleCreateCategory(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const trimmed = newCategoryName.trim();
-        if (!trimmed) return;
-
-        try {
-            const response = await api.post("categories/", { name: trimmed });
-            toast.success("Categoría creada.");
-            setCategories((prev) => [...prev, response.data]);
-            setCategory(response.data.id);
-            setNewCategoryName("");
-            setIsCreatingCategory(false);
-        } catch (err) {
-            toast.error(getApiError(err, "No se pudo crear la categoría."));
-        }
+    function handleCategoryCreated(newCategory) {
+        setCategories((prev) => [...prev, newCategory]);
+        setCategory(newCategory.id);
     }
 
     async function handleSubmit(e) {
@@ -59,7 +44,6 @@ function QuickProductModal({ isOpen, onClose, initialName = "", onProductCreated
             toast.error("El nombre del producto es obligatorio.");
             return;
         }
-
 
         if (!price || Number(price) <= 0) {
             toast.error("Ingresa un precio de venta válido.");
@@ -223,90 +207,18 @@ function QuickProductModal({ isOpen, onClose, initialName = "", onProductCreated
                         </div>
                     </div>
 
-                    {/* Category Selector */}
+                    {/* Category Combobox (Search & Create on input) */}
                     <div className="space-y-1">
-                        <div className="flex items-center justify-between">
-                            <label className="block text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-                                Categoría (opcional)
-                            </label>
-                            {!isCreatingCategory && (
-                                <button
-                                    type="button"
-                                    onClick={() => setIsCreatingCategory(true)}
-                                    className="text-[11px] font-bold text-[var(--primary)] hover:underline flex items-center gap-1"
-                                >
-                                    <Plus className="w-3 h-3" />
-                                    <span>Nueva categoría</span>
-                                </button>
-                            )}
-                        </div>
-
-                        {isCreatingCategory ? (
-                            <div className="flex items-center gap-2 pt-1">
-                                <input
-                                    type="text"
-                                    placeholder="Nombre de la categoría..."
-                                    value={newCategoryName}
-                                    onChange={(e) => setNewCategoryName(e.target.value)}
-                                    className="
-                                        flex-1
-                                        rounded-xl
-                                        border
-                                        border-[var(--border)]
-                                        bg-[var(--background)]
-                                        px-3
-                                        py-2
-                                        text-xs
-                                        font-semibold
-                                        text-[var(--text-primary)]
-                                        outline-none
-                                        focus:border-[var(--primary)]
-                                    "
-                                />
-                                <button
-                                    type="button"
-                                    onClick={handleCreateCategory}
-                                    className="rounded-xl bg-[var(--primary)] px-3 py-2 text-xs font-bold text-white hover:bg-[var(--primary-hover)]"
-                                >
-                                    Guardar
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setIsCreatingCategory(false)}
-                                    className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-                                >
-                                    <X className="w-4 h-4" />
-                                </button>
-                            </div>
-                        ) : (
-                            <select
-                                value={category}
-                                onChange={(e) => setCategory(e.target.value)}
-                                className="
-                                    w-full
-                                    rounded-xl
-                                    border
-                                    border-[var(--border)]
-                                    bg-[var(--background)]
-                                    px-3.5
-                                    py-2.5
-                                    text-xs
-                                    font-semibold
-                                    text-[var(--text-primary)]
-                                    outline-none
-                                    focus:border-[var(--primary)]
-                                    focus:ring-2
-                                    focus:ring-[var(--primary)]/20
-                                "
-                            >
-                                <option value="">Sin categoría</option>
-                                {categories.map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
-                                        {cat.name}
-                                    </option>
-                                ))}
-                            </select>
-                        )}
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+                            Categoría (opcional)
+                        </label>
+                        <CategoryCombobox
+                            selectedCategoryId={category}
+                            onSelectCategory={(catId) => setCategory(catId)}
+                            categories={categories}
+                            onCategoryCreated={handleCategoryCreated}
+                            placeholder="Buscar o escribir nueva categoría..."
+                        />
                     </div>
 
                     {/* Actions */}
@@ -349,4 +261,3 @@ function QuickProductModal({ isOpen, onClose, initialName = "", onProductCreated
 }
 
 export default QuickProductModal;
-

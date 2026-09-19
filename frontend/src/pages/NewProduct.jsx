@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import api, { getApiError } from "../services/api";
 import { capitalizeWords } from "../utils/capitalizeWords";
 import { ArrowLeft, Package, Plus } from "lucide-react";
+import CategoryCombobox from "../components/CategoryCombobox";
 
 function NewProduct() {
     const navigate = useNavigate();
@@ -154,38 +155,13 @@ function NewProduct() {
                             Categoría (Opcional)
                         </label>
 
-                        <select
-                            id="category"
-                            value={category}
-                            onChange={(event) => setCategory(event.target.value)}
-                            className="
-                                w-full
-                                rounded-2xl
-                                border
-                                border-[var(--border)]
-                                bg-[var(--surface)]
-                                px-4
-                                py-3
-                                text-sm
-                                font-medium
-                                text-[var(--text-primary)]
-                                outline-none
-                                transition
-                                focus:border-[var(--primary)]
-                                focus:ring-2
-                                focus:ring-[var(--primary)]/20
-                            "
-                        >
-                            <option value="">
-                                Sin categoría
-                            </option>
-
-                            {categories.map((item) => (
-                                <option key={item.id} value={item.id}>
-                                    {capitalizeWords(item.name)}
-                                </option>
-                            ))}
-                        </select>
+                        <CategoryCombobox
+                            selectedCategoryId={category}
+                            onSelectCategory={(catId) => setCategory(catId)}
+                            categories={categories}
+                            onCategoryCreated={(newCat) => setCategories((prev) => [...prev, newCat])}
+                            placeholder="Buscar o escribir nueva categoría..."
+                        />
                     </div>
 
                     <div className="pt-2 flex gap-2.5">
