@@ -1,8 +1,10 @@
 import { formatCurrency } from "../utils/formatCurrency";
 import { TrendingUp, Wallet, Coins } from "lucide-react";
 import { useCountUp } from "../hooks/useCountUp";
+import { usePrivacy } from "../context/PrivacyContext";
 
 function SummaryCard({ title, value, variant, cacheKey, isLoading }) {
+    const { isPrivate } = usePrivacy();
     const isProfit = variant === "profit";
     const isInvestment = title.toLowerCase().includes("inversi");
     const { displayValue, isBumping } = useCountUp(value, {
@@ -10,7 +12,6 @@ function SummaryCard({ title, value, variant, cacheKey, isLoading }) {
         cacheKey,
         isLoading,
     });
-
 
     const Icon = isProfit ? TrendingUp : isInvestment ? Coins : Wallet;
 
@@ -85,9 +86,10 @@ function SummaryCard({ title, value, variant, cacheKey, isLoading }) {
                             ? "text-3xl sm:text-4xl text-[var(--success)]"
                             : "text-xl sm:text-2xl text-[var(--text-primary)]"
                     }
+                    ${isPrivate ? "tracking-widest" : ""}
                 `}
             >
-                {formatCurrency(displayValue)}
+                {formatCurrency(displayValue, { isPrivate })}
             </p>
         </div>
     );

@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 import { useCountUp } from "../hooks/useCountUp";
 import { triggerConfetti, playFanfareSound } from "../utils/soundEffects";
 import { isBambiEnabled, getCloseoutBambiMoment } from "../utils/bambiConfig";
+import { usePrivacy } from "../context/PrivacyContext";
 
 function DailySummaryModal({
     isOpen,
@@ -28,6 +29,7 @@ function DailySummaryModal({
     sales = [],
     periodLabel = "",
 }) {
+    const { isPrivate } = usePrivacy();
     const [viewMode, setViewMode] = useState("summary"); // "summary" | "analytics"
     const [bambiData, setBambiData] = useState(() => getCloseoutBambiMoment(summary, sales));
 
@@ -283,9 +285,9 @@ function DailySummaryModal({
                                 <p
                                     className={`mt-2 text-4xl font-black text-[var(--success-text)] tracking-tight transition-transform duration-200 ${
                                         isEarningsBumping ? "scale-105" : ""
-                                    }`}
+                                    } ${isPrivate ? "tracking-widest" : ""}`}
                                 >
-                                    +{formatCurrency(animatedEarnings)}
+                                    +{formatCurrency(animatedEarnings, { isPrivate })}
                                 </p>
                                 <div className="mt-4 grid grid-cols-2 gap-2.5 border-t border-[var(--success-border)]/50 pt-3 text-xs">
                                     <div className="rounded-2xl border border-[var(--border)]/70 bg-[var(--surface)] p-2.5 shadow-xs">
@@ -293,7 +295,7 @@ function DailySummaryModal({
                                             Ingresos
                                         </span>
                                         <span className="font-extrabold text-[var(--text-primary)] text-sm mt-0.5 block">
-                                            {formatCurrency(animatedGross)}
+                                            {formatCurrency(animatedGross, { isPrivate })}
                                         </span>
                                     </div>
                                     <div className="rounded-2xl border border-[var(--border)]/70 bg-[var(--surface)] p-2.5 shadow-xs">
@@ -301,7 +303,7 @@ function DailySummaryModal({
                                             Inversión
                                         </span>
                                         <span className="font-extrabold text-[var(--text-primary)] text-sm mt-0.5 block">
-                                            {formatCurrency(animatedInvestment)}
+                                            {formatCurrency(animatedInvestment, { isPrivate })}
                                         </span>
                                     </div>
                                 </div>

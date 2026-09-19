@@ -2,9 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "../utils/formatCurrency";
 import { capitalizeWords } from "../utils/capitalizeWords";
 import { Clock, Edit2, Trash2 } from "lucide-react";
+import { usePrivacy } from "../context/PrivacyContext";
 
 function SaleCard({ sale, onDelete, showActions = true }) {
     const navigate = useNavigate();
+    const { isPrivate } = usePrivacy();
     const profit = Number(sale.gross_amount) - Number(sale.investment_amount);
 
     return (
@@ -46,7 +48,7 @@ function SaleCard({ sale, onDelete, showActions = true }) {
                 {/* Profit Pill */}
                 <div className="text-right shrink-0">
                     <div className="inline-flex items-center rounded-full bg-[var(--success-bg)] px-2.5 py-1 text-xs font-bold text-[var(--success)] border border-[var(--success-border)]">
-                        +{formatCurrency(profit)}
+                        +{formatCurrency(profit, { isPrivate })}
                     </div>
                 </div>
             </div>
@@ -56,14 +58,14 @@ function SaleCard({ sale, onDelete, showActions = true }) {
                 <div>
                     <span>Total venta: </span>
                     <span className="font-bold text-[var(--text-primary)]">
-                        {formatCurrency(sale.gross_amount)}
+                        {formatCurrency(sale.gross_amount, { isPrivate })}
                     </span>
                 </div>
 
                 <div>
                     <span>Costo: </span>
                     <span className="font-medium text-[var(--text-secondary)]">
-                        {formatCurrency(sale.investment_amount)}
+                        {formatCurrency(sale.investment_amount, { isPrivate })}
                     </span>
                 </div>
 

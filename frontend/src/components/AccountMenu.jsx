@@ -3,11 +3,13 @@ import ThemeSelector from "./ThemeSelector";
 import OnboardingModal from "./OnboardingModal";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { User, Palette, LogOut, ChevronDown, HelpCircle, Volume2, VolumeX, Sparkles } from "lucide-react";
+import { User, Palette, LogOut, ChevronDown, HelpCircle, Volume2, VolumeX, Sparkles, Eye, EyeOff } from "lucide-react";
 import { isSoundEnabled, setSoundEnabled, playPopSound } from "../utils/soundEffects";
 import { isBambiAuthorized, isBambiVisible, setBambiVisible } from "../utils/bambiConfig";
+import { usePrivacy } from "../context/PrivacyContext";
 
 function AccountMenu({ user, onLogout }) {
+    const { isPrivate, togglePrivacy } = usePrivacy();
     const [isOpen, setIsOpen] = useState(false);
     const [showGuide, setShowGuide] = useState(false);
     const [soundOn, setSoundOn] = useState(() => isSoundEnabled());
@@ -185,6 +187,47 @@ function AccountMenu({ user, onLogout }) {
                                 }`}
                             >
                                 {soundOn ? "ON" : "OFF"}
+                            </span>
+                        </button>
+                    </div>
+
+                    {/* Privacy / Discreet Mode Toggle */}
+                    <div className="border-t border-[var(--border)] py-2">
+                        <button
+                            type="button"
+                            onClick={togglePrivacy}
+                            className="
+                                flex
+                                w-full
+                                items-center
+                                justify-between
+                                rounded-xl
+                                px-2.5
+                                py-2
+                                text-xs
+                                font-bold
+                                text-[var(--text-primary)]
+                                transition
+                                active-press
+                                hover:bg-[var(--surface-accent)]
+                            "
+                        >
+                            <span className="flex items-center gap-2">
+                                {isPrivate ? (
+                                    <EyeOff className="w-3.5 h-3.5 text-[var(--primary)]" />
+                                ) : (
+                                    <Eye className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
+                                )}
+                                <span>Ocultar montos</span>
+                            </span>
+                            <span
+                                className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-md ${
+                                    isPrivate
+                                        ? "bg-[var(--success-bg)] text-[var(--success-text)]"
+                                        : "bg-[var(--surface-accent)] text-[var(--text-secondary)]"
+                                }`}
+                            >
+                                {isPrivate ? "ON" : "OFF"}
                             </span>
                         </button>
                     </div>

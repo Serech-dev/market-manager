@@ -11,11 +11,13 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import AppNavigation from "../components/AppNavigation";
 import DailySummaryModal from "../components/DailySummaryModal";
 import OnboardingModal from "../components/OnboardingModal";
-import { ReceiptText, Plus, ClipboardList, ShoppingBag } from "lucide-react";
+import { ReceiptText, Plus, ClipboardList, ShoppingBag, Eye, EyeOff } from "lucide-react";
 import { isBambiEnabled } from "../utils/bambiConfig";
 import { playPopSound } from "../utils/soundEffects";
+import { usePrivacy } from "../context/PrivacyContext";
 
 function Dashboard() {
+    const { isPrivate, togglePrivacy } = usePrivacy();
     const [summary, setSummary] = useState({
         gross: 0,
         investment: 0,
@@ -170,6 +172,37 @@ function Dashboard() {
                     </div>
 
                     <div className="flex shrink-0 items-center gap-2">
+                        {/* Privacy / Discreet Mode Toggle Button */}
+                        <button
+                            type="button"
+                            onClick={togglePrivacy}
+                            title={isPrivate ? "Mostrar montos" : "Ocultar montos"}
+                            aria-label={isPrivate ? "Mostrar montos" : "Ocultar montos"}
+                            className={`
+                                flex
+                                h-9
+                                w-9
+                                items-center
+                                justify-center
+                                rounded-xl
+                                border
+                                transition
+                                active-press
+                                shadow-xs
+                                ${
+                                    isPrivate
+                                        ? "border-[var(--primary)] bg-[var(--surface-accent)] text-[var(--primary)]"
+                                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:bg-[var(--surface-accent)] hover:text-[var(--text-primary)]"
+                                }
+                            `}
+                        >
+                            {isPrivate ? (
+                                <EyeOff className="w-4 h-4" />
+                            ) : (
+                                <Eye className="w-4 h-4" />
+                            )}
+                        </button>
+
                         <Link
                             to="/new-sale"
                             className="

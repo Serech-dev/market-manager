@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { initGlobalSoundListeners } from "./utils/soundEffects";
+import { PrivacyProvider } from "./context/PrivacyContext";
 
 import Login from "./pages/Login";
 import NewSale from "./pages/NewSale";
@@ -23,8 +24,7 @@ function App() {
     }, []);
 
     return (
-
-        <>
+        <PrivacyProvider>
             {/* Ambient Breathing Glow Orbs */}
             <div className="ambient-glow-wrapper" aria-hidden="true">
                 <div className="ambient-orb-1" />
@@ -78,7 +78,7 @@ function App() {
                     </Route>
                 </Routes>
             </BrowserRouter>
-        </>
+        </PrivacyProvider>
     );
 }
 
