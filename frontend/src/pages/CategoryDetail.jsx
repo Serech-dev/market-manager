@@ -587,3 +587,4 @@ function CategoryDetail() {
 }
 
 export default CategoryDetail;
+

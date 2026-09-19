@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { formatCurrency } from "../utils/formatCurrency";
 import { capitalizeWords } from "../utils/capitalizeWords";
 import {
@@ -8,13 +8,11 @@ import {
     TrendingUp,
     Crown,
     Tags,
-    Percent,
     Share2,
     Copy,
-    Award,
-    ChevronRight,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { useCountUp } from "../hooks/useCountUp";
 import { triggerConfetti, playFanfareSound } from "../utils/soundEffects";
 import { usePrivacy } from "../context/PrivacyContext";
 
@@ -25,7 +23,6 @@ function CategoryRankModal({
     periodLabel = "",
 }) {
     const { isPrivate } = usePrivacy();
-    const [rankBy, setRankBy] = useState("earnings"); // "earnings" | "gross" | "sales" | "margin"
 
     useEffect(() => {
         if (isOpen) {
@@ -34,68 +31,74 @@ function CategoryRankModal({
         }
     }, [isOpen]);
 
-    if (!isOpen) return null;
-
-    const safeCategories = (categories || []).filter((c) => Number(c.gross || 0) > 0 || Number(c.sales_count || 0) > 0);
+    const safeCategories = (categories || [])
+        .filter((c) => Number(c.gross || 0) > 0 || Number(c.sales_count || 0) > 0)
+        .sort((a, b) => Number(b.earnings || 0) - Number(a.earnings || 0));
 
     const totalGross = safeCategories.reduce((sum, c) => sum + Number(c.gross || 0), 0);
     const totalEarnings = safeCategories.reduce((sum, c) => sum + Number(c.earnings || 0), 0);
     const totalSales = safeCategories.reduce((sum, c) => sum + Number(c.sales_count || 0), 0);
 
-    // Sorting
-    const sortedCategories = [...safeCategories].sort((a, b) => {
-        if (rankBy === "gross") {
-            return Number(b.gross || 0) - Number(a.gross || 0);
-        }
-        if (rankBy === "sales") {
-            return Number(b.sales_count || 0) - Number(a.sales_count || 0);
-        }
-        if (rankBy === "margin") {
-            return (b.margin_percentage || 0) - (a.margin_percentage || 0);
-        }
-        return Number(b.earnings || 0) - Number(a.earnings || 0);
+    const { displayValue: animatedEarnings, isBumping } = useCountUp(totalEarnings, {
+        startFromZero: true,
+        duration: 1200,
+        trigger: isOpen,
     });
 
-    const topCategory = sortedCategories.length > 0 ? sortedCategories[0] : null;
-    const topCategoryShare =
-        topCategory && totalGross > 0
-            ? Math.round((Number(topCategory.gross || 0) / totalGross) * 100)
+    if (!isOpen) return null;
+
+    const first = safeCategories[0] || null;
+    const second = safeCategories[1] || null;
+    const third = safeCategories[2] || null;
+
+    const firstShare =
+        first && totalGross > 0
+            ? Math.round((Number(first.gross || 0) / totalGross) * 100)
             : 0;
 
-    function handleShare() {
+    function generateShareText() {
         const lines = [
             `🏆 *Ranking de Categorías - Market Manager*`,
             periodLabel ? `📅 Período: ${periodLabel}` : "",
-            `💰 Ingresos Totales: ${formatCurrency(totalGross, { isPrivate })}`,
-            `✨ Ganancia Total: ${formatCurrency(totalEarnings, { isPrivate })}`,
+            `💰 Ganancia Total: ${formatCurrency(totalEarnings, { isPrivate })}`,
+            `💵 Ingresos Totales: ${formatCurrency(totalGross, { isPrivate })}`,
             `📦 Ventas Totales: ${totalSales}`,
             "",
-            "📊 *Rendimiento por Categoría:*",
-            ...sortedCategories.map((c, i) => {
+            "🥇 *Podio de Categorías:*",
+            ...safeCategories.map((c, i) => {
                 const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `#${i + 1}`;
-                return `${medal} *${capitalizeWords(c.name)}*: ${formatCurrency(c.earnings, { isPrivate })} ganancia (${c.sales_count} ventas - ${c.margin_percentage || 0}% margen)`;
+                return `${medal} *${capitalizeWords(c.name)}*: +${formatCurrency(c.earnings, { isPrivate })} (${c.sales_count} ventas · ${c.margin_percentage || 0}% margen)`;
             }),
+            "",
+            "✨ *Market Manager*",
         ].filter(Boolean);
 
-        const text = lines.join("\n");
+        return lines.join("\n");
+    }
 
-        if (navigator.share) {
-            navigator.share({ title: "Ranking de Categorías", text }).catch(() => {});
-        } else {
-            navigator.clipboard.writeText(text);
-            toast.success("Ranking copiado al portapapeles.");
+    async function handleCopy() {
+        try {
+            await navigator.clipboard.writeText(generateShareText());
+            toast.success("¡Ranking copiado al portapapeles! 🏆");
+        } catch {
+            toast.error("No se pudo copiar.");
         }
     }
 
+    function handleWhatsApp() {
+        const text = encodeURIComponent(generateShareText());
+        window.open(`https://wa.me/?text=${text}`, "_blank");
+    }
+
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-md animate-fade-in">
-            <div className="flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface)] shadow-2xl animate-pop-in">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-md p-0 sm:p-4 animate-fade-in">
+            <div className="flex max-h-[92vh] w-full max-w-lg flex-col overflow-hidden rounded-t-3xl sm:rounded-3xl border border-[var(--border)] bg-[var(--surface)] shadow-2xl animate-pop-in">
                 
                 {/* Header */}
-                <div className="relative border-b border-[var(--border)] bg-[var(--surface-accent)]/30 p-5">
+                <div className="relative border-b border-[var(--border)] bg-[var(--surface-accent)]/40 p-4 sm:p-5 shrink-0">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2.5">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--warning)] text-white shadow-md shadow-[var(--warning)]/20">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--warning)] text-white shadow-md shadow-[var(--warning)]/20 animate-float">
                                 <Trophy className="w-5 h-5" />
                             </div>
                             <div>
@@ -103,243 +106,328 @@ function CategoryRankModal({
                                     Ranking de Categorías
                                 </h2>
                                 <p className="text-xs font-medium text-[var(--text-secondary)] capitalize">
-                                    {periodLabel || "Resumen de rendimiento"}
+                                    {periodLabel || "Resumen del período"}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-1.5">
-                            <button
-                                type="button"
-                                onClick={handleShare}
-                                className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--surface)] text-[var(--text-primary)] border border-[var(--border)] shadow-2xs hover:bg-[var(--surface-accent)] active-press transition"
-                                title="Compartir ranking"
-                            >
-                                <Share2 className="w-4 h-4" />
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                className="flex h-9 w-9 items-center justify-center rounded-xl text-[var(--text-secondary)] hover:bg-[var(--surface-accent)] hover:text-[var(--text-primary)] active-press transition"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
-                        </div>
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="flex h-9 w-9 items-center justify-center rounded-xl text-[var(--text-secondary)] hover:bg-[var(--surface-accent)] hover:text-[var(--text-primary)] active-press transition"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
                     </div>
-
-                    {/* Champion Hero Card */}
-                    {topCategory && (
-                        <div className="mt-4 flex items-center justify-between rounded-2xl border border-[var(--warning)]/40 bg-[var(--surface)] p-3.5 shadow-sm">
-                            <div className="flex items-center gap-2.5">
-                                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/15 text-amber-500">
-                                    <Crown className="w-5 h-5" />
-                                </div>
-                                <div>
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-500">
-                                        Categoría Líder
-                                    </span>
-                                    <h3 className="text-sm font-extrabold text-[var(--text-primary)]">
-                                        {capitalizeWords(topCategory.name)}
-                                    </h3>
-                                </div>
-                            </div>
-
-                            <div className="text-right">
-                                <span className="text-xs font-bold text-[var(--success)]">
-                                    +{formatCurrency(topCategory.earnings, { isPrivate })}
-                                </span>
-                                <p className="text-[10px] font-semibold text-[var(--text-secondary)]">
-                                    {topCategoryShare}% de tus ingresos
-                                </p>
-                            </div>
-                        </div>
-                    )}
                 </div>
 
-                {/* Metric Sorter Tabs */}
-                <div className="flex gap-1 border-b border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 overflow-x-auto no-scrollbar">
-                    <button
-                        type="button"
-                        onClick={() => setRankBy("earnings")}
-                        className={`
-                            shrink-0 rounded-xl px-3 py-1.5 text-xs font-bold transition active-press border
-                            ${
-                                rankBy === "earnings"
-                                    ? "bg-[var(--primary)] text-white border-[var(--primary)] shadow-2xs"
-                                    : "bg-[var(--surface-accent)] text-[var(--text-secondary)] border-[var(--border)] hover:text-[var(--text-primary)]"
-                            }
-                        `}
-                    >
-                        💰 Mayor Ganancia
-                    </button>
+                {/* Scrollable Content */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
 
-                    <button
-                        type="button"
-                        onClick={() => setRankBy("gross")}
-                        className={`
-                            shrink-0 rounded-xl px-3 py-1.5 text-xs font-bold transition active-press border
-                            ${
-                                rankBy === "gross"
-                                    ? "bg-[var(--primary)] text-white border-[var(--primary)] shadow-2xs"
-                                    : "bg-[var(--surface-accent)] text-[var(--text-secondary)] border-[var(--border)] hover:text-[var(--text-primary)]"
-                            }
-                        `}
-                    >
-                        📈 Mayor Ingreso
-                    </button>
-
-                    <button
-                        type="button"
-                        onClick={() => setRankBy("sales")}
-                        className={`
-                            shrink-0 rounded-xl px-3 py-1.5 text-xs font-bold transition active-press border
-                            ${
-                                rankBy === "sales"
-                                    ? "bg-[var(--primary)] text-white border-[var(--primary)] shadow-2xs"
-                                    : "bg-[var(--surface-accent)] text-[var(--text-secondary)] border-[var(--border)] hover:text-[var(--text-primary)]"
-                            }
-                        `}
-                    >
-                        📦 Más Ventas
-                    </button>
-
-                    <button
-                        type="button"
-                        onClick={() => setRankBy("margin")}
-                        className={`
-                            shrink-0 rounded-xl px-3 py-1.5 text-xs font-bold transition active-press border
-                            ${
-                                rankBy === "margin"
-                                    ? "bg-[var(--primary)] text-white border-[var(--primary)] shadow-2xs"
-                                    : "bg-[var(--surface-accent)] text-[var(--text-secondary)] border-[var(--border)] hover:text-[var(--text-primary)]"
-                            }
-                        `}
-                    >
-                        🎯 Mejor Margen
-                    </button>
-                </div>
-
-                {/* Ranked List Content */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-2.5 custom-scrollbar">
-                    {sortedCategories.length === 0 ? (
-                        <div className="p-8 text-center space-y-2">
-                            <Tags className="mx-auto w-8 h-8 text-[var(--text-secondary)]" />
-                            <p className="text-xs font-semibold text-[var(--text-secondary)]">
-                                No hay ventas registradas con categorías en este período.
+                    {safeCategories.length === 0 ? (
+                        <div className="p-8 text-center space-y-2.5">
+                            <Tags className="mx-auto w-10 h-10 text-[var(--text-secondary)] opacity-50" />
+                            <p className="text-sm font-bold text-[var(--text-primary)]">
+                                Sin ventas categorizadas
+                            </p>
+                            <p className="text-xs text-[var(--text-secondary)] max-w-xs mx-auto">
+                                No se registraron ventas con categorías asignadas en este período.
                             </p>
                         </div>
                     ) : (
-                        sortedCategories.map((category, index) => {
-                            const isGold = index === 0;
-                            const isSilver = index === 1;
-                            const isBronze = index === 2;
-
-                            const share =
-                                totalGross > 0
-                                    ? Math.round((Number(category.gross || 0) / totalGross) * 100)
-                                    : 0;
-
-                            return (
-                                <div
-                                    key={category.id}
-                                    className={`
-                                        rounded-2xl border p-3.5 space-y-2 shadow-2xs transition
-                                        ${
-                                            isGold
-                                                ? "border-amber-500/40 bg-amber-500/5"
-                                                : isSilver
-                                                ? "border-slate-400/40 bg-slate-400/5"
-                                                : isBronze
-                                                ? "border-amber-700/40 bg-amber-700/5"
-                                                : "border-[var(--border)] bg-[var(--surface)]"
-                                        }
-                                    `}
+                        <>
+                            {/* Total Profit Highlight Card */}
+                            <div
+                                className={`rounded-3xl border border-[var(--success-border)] bg-[var(--success-bg)] p-4 text-center shadow-inner relative overflow-hidden transition-all duration-300 ${
+                                    isBumping ? "ring-2 ring-[var(--success)]/40 scale-[1.01]" : ""
+                                }`}
+                            >
+                                <div className="flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--success-text)]">
+                                    <TrendingUp className="w-4 h-4 text-[var(--success)]" />
+                                    <span>Ganancia de Categorías</span>
+                                </div>
+                                <p
+                                    className={`mt-1 text-3xl sm:text-4xl font-black text-[var(--success-text)] tracking-tight transition-transform duration-200 ${
+                                        isBumping ? "scale-105" : ""
+                                    } ${isPrivate ? "tracking-widest" : ""}`}
                                 >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2.5 min-w-0">
-                                            <span
+                                    +{formatCurrency(animatedEarnings, { isPrivate })}
+                                </p>
+                                <div className="mt-3 flex items-center justify-center gap-4 text-xs font-semibold text-[var(--text-secondary)] border-t border-[var(--success-border)]/50 pt-2.5">
+                                    <span>
+                                        📦 <strong className="text-[var(--text-primary)]">{totalSales}</strong> ventas
+                                    </span>
+                                    <span>·</span>
+                                    <span>
+                                        💵 <strong className="text-[var(--text-primary)]">{formatCurrency(totalGross, { isPrivate })}</strong> ingresos
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Visual Podium (Top 3 or Champion Card) */}
+                            {safeCategories.length >= 2 ? (
+                                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-accent)]/30 p-3 pt-5">
+                                    <div className="flex items-end justify-center gap-2">
+                                        {/* 2nd Place */}
+                                        {second && (
+                                            <div className="flex-1 flex flex-col items-center">
+                                                <div className="mb-2 text-center w-full px-1">
+                                                    <span className="text-2xl drop-shadow-sm">🥈</span>
+                                                    <p className="text-xs font-bold text-[var(--text-primary)] truncate mt-1" title={second.name}>
+                                                        {capitalizeWords(second.name)}
+                                                    </p>
+                                                    <p className="text-xs font-extrabold text-[var(--success)] truncate mt-0.5">
+                                                        +{formatCurrency(second.earnings, { isPrivate })}
+                                                    </p>
+                                                    <span className="inline-block text-[10px] font-semibold text-[var(--text-secondary)]">
+                                                        {second.margin_percentage || 0}% mg
+                                                    </span>
+                                                </div>
+                                                <div className="w-full h-20 rounded-t-2xl bg-gradient-to-b from-slate-400/25 to-slate-400/10 border-t-2 border-x-2 border-slate-400/40 flex items-center justify-center">
+                                                    <span className="text-2xl font-black text-slate-400">2</span>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* 1st Place */}
+                                        {first && (
+                                            <div className="flex-1 flex flex-col items-center -mt-2">
+                                                <div className="mb-2 text-center w-full px-1">
+                                                    <div className="inline-flex items-center justify-center text-amber-500 animate-bounce">
+                                                        <Crown className="w-6 h-6 fill-amber-400 text-amber-500" />
+                                                    </div>
+                                                    <p className="text-sm font-black text-[var(--text-primary)] truncate mt-0.5" title={first.name}>
+                                                        {capitalizeWords(first.name)}
+                                                    </p>
+                                                    <p className="text-xs font-black text-[var(--success)] truncate mt-0.5">
+                                                        +{formatCurrency(first.earnings, { isPrivate })}
+                                                    </p>
+                                                    <span className="inline-block rounded-full bg-amber-500/15 px-2 py-0.5 text-[9px] font-extrabold text-amber-600 dark:text-amber-400 mt-1">
+                                                        {firstShare}% ingresos
+                                                    </span>
+                                                </div>
+                                                <div className="w-full h-28 rounded-t-2xl bg-gradient-to-b from-amber-400/30 to-amber-500/10 border-t-2 border-x-2 border-amber-500/50 flex flex-col items-center justify-center shadow-lg shadow-amber-500/10">
+                                                    <span className="text-3xl font-black text-amber-500">1</span>
+                                                    <span className="text-[9px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                                                        Líder
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* 3rd Place */}
+                                        {third ? (
+                                            <div className="flex-1 flex flex-col items-center">
+                                                <div className="mb-2 text-center w-full px-1">
+                                                    <span className="text-2xl drop-shadow-sm">🥉</span>
+                                                    <p className="text-xs font-bold text-[var(--text-primary)] truncate mt-1" title={third.name}>
+                                                        {capitalizeWords(third.name)}
+                                                    </p>
+                                                    <p className="text-xs font-extrabold text-[var(--success)] truncate mt-0.5">
+                                                        +{formatCurrency(third.earnings, { isPrivate })}
+                                                    </p>
+                                                    <span className="inline-block text-[10px] font-semibold text-[var(--text-secondary)]">
+                                                        {third.margin_percentage || 0}% mg
+                                                    </span>
+                                                </div>
+                                                <div className="w-full h-14 rounded-t-2xl bg-gradient-to-b from-amber-700/20 to-amber-800/5 border-t-2 border-x-2 border-amber-700/40 flex items-center justify-center">
+                                                    <span className="text-xl font-black text-amber-700/80">3</span>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="flex-1" />
+                                        )}
+                                    </div>
+                                </div>
+                            ) : first ? (
+                                <div className="flex items-center justify-between rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 shadow-sm">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/20 text-amber-500">
+                                            <Crown className="w-6 h-6 fill-amber-400" />
+                                        </div>
+                                        <div>
+                                            <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-500">
+                                                Categoría Líder
+                                            </span>
+                                            <h3 className="text-base font-extrabold text-[var(--text-primary)]">
+                                                {capitalizeWords(first.name)}
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <span className="text-sm font-black text-[var(--success)]">
+                                            +{formatCurrency(first.earnings, { isPrivate })}
+                                        </span>
+                                        <p className="text-[11px] font-bold text-[var(--text-secondary)]">
+                                            {first.margin_percentage || 0}% margen
+                                        </p>
+                                    </div>
+                                </div>
+                            ) : null}
+
+                            {/* Complete Leaderboard Breakdown */}
+                            <div className="space-y-2 pt-1">
+                                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] flex items-center gap-1.5 px-0.5">
+                                    <Sparkles className="w-3.5 h-3.5 text-[var(--warning)]" />
+                                    <span>Tabla de Rendimiento ({safeCategories.length})</span>
+                                </h3>
+
+                                <div className="space-y-2">
+                                    {safeCategories.map((category, index) => {
+                                        const isGold = index === 0;
+                                        const isSilver = index === 1;
+                                        const isBronze = index === 2;
+
+                                        const share =
+                                            totalGross > 0
+                                                ? Math.round((Number(category.gross || 0) / totalGross) * 100)
+                                                : 0;
+
+                                        return (
+                                            <div
+                                                key={category.id}
                                                 className={`
-                                                    flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-extrabold
+                                                    rounded-2xl border p-3.5 space-y-2.5 transition shadow-2xs
                                                     ${
                                                         isGold
-                                                            ? "bg-amber-500 text-white shadow-2xs"
+                                                            ? "border-amber-500/40 bg-amber-500/5"
                                                             : isSilver
-                                                            ? "bg-slate-400 text-white"
+                                                            ? "border-slate-400/40 bg-slate-400/5"
                                                             : isBronze
-                                                            ? "bg-amber-700 text-white"
-                                                            : "bg-[var(--surface-accent)] text-[var(--text-secondary)]"
+                                                            ? "border-amber-700/40 bg-amber-700/5"
+                                                            : "border-[var(--border)] bg-[var(--surface)]"
                                                     }
                                                 `}
                                             >
-                                                {index + 1}
-                                            </span>
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-2.5 min-w-0">
+                                                        <span
+                                                            className={`
+                                                                flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-extrabold
+                                                                ${
+                                                                    isGold
+                                                                        ? "bg-amber-500 text-white shadow-2xs"
+                                                                        : isSilver
+                                                                        ? "bg-slate-400 text-white"
+                                                                        : isBronze
+                                                                        ? "bg-amber-700 text-white"
+                                                                        : "bg-[var(--surface-accent)] text-[var(--text-secondary)]"
+                                                                }
+                                                            `}
+                                                        >
+                                                            {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : index + 1}
+                                                        </span>
 
-                                            <h4 className="truncate text-sm font-bold text-[var(--text-primary)]">
-                                                {capitalizeWords(category.name)}
-                                            </h4>
-                                        </div>
+                                                        <h4 className="truncate text-sm font-bold text-[var(--text-primary)]">
+                                                            {capitalizeWords(category.name)}
+                                                        </h4>
+                                                    </div>
 
-                                        <div className="text-right shrink-0">
-                                            <span className="text-xs font-extrabold text-[var(--success)]">
-                                                +{formatCurrency(category.earnings, { isPrivate })}
-                                            </span>
-                                        </div>
-                                    </div>
+                                                    <div className="text-right shrink-0">
+                                                        <span className="text-xs font-black text-[var(--success)]">
+                                                            +{formatCurrency(category.earnings, { isPrivate })}
+                                                        </span>
+                                                    </div>
+                                                </div>
 
-                                    {/* Progress Share Bar */}
-                                    <div className="space-y-1">
-                                        <div className="flex justify-between text-[10px] font-semibold text-[var(--text-secondary)]">
-                                            <span>Participación en ingresos</span>
-                                            <span className="font-bold text-[var(--text-primary)]">{share}%</span>
-                                        </div>
-                                        <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--surface-accent)]">
-                                            <div
-                                                className={`h-full rounded-full transition-all duration-500 ${
-                                                    isGold
-                                                        ? "bg-amber-500"
-                                                        : isSilver
-                                                        ? "bg-slate-400"
-                                                        : isBronze
-                                                        ? "bg-amber-700"
-                                                        : "bg-[var(--primary)]"
-                                                }`}
-                                                style={{ width: `${Math.max(4, Math.min(100, share))}%` }}
-                                            />
-                                        </div>
-                                    </div>
+                                                {/* Relative Contribution Bar */}
+                                                <div className="space-y-1">
+                                                    <div className="flex justify-between text-[10px] font-semibold text-[var(--text-secondary)]">
+                                                        <span>Participación en ventas</span>
+                                                        <span className="font-bold text-[var(--text-primary)]">{share}%</span>
+                                                    </div>
+                                                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--surface-accent)]">
+                                                        <div
+                                                            className={`h-full rounded-full transition-all duration-500 ${
+                                                                isGold
+                                                                    ? "bg-amber-500"
+                                                                    : isSilver
+                                                                    ? "bg-slate-400"
+                                                                    : isBronze
+                                                                    ? "bg-amber-700"
+                                                                    : "bg-[var(--primary)]"
+                                                            }`}
+                                                            style={{ width: `${Math.max(4, Math.min(100, share))}%` }}
+                                                        />
+                                                    </div>
+                                                </div>
 
-                                    {/* Detailed Stats Row */}
-                                    <div className="grid grid-cols-3 gap-1.5 pt-1 text-center text-[11px]">
-                                        <div className="rounded-xl bg-[var(--surface-accent)]/50 p-1.5">
-                                            <span className="text-[9px] uppercase font-bold text-[var(--text-secondary)]">Ventas</span>
-                                            <p className="font-bold text-[var(--text-primary)]">{category.sales_count}</p>
-                                        </div>
+                                                {/* Metric Pills */}
+                                                <div className="grid grid-cols-3 gap-1.5 pt-0.5 text-center text-xs">
+                                                    <div className="rounded-xl bg-[var(--surface-accent)]/50 p-1.5">
+                                                        <span className="text-[9px] uppercase font-bold text-[var(--text-secondary)]">Ventas</span>
+                                                        <p className="font-extrabold text-[var(--text-primary)] text-[11px]">{category.sales_count}</p>
+                                                    </div>
 
-                                        <div className="rounded-xl bg-[var(--surface-accent)]/50 p-1.5">
-                                            <span className="text-[9px] uppercase font-bold text-[var(--text-secondary)]">Margen</span>
-                                            <p className="font-bold text-[var(--primary)]">{category.margin_percentage || 0}%</p>
-                                        </div>
+                                                    <div className="rounded-xl bg-[var(--surface-accent)]/50 p-1.5">
+                                                        <span className="text-[9px] uppercase font-bold text-[var(--text-secondary)]">Margen</span>
+                                                        <p className="font-extrabold text-[var(--primary)] text-[11px]">{category.margin_percentage || 0}%</p>
+                                                    </div>
 
-                                        <div className="rounded-xl bg-[var(--surface-accent)]/50 p-1.5">
-                                            <span className="text-[9px] uppercase font-bold text-[var(--text-secondary)]">Ticket Prom.</span>
-                                            <p className="font-bold text-[var(--text-primary)]">{formatCurrency(category.average_ticket || 0, { isPrivate })}</p>
-                                        </div>
-                                    </div>
+                                                    <div className="rounded-xl bg-[var(--surface-accent)]/50 p-1.5">
+                                                        <span className="text-[9px] uppercase font-bold text-[var(--text-secondary)]">Ingresos</span>
+                                                        <p className="font-extrabold text-[var(--text-primary)] text-[11px]">{formatCurrency(category.gross || 0, { isPrivate })}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
-                            );
-                        })
+                            </div>
+                        </>
                     )}
                 </div>
 
-                {/* Footer */}
-                <div className="border-t border-[var(--border)] p-3.5 bg-[var(--surface)]">
+                {/* Footer Action Buttons */}
+                <div className="grid grid-cols-2 gap-3 p-4 border-t border-[var(--border)] bg-[var(--surface)] shrink-0">
                     <button
                         type="button"
-                        onClick={onClose}
-                        className="w-full rounded-2xl bg-[var(--primary)] py-3 text-xs font-extrabold text-white shadow-md shadow-[var(--primary)]/20 active-press transition hover:bg-[var(--primary-hover)]"
+                        onClick={handleCopy}
+                        className="
+                            flex
+                            items-center
+                            justify-center
+                            gap-2
+                            rounded-2xl
+                            border
+                            border-[var(--border)]
+                            bg-[var(--surface-accent)]
+                            py-3
+                            text-xs
+                            font-extrabold
+                            text-[var(--text-primary)]
+                            transition
+                            active-press
+                            hover:bg-[var(--surface)]
+                        "
                     >
-                        Cerrar Ranking
+                        <Copy className="w-4 h-4" />
+                        <span>Copiar</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={handleWhatsApp}
+                        className="
+                            flex
+                            items-center
+                            justify-center
+                            gap-2
+                            rounded-2xl
+                            bg-[#25D366]
+                            py-3
+                            text-xs
+                            font-extrabold
+                            text-white
+                            shadow-md
+                            shadow-[#25D366]/20
+                            transition
+                            active-press
+                            hover:bg-[#1EBE5D]
+                        "
+                    >
+                        <Share2 className="w-4 h-4" />
+                        <span>WhatsApp</span>
                     </button>
                 </div>
 
