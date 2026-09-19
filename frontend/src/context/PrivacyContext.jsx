@@ -56,3 +56,4 @@ export function PrivacyProvider({ children }) {
 export function usePrivacy() {
     return useContext(PrivacyContext);
 }
+

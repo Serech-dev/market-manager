@@ -172,37 +172,6 @@ function Dashboard() {
                     </div>
 
                     <div className="flex shrink-0 items-center gap-2">
-                        {/* Privacy / Discreet Mode Toggle Button */}
-                        <button
-                            type="button"
-                            onClick={togglePrivacy}
-                            title={isPrivate ? "Mostrar montos" : "Ocultar montos"}
-                            aria-label={isPrivate ? "Mostrar montos" : "Ocultar montos"}
-                            className={`
-                                flex
-                                h-9
-                                w-9
-                                items-center
-                                justify-center
-                                rounded-xl
-                                border
-                                transition
-                                active-press
-                                shadow-xs
-                                ${
-                                    isPrivate
-                                        ? "border-[var(--primary)] bg-[var(--surface-accent)] text-[var(--primary)]"
-                                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:bg-[var(--surface-accent)] hover:text-[var(--text-primary)]"
-                                }
-                            `}
-                        >
-                            {isPrivate ? (
-                                <EyeOff className="w-4 h-4" />
-                            ) : (
-                                <Eye className="w-4 h-4" />
-                            )}
-                        </button>
-
                         <Link
                             to="/new-sale"
                             className="
@@ -251,9 +220,36 @@ function Dashboard() {
                 <section className="space-y-3">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-                                Resumen
-                            </h2>
+                            <div className="flex items-center gap-1.5">
+                                <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+                                    Resumen
+                                </h2>
+                                <button
+                                    type="button"
+                                    onClick={togglePrivacy}
+                                    title={isPrivate ? "Mostrar montos" : "Ocultar montos"}
+                                    aria-label={isPrivate ? "Mostrar montos" : "Ocultar montos"}
+                                    className="
+                                        flex
+                                        h-6
+                                        w-6
+                                        items-center
+                                        justify-center
+                                        rounded-lg
+                                        text-[var(--text-secondary)]
+                                        transition
+                                        active-press
+                                        hover:bg-[var(--surface-accent)]
+                                        hover:text-[var(--primary)]
+                                    "
+                                >
+                                    {isPrivate ? (
+                                        <EyeOff className="w-3.5 h-3.5 text-[var(--primary)]" />
+                                    ) : (
+                                        <Eye className="w-3.5 h-3.5" />
+                                    )}
+                                </button>
+                            </div>
                             <p className="text-xs text-[var(--text-secondary)] capitalize mt-0.5">
                                 {getPeriodLabel()}
                             </p>

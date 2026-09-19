@@ -1,10 +1,10 @@
 import { formatCurrency } from "../utils/formatCurrency";
-import { TrendingUp, Wallet, Coins } from "lucide-react";
+import { TrendingUp, Wallet, Coins, Eye, EyeOff } from "lucide-react";
 import { useCountUp } from "../hooks/useCountUp";
 import { usePrivacy } from "../context/PrivacyContext";
 
 function SummaryCard({ title, value, variant, cacheKey, isLoading }) {
-    const { isPrivate } = usePrivacy();
+    const { isPrivate, togglePrivacy } = usePrivacy();
     const isProfit = variant === "profit";
     const isInvestment = title.toLowerCase().includes("inversi");
     const { displayValue, isBumping } = useCountUp(value, {
@@ -35,42 +35,73 @@ function SummaryCard({ title, value, variant, cacheKey, isLoading }) {
             `}
         >
             <div className={`flex items-center gap-2 ${isProfit ? "justify-center" : "justify-between"}`}>
-                <span
-                    className={`
-                        text-xs
-                        font-semibold
-                        uppercase
-                        tracking-wider
-                        ${
-                            isProfit
-                                ? "text-[var(--success-text)] font-bold"
-                                : "text-[var(--text-secondary)]"
-                        }
-                    `}
-                >
-                    {title}
-                </span>
+                <div className="flex items-center gap-1.5">
+                    <span
+                        className={`
+                            text-xs
+                            font-semibold
+                            uppercase
+                            tracking-wider
+                            ${
+                                isProfit
+                                    ? "text-[var(--success-text)] font-bold"
+                                    : "text-[var(--text-secondary)]"
+                            }
+                        `}
+                    >
+                        {title}
+                    </span>
 
-                <div
-                    className={`
-                        flex
-                        h-7
-                        w-7
-                        items-center
-                        justify-center
-                        rounded-lg
-                        transition-transform
-                        duration-300
-                        ${isBumping ? "scale-125 rotate-6" : ""}
-                        ${
-                            isProfit
-                                ? "bg-[var(--success)]/15 text-[var(--success)]"
-                                : "bg-[var(--surface-accent)] text-[var(--text-secondary)]"
-                        }
-                    `}
-                >
-                    <Icon className="w-4 h-4" />
+                    {isProfit && (
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                togglePrivacy();
+                            }}
+                            title={isPrivate ? "Mostrar montos" : "Ocultar montos"}
+                            aria-label={isPrivate ? "Mostrar montos" : "Ocultar montos"}
+                            className="
+                                flex
+                                h-5
+                                w-5
+                                items-center
+                                justify-center
+                                rounded-md
+                                text-[var(--success-text)]/70
+                                transition
+                                active-press
+                                hover:text-[var(--success-text)]
+                                hover:bg-[var(--success)]/15
+                            "
+                        >
+                            {isPrivate ? (
+                                <EyeOff className="w-3.5 h-3.5 text-[var(--success-text)]" />
+                            ) : (
+                                <Eye className="w-3.5 h-3.5" />
+                            )}
+                        </button>
+                    )}
                 </div>
+
+                {!isProfit && (
+                    <div
+                        className={`
+                            flex
+                            h-7
+                            w-7
+                            items-center
+                            justify-center
+                            rounded-lg
+                            transition-transform
+                            duration-300
+                            ${isBumping ? "scale-125 rotate-6" : ""}
+                            bg-[var(--surface-accent)] text-[var(--text-secondary)]
+                        `}
+                    >
+                        <Icon className="w-4 h-4" />
+                    </div>
+                )}
             </div>
 
             <p
@@ -96,4 +127,4 @@ function SummaryCard({ title, value, variant, cacheKey, isLoading }) {
 }
 
 export default SummaryCard;
-
+

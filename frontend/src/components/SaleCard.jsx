@@ -120,4 +120,4 @@ function SaleCard({ sale, onDelete, showActions = true }) {
     );
 }
 
-export default SaleCard;
+export default SaleCard;
