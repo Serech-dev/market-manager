@@ -8,6 +8,8 @@ const VALID_THEMES = [
     "cherry-dark",
     "forest-dark",
     "cosmic",
+    "solar",
+    "cyber",
 ];
 
 const THEME_ALIASES = {
@@ -20,8 +22,12 @@ const THEME_ALIASES = {
     evergreen: "forest-dark",
     cosmic_noir: "cosmic",
     space: "cosmic",
+    gold: "solar",
+    solar_gold: "solar",
+    teal: "cyber",
+    cyber_teal: "cyber",
+    neon: "cyber",
 };
-
 
 export const THEME_BACKGROUND_COLORS = {
     cosmic: "#0d0c1d",
@@ -31,6 +37,8 @@ export const THEME_BACKGROUND_COLORS = {
     midnight: "#171b22",
     "forest-dark": "#151c19",
     "cherry-dark": "#1d171b",
+    solar: "#121214",
+    cyber: "#091319",
 };
 
 const DEFAULT_THEME = "cosmic";
