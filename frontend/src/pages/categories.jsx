@@ -135,32 +135,6 @@ function Categories() {
                     </div>
 
                     <div className="flex shrink-0 items-center gap-2">
-                        {/* Ranking Comparison Modal Button */}
-                        <button
-                            type="button"
-                            onClick={() => setIsRankModalOpen(true)}
-                            className="
-                                flex
-                                items-center
-                                gap-1.5
-                                rounded-xl
-                                bg-[var(--warning)]
-                                px-3
-                                py-2
-                                text-xs
-                                font-extrabold
-                                text-white
-                                shadow-sm
-                                transition
-                                active-press
-                                hover:brightness-110
-                            "
-                            title="Comparar y rankear categorías"
-                        >
-                            <Trophy className="w-3.5 h-3.5" />
-                            <span>Ranking</span>
-                        </button>
-
                         <Link
                             to="/products/categories/new"
                             className="
@@ -243,34 +217,61 @@ function Categories() {
                         )}
                     </div>
 
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold text-[var(--text-secondary)]">
-                            Ordenar por:
-                        </span>
-                        <select
-                            value={sort}
-                            onChange={(e) => setSort(e.target.value)}
+                    <div className="flex items-center justify-between gap-2">
+                        <button
+                            type="button"
+                            onClick={() => setIsRankModalOpen(true)}
                             className="
+                                flex
+                                items-center
+                                gap-1.5
                                 rounded-xl
-                                border
-                                border-[var(--border)]
-                                bg-[var(--surface)]
+                                bg-[var(--warning)]
                                 px-3
                                 py-1.5
                                 text-xs
                                 font-bold
-                                text-[var(--text-primary)]
-                                outline-none
-                                focus:border-[var(--primary)]
+                                text-white
+                                shadow-2xs
+                                transition
+                                active-press
+                                hover:brightness-110
                             "
+                            title="Comparar y rankear categorías"
                         >
-                            <option value="name">Nombre (A–Z)</option>
-                            <option value="earnings">Mayor ganancia</option>
-                            <option value="gross">Mayor ingreso</option>
-                            <option value="sales">Más ventas</option>
-                            <option value="products">Más productos</option>
-                            <option value="recent">Venta más reciente</option>
-                        </select>
+                            <Trophy className="w-3.5 h-3.5" />
+                            <span>Ver Ranking</span>
+                        </button>
+
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs font-semibold text-[var(--text-secondary)]">
+                                Ordenar:
+                            </span>
+                            <select
+                                value={sort}
+                                onChange={(e) => setSort(e.target.value)}
+                                className="
+                                    rounded-xl
+                                    border
+                                    border-[var(--border)]
+                                    bg-[var(--surface)]
+                                    px-3
+                                    py-1.5
+                                    text-xs
+                                    font-bold
+                                    text-[var(--text-primary)]
+                                    outline-none
+                                    focus:border-[var(--primary)]
+                                "
+                            >
+                                <option value="name">Nombre (A–Z)</option>
+                                <option value="earnings">Mayor ganancia</option>
+                                <option value="gross">Mayor ingreso</option>
+                                <option value="sales">Más ventas</option>
+                                <option value="products">Más productos</option>
+                                <option value="recent">Venta más reciente</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 

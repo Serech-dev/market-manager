@@ -143,63 +143,28 @@ function Products() {
                     </div>
 
                     <div className="flex shrink-0 items-center gap-2">
-                        {/* Toggle Selection / Organize Mode Button */}
-                        <button
-                            type="button"
-                            onClick={() => {
-                                if (isSelectMode) {
-                                    cancelSelectionMode();
-                                } else {
-                                    setIsSelectMode(true);
-                                }
-                            }}
-                            className={`
+                        <Link
+                            to="/products/new"
+                            className="
                                 flex
                                 items-center
                                 gap-1.5
                                 rounded-xl
+                                bg-[var(--primary)]
                                 px-3
                                 py-2
                                 text-xs
                                 font-bold
+                                text-white
+                                shadow-sm
                                 transition
                                 active-press
-                                border
-                                ${
-                                    isSelectMode
-                                        ? "bg-[var(--primary)] text-white border-[var(--primary)] shadow-sm"
-                                        : "bg-[var(--surface)] text-[var(--text-primary)] border-[var(--border)] hover:border-[var(--primary)]/50"
-                                }
-                            `}
+                                hover:bg-[var(--primary-hover)]
+                            "
                         >
-                            <Tags className="w-3.5 h-3.5" />
-                            <span>{isSelectMode ? "Listo" : "Organizar"}</span>
-                        </button>
-
-                        {!isSelectMode && (
-                            <Link
-                                to="/products/new"
-                                className="
-                                    flex
-                                    items-center
-                                    gap-1.5
-                                    rounded-xl
-                                    bg-[var(--primary)]
-                                    px-3
-                                    py-2
-                                    text-xs
-                                    font-bold
-                                    text-white
-                                    shadow-sm
-                                    transition
-                                    active-press
-                                    hover:bg-[var(--primary-hover)]
-                                "
-                            >
-                                <Plus className="w-3.5 h-3.5 stroke-[3]" />
-                                <span>Nuevo</span>
-                            </Link>
-                        )}
+                            <Plus className="w-3.5 h-3.5 stroke-[3]" />
+                            <span>Nuevo</span>
+                        </Link>
                         <AccountMenu user={user} />
                     </div>
                 </header>
@@ -347,34 +312,68 @@ function Products() {
                         ))}
                     </div>
 
-                    {/* Sort Selector */}
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold text-[var(--text-secondary)]">
-                            Ordenar por:
-                        </span>
-                        <select
-                            value={sort}
-                            onChange={(e) => setSort(e.target.value)}
-                            className="
+                    {/* Sort & Organize Controls */}
+                    <div className="flex items-center justify-between gap-2">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (isSelectMode) {
+                                    cancelSelectionMode();
+                                } else {
+                                    setIsSelectMode(true);
+                                }
+                            }}
+                            className={`
+                                flex
+                                items-center
+                                gap-1.5
                                 rounded-xl
-                                border
-                                border-[var(--border)]
-                                bg-[var(--surface)]
                                 px-3
                                 py-1.5
                                 text-xs
                                 font-bold
-                                text-[var(--text-primary)]
-                                outline-none
-                                focus:border-[var(--primary)]
-                            "
+                                transition
+                                active-press
+                                border
+                                ${
+                                    isSelectMode
+                                        ? "bg-[var(--primary)] text-white border-[var(--primary)] shadow-sm"
+                                        : "bg-[var(--surface)] text-[var(--text-secondary)] border-[var(--border)] hover:text-[var(--text-primary)] hover:border-[var(--primary)]/50"
+                                }
+                            `}
                         >
-                            <option value="name">Nombre (A–Z)</option>
-                            <option value="sales">Más vendidos</option>
-                            <option value="gross">Mayor ingreso</option>
-                            <option value="earnings">Mayor ganancia</option>
-                            <option value="recent">Venta más reciente</option>
-                        </select>
+                            <Tags className="w-3.5 h-3.5" />
+                            <span>{isSelectMode ? "Listo" : "Organizar"}</span>
+                        </button>
+
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs font-semibold text-[var(--text-secondary)]">
+                                Ordenar:
+                            </span>
+                            <select
+                                value={sort}
+                                onChange={(e) => setSort(e.target.value)}
+                                className="
+                                    rounded-xl
+                                    border
+                                    border-[var(--border)]
+                                    bg-[var(--surface)]
+                                    px-3
+                                    py-1.5
+                                    text-xs
+                                    font-bold
+                                    text-[var(--text-primary)]
+                                    outline-none
+                                    focus:border-[var(--primary)]
+                                "
+                            >
+                                <option value="name">Nombre (A–Z)</option>
+                                <option value="sales">Más vendidos</option>
+                                <option value="gross">Mayor ingreso</option>
+                                <option value="earnings">Mayor ganancia</option>
+                                <option value="recent">Venta más reciente</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
