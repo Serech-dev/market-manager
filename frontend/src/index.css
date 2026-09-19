@@ -5,6 +5,7 @@
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  color-scheme: light;
 
   /* Default theme fallback (Sky / Blue) */
   --background: #e9e9e5;
@@ -38,6 +39,7 @@
 }
 
 [data-theme="cherry"] {
+  color-scheme: light;
   --background: #f7e8ed;
   --surface: #fdf5f7;
   --surface-accent: #f2dfe5;
@@ -78,6 +80,7 @@
 }
 
 [data-theme="blue"] {
+  color-scheme: light;
   --background: #e9e9e5;
   --surface: #f7fafc;
   --surface-accent: #d5e2ec;
@@ -116,6 +119,7 @@
 }
 
 [data-theme="forest"] {
+  color-scheme: light;
   --background: #eeede5;
   --surface: #f7fbf8;
   --surface-accent: #d5e5da;
@@ -154,6 +158,7 @@
 }
 
 [data-theme="midnight"] {
+  color-scheme: dark;
   --background: #171b22;
   --surface: #202630;
   --surface-accent: #29323e;
@@ -192,6 +197,7 @@
 }
 
 [data-theme="forest-dark"] {
+  color-scheme: dark;
   --background: #151c19;
   --surface: #1e2823;
   --surface-accent: #28352e;
@@ -230,6 +236,7 @@
 }
 
 [data-theme="cherry-dark"] {
+  color-scheme: dark;
   --background: #1d171b;
   --surface: #292025;
   --surface-accent: #35292f;
@@ -269,6 +276,7 @@
 }
 
 [data-theme="cosmic"] {
+  color-scheme: dark;
   --background: #0d0c1d;
   --surface: #151329;
   --surface-accent: #211c3e;

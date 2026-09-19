@@ -111,8 +111,10 @@ function AccountMenu({ user, onLogout }) {
                         right-0
                         z-40
                         mt-2
-                        w-52
-                        overflow-hidden
+                        w-56
+                        max-h-[85vh]
+                        overflow-y-auto
+                        custom-scrollbar
                         rounded-2xl
                         border
                         border-[var(--border)]
